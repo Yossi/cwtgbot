@@ -200,7 +200,7 @@ def pong(update, context):
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
 
-
+@log
 def help(update, context):
     pass # TODO: this.
 
@@ -219,6 +219,7 @@ def direct(update, context):
 dispatcher.add_handler(CommandHandler('test', test))
 dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('settings', settings))
+dispatcher.add_handler(CommandHandler('help', help))
 dispatcher.add_handler(CommandHandler('save', save))
 dispatcher.add_handler(CommandHandler('ignore', ignore))
 dispatcher.add_handler(CommandHandler('ping', ping))
