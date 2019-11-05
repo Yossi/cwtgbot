@@ -10,8 +10,10 @@ if not Path("data.dict").is_file():
     with open('data.dict', 'wb') as fp:
         scrape_data(fp)
 with open('data.dict', 'rb') as fp:
-    name_to_id = pickle.load(fp)
-    id_to_name = {v: k for k, v in name_to_id.items()}
+    data = pickle.load(fp)
+    id_to_weight = dict(data.values())
+    id_to_name = {v[0]: k for k, v in data.items()}
+    name_to_id = {v: k for k, v in id_to_name.items()}
 
 
 def main(text, user_data):

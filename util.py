@@ -11,11 +11,11 @@ def scrape_data(fp):
     soup = BeautifulSoup(page.content, features="html.parser")
     table = soup.find("table", {"class": "sortable wikitable smwtable"})
     for row in table.findAll('tr')[1:]:
-        name, code, _, item_type = row.findAll('td')
+        name, code, weight, item_type = row.findAll('td')
         if item_type.text == 'Recipe (Item)':
-            data['📃' + name.text.lower()] = code.text.lower()
+            data['📃' + name.text.lower()] = code.text.lower(), int(weight.text) if weight.text else 1
         else:
-            data[name.text.lower()] = code.text.lower()
+            data[name.text.lower()] = code.text.lower(), int(weight.text) if weight.text else 1
     pickle.dump(data, fp)
 
 def meta():
