@@ -1,0 +1,16 @@
+/setdescription@BotFather
+Forward me your /stock and I will return the /g_deposit commands you need to transfer it all to guild.
+Use /save with a list of item IDs to get /wts_ commands for those items instead.
+Use /ignore with a list of item IDs to ignore those items.
+Also supports forwards of ⚒Crafting and ⚗️Alchemy.
+
+If you are trying to repair/craft/brew something and are missing items, forward message to me to get /g_withdraw command.
+
+/setcommands@BotFather
+save - pass a list of item codes that you want to hide in exchange rather than deposit
+ignore - pass a list of item codes that the bot should ignore
+
+/setabouttext@BotFather
+Bot that generates the commands you need to manage your inventory while a guild member
+
+/setuserpic@BotFather
