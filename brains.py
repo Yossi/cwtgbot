@@ -4,9 +4,6 @@ import pickle
 from pprint import pprint
 from pathlib import Path
 
-import requests
-from bs4 import BeautifulSoup
-
 from util import scrape_data, is_witching_hour
 
 if not Path("data.dict").is_file():

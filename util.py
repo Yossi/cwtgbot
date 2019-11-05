@@ -1,4 +1,6 @@
 import pickle
+import requests
+from bs4 import BeautifulSoup
 from datetime import datetime, time, timedelta
 
 def scrape_data(fp):
@@ -34,6 +36,8 @@ def is_witching_hour():
     return any((start < now < end for start, end in closed_times))
 
 if __name__ == '__main__':
-    print(is_witching_hour())
-#    from pprint import pprint
-#    pprint(meta())
+    from pprint import pprint
+
+    #print(is_witching_hour())
+
+    pprint(meta())
