@@ -73,10 +73,10 @@ def main(text, user_data):
             sales = '\n'.join(sorted(sales))
             if is_witching_hour():
                 matches = re.finditer(r'\/wts_(?P<id>\d+)_(?P<number>\d+)_1000 (?P<name>.+)', sales)
-                fire_sale = []
+                fire_sale = ['Market is closed so you get deposit commands.\nForward this message back to the bot after battle to get the withdraw commands for a refund.\n']
                 for match in matches:
                     d = match.groupdict()
-                    fire_sale.append(f'<code>/g_deposit {d["id"]}{" "+d["number"] if d["number"] != "1" else ""}</code> {d["name"]}*')
+                    fire_sale.append(f'<code>/g_deposit {d["id"]}{" "+d["number"] if d["number"] != "1" else ""}</code> {d["name"]}')
                 sales = '\n'.join(sorted(fire_sale))
             ret.append(sales)
 
@@ -218,7 +218,7 @@ if __name__ == '__main__':
           'Coal (4)\n'
           'Coke (10)\n'
           'Crafted leather (1)\n'
-          'Iron ore (3)\n'
+          'Iron ore (757)\n'
           'Leather (109)\n'
           'Magic stone (2)\n'
           'Metal plate (2)\n'
@@ -229,7 +229,7 @@ if __name__ == '__main__':
           'Solvent (5)\n'
           'Thread (447)',
 
-'more': '📦Your stock:\n'
+ 'more': '📦Your stock:\n'
         '/a_11 Bauxite x 3\n'
         '/a_21 Bone powder x 2\n'
         '/a_04 Bone x 9\n'
@@ -251,8 +251,7 @@ if __name__ == '__main__':
         '/a_01 Thread x 9',
 }
 
-
-    l= d['missing']
+    l= d['stock']
     #pprint(l)
     
-    pprint(main(l,{}))
+    pprint(main(l,{'save': {'01': '', '02': '', '08': ''}}))
