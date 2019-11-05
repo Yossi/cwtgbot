@@ -46,14 +46,15 @@ def main(text, user_data):
             id = name_to_id[name.lower()]
             count_total = int(match[2])
             if id in user_data.get('save', {}):
+                max_weight = 1000 // id_to_weight[id]
                 count_keep = user_data['save'][id]
                 if not count_keep:
                     count_keep = count_total
                 count_keep = min(int(count_keep), count_total)
                 count_deposit = count_total - count_keep
-                while count_keep > 1000:
-                    sales.append(f'/wts_{id}_1000_1000')
-                    count_keep = count_keep - 1000
+                while count_keep > max_weight:
+                    sales.append(f'/wts_{id}_{max_weight}_1000')
+                    count_keep = count_keep - max_weight
                 sales.append(f'/wts_{id}_{count_keep}_1000 {name}')
                 if count_deposit:
                     deposits.append(f'<code>/g_deposit {id}{" "+str(count_deposit) if count_deposit != 1 else ""}</code> {name}')
