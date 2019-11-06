@@ -207,7 +207,9 @@ def help(update, context):
 @log
 def settings(update, context):
     '''direct users to the settings'''
-    text = "Use /save and/or /ignore to customize your experience"
+    text = """Use /save and/or /ignore to customize your experience.\n
+Add a space-separated list of IDs after the command to save or ignore. You can limit how many of an item are affected by attaching an amount to the ID with a comma. Using the command with nothing else will show you what you have stored.\n
+Example:\n`/save 01 02,150 03` 👈 Save all thread, all pelt and 150 sticks. Rest of the sticks get deposited."""
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
 
