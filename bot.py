@@ -202,14 +202,29 @@ def pong(update, context):
 
 @log
 def help(update, context):
-    pass # TODO: this.
+    text = """
+Forward messages here for the bot to act on.
+
+Any list of items (eg. /stock, ⚒Crafting, etc.) - Create all the /g_deposit commands to move everything to guild stock.
+Any message with list of missing items - Create /g_withdraw command that you need to send to guild leader.
+A message with /g_deposit commands from this bot - Create /g_withdraw command to get your stuff back out.
+
+Some /settings available too.
+"""
+    logging.info(f'bot said:\n{text}')
+    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
 
 @log
 def settings(update, context):
     '''direct users to the settings'''
-    text = """Use /save and/or /ignore to customize your experience.\n
-Add a space-separated list of IDs after the command to save or ignore. You can limit how many of an item are affected by attaching an amount to the ID with a comma. Using the command with nothing else will show you what you have stored.\n
-Example:\n`/save 01 02,150 03` 👈 Save all thread, all pelt and 150 sticks. Rest of the sticks get deposited."""
+    text = """
+Use /save and/or /ignore to customize your experience.
+
+Add a space-separated list of IDs after the command to save or ignore. You can limit how many of an item are affected by attaching an amount to the ID with a comma. Using the command with nothing else will show you what you have stored.
+
+Example:
+`/save 01 02,150 03` 👈 Save all thread, all pelt and 150 sticks. Rest of the sticks get deposited.
+"""
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
 
