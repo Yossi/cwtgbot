@@ -12,10 +12,7 @@ def scrape_data(fp):
     table = soup.find("table", {"class": "sortable wikitable smwtable"})
     for row in table.findAll('tr')[1:]:
         name, code, weight, item_type = row.findAll('td')
-        if item_type.text == 'Recipe (Item)':
-            data['📃' + name.text.lower()] = code.text.lower(), int(weight.text) if weight.text else 1
-        else:
-            data[name.text.lower()] = code.text.lower(), int(weight.text) if weight.text else 1
+        data[name.text.lower()] = code.text.lower(), int(weight.text) if weight.text else 1
     pickle.dump(data, fp)
 
 def meta():

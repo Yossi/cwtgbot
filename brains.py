@@ -41,6 +41,7 @@ def main(text, user_data):
             match = re.search(r'(.+)\((\d+)\)', item)
             if not match: continue
             name = match[1].strip()
+            name = name.replace('📃', '')
             if name.startswith('/sg_'):
                 name = name.partition(' ')[2]
             id = name_to_id[name.lower()]
@@ -156,40 +157,40 @@ def main(text, user_data):
 
 if __name__ == '__main__':
     d = {
- 'crafting': 'Royal Boots part (1)\n'
-             'Royal Gauntlets part (1)\n'
-             '📃Royal Gauntlets recipe (1) /view_r41\n'
-             'Royal Helmet fragment (1)',
+    'crafting': 'Royal Boots part (1)\n'
+                'Royal Gauntlets part (1)\n'
+                '📃Royal Gauntlets recipe (1) /view_r41\n'
+                'Royal Helmet fragment (1)',
 
- 'exchange': 'Here you can buy and sell some items.\n'
-             'To find a tradable item just type:\n'
-             '/t [item name]\n'
-             'Example:\n'
-             '/t coal\n'
-             '\n'
-             'Your deals (9/11):\n'
-             'Thread\n'
-             '1000 x 1000💰 [Selling] /rm_blatt6nqqm6jf52f7d40\n'
-             'Thread\n'
-             '1000 x 9💰 [Selling] /rm_blattknqqm6jf52f7ep0\n'
-             'String\n'
-             '2 x 2💰 [Selling] /rm_blr9ujvqqm6kjt662q30\n'
-             'Bone\n'
-             '45 x 9💰 [Selling] /rm_blrd4qfqqm6kjt667b40\n'
-             'Cloth\n'
-             '127 x 9💰 [Selling] /rm_blrd4sfqqm6kjt667beg\n'
-             'Leather\n'
-             '109 x 9💰 [Selling] /rm_blrd52vqqm6kjt667c0g\n'
-             'Pelt\n'
-             '226 x 9💰 [Selling] /rm_blrd55fqqm6kjt667c90\n'
-             'Powder\n'
-             '225 x 9💰 [Selling] /rm_blrd577qqm6kjt667ceg\n'
-             'Thread\n'
-             '448 x 9💰 [Selling] /rm_blrd58fqqm6kjt667chg\n'
-             '\n'
-             'Your last 10 comitted trades: /trades',
+    #  'exchange': 'Here you can buy and sell some items.\n'
+    #              'To find a tradable item just type:\n'
+    #              '/t [item name]\n'
+    #              'Example:\n'
+    #              '/t coal\n'
+    #              '\n'
+    #              'Your deals (9/11):\n'
+    #              'Thread\n'
+    #              '1000 x 1000💰 [Selling] /rm_blatt6nqqm6jf52f7d40\n'
+    #              'Thread\n'
+    #              '1000 x 9💰 [Selling] /rm_blattknqqm6jf52f7ep0\n'
+    #              'String\n'
+    #              '2 x 2💰 [Selling] /rm_blr9ujvqqm6kjt662q30\n'
+    #              'Bone\n'
+    #              '45 x 9💰 [Selling] /rm_blrd4qfqqm6kjt667b40\n'
+    #              'Cloth\n'
+    #              '127 x 9💰 [Selling] /rm_blrd4sfqqm6kjt667beg\n'
+    #              'Leather\n'
+    #              '109 x 9💰 [Selling] /rm_blrd52vqqm6kjt667c0g\n'
+    #              'Pelt\n'
+    #              '226 x 9💰 [Selling] /rm_blrd55fqqm6kjt667c90\n'
+    #              'Powder\n'
+    #              '225 x 9💰 [Selling] /rm_blrd577qqm6kjt667ceg\n'
+    #              'Thread\n'
+    #              '448 x 9💰 [Selling] /rm_blrd58fqqm6kjt667chg\n'
+    #              '\n'
+    #              'Your last 10 comitted trades: /trades',
 
- 'missing': 'Not enough materials. Missing:\n'
+    'missing': 'Not enough materials. Missing:\n'
             ' 11 x Powder\n'
             ' 9 x Charcoal\n'
             ' 9 x Stick\n'
@@ -201,35 +202,35 @@ if __name__ == '__main__':
             ' 15 x Thread\n'
             ' 1 x Solvent',
 
- 'sg_stock': '📦Storage (2181/4000):\n'
-             'Use /sg_{code} to trade some amount of resource for 1💰/pcs\n'
-             '\n'
-             '/sg_05 Coal (1)\n'
-             '/sg_03 Pelt (2)\n'
-             '/sg_02 Stick (2)\n'
-             '/sg_01 Thread (1)',
+    'sg_stock': '📦Storage (2181/4000):\n'
+                'Use /sg_{code} to trade some amount of resource for 1💰/pcs\n'
+                '\n'
+                '/sg_05 Coal (1)\n'
+                '/sg_03 Pelt (2)\n'
+                '/sg_02 Stick (2)\n'
+                '/sg_01 Thread (1)',
 
- 'stock': '📦Storage (1633/4000):\n'
-          'Bauxite (4)\n'
-          'Bone powder (9)\n'
-          'Bone (42)\n'
-          'Charcoal (19)\n'
-          'Cloth (127)\n'
-          'Coal (4)\n'
-          'Coke (10)\n'
-          'Crafted leather (1)\n'
-          'Iron ore (757)\n'
-          'Leather (109)\n'
-          'Magic stone (2)\n'
-          'Metal plate (2)\n'
-          'Pelt (226)\n'
-          'Powder (223)\n'
-          'Ruby (1)\n'
-          'Silver ore (13)\n'
-          'Solvent (5)\n'
-          'Thread (447)',
+    'stock': '📦Storage (1633/4000):\n'
+            'Bauxite (4)\n'
+            'Bone powder (9)\n'
+            'Bone (42)\n'
+            'Charcoal (19)\n'
+            'Cloth (127)\n'
+            'Coal (4)\n'
+            'Coke (10)\n'
+            'Crafted leather (1)\n'
+            'Iron ore (757)\n'
+            'Leather (109)\n'
+            'Magic stone (2)\n'
+            'Metal plate (2)\n'
+            'Pelt (226)\n'
+            'Powder (223)\n'
+            'Ruby (1)\n'
+            'Silver ore (13)\n'
+            'Solvent (5)\n'
+            'Thread (447)',
 
- 'more': '📦Your stock:\n'
+    'more': '📦Your stock:\n'
         '/a_11 Bauxite x 3\n'
         '/a_21 Bone powder x 2\n'
         '/a_04 Bone x 9\n'
@@ -249,9 +250,21 @@ if __name__ == '__main__':
         '/a_16 Solvent x 2\n'
         '/a_02 Stick x 1\n'
         '/a_01 Thread x 9',
+
+    'clarity': 'Not enough materials to craft Clarity Robe.\n'
+            'Required:\n'
+            '15 x Leather\n'
+            '9 x Coke\n'
+            '12 x Rope\n'
+            '7 x Solvent\n'
+            '5 x Sapphire\n'
+            '1 x Clarity Robe recipe\n'
+            '3 x Clarity Robe piece\n'
+            '3 x Silver mold',
 }
 
-    l= d['stock']
+    #l = d['crafting']
     #pprint(l)
-    
-    pprint(main(l,{'save': {'01': '', '02': '', '08': ''}}))
+    for name, l in d.items():
+        print(name)
+        pprint(main(l,{'save': {'01': '', '02': '', '08': ''}}))
