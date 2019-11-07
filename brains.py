@@ -157,10 +157,122 @@ def main(text, user_data):
 
 if __name__ == '__main__':
     d = {
+    'sg_stock': '📦Storage (2181/4000):\n'
+                'Use /sg_{code} to trade some amount of resource for 1💰/pcs\n'
+                '\n'
+                '/sg_05 Coal (1)\n'
+                '/sg_03 Pelt (2)\n'
+                '/sg_02 Stick (2)\n'
+                '/sg_01 Thread (1)',
+
+    'stock': '📦Storage (1633/4000):\n'
+             'Bauxite (4)\n'
+             'Bone powder (9)\n'
+             'Bone (42)\n'
+             'Charcoal (19)\n'
+             'Cloth (127)\n'
+             'Coal (4)\n'
+             'Coke (10)\n'
+             'Crafted leather (1)\n'
+             'Iron ore (757)\n'
+             'Leather (109)\n'
+             'Magic stone (2)\n'
+             'Metal plate (2)\n'
+             'Pelt (226)\n'
+             'Powder (223)\n'
+             'Ruby (1)\n'
+             'Silver ore (13)\n'
+             'Solvent (5)\n'
+             'Thread (447)',
+
+    'more': '📦Your stock:\n'
+            '/a_11 Bauxite x 3\n'
+            '/a_21 Bone powder x 2\n'
+            '/a_04 Bone x 9\n'
+            '/a_06 Charcoal x 3\n'
+            '/a_09 Cloth x 4\n'
+            '/a_05 Coal x 7\n'
+            '/a_23 Coke x 3\n'
+            '/a_08 Iron ore x 2\n'
+            '/a_20 Leather x 7\n'
+            '/a_13 Magic stone x 1\n'
+            '/a_33 Metal plate x 3\n'
+            '/a_34 Metallic fiber x 1\n'
+            '/a_03 Pelt x 7\n'
+            '/a_07 Powder x 21\n'
+            '/a_31 Rope x 2\n'
+            '/a_10 Silver ore x 11\n'
+            '/a_16 Solvent x 2\n'
+            '/a_02 Stick x 1\n'
+            '/a_01 Thread x 9',
+
     'crafting': 'Royal Boots part (1)\n'
                 'Royal Gauntlets part (1)\n'
                 '📃Royal Gauntlets recipe (1) /view_r41\n'
                 'Royal Helmet fragment (1)',
+
+    'missing': 'Not enough materials. Missing:\n'
+               ' 11 x Powder\n'
+               ' 9 x Charcoal\n'
+               ' 9 x Stick\n'
+               ' 7 x Iron ore\n'
+               ' 64 x Pelt\n'
+               ' 1 x Silver ore\n'
+               ' 22 x Coal\n'
+               ' 2 x Bauxite\n'
+               ' 15 x Thread\n'
+               ' 1 x Solvent',
+
+    'clarity': 'Not enough materials to craft Clarity Robe.\n'
+               'Required:\n'
+               '15 x Leather\n'
+               '9 x Coke\n'
+               '12 x Rope\n'
+               '7 x Solvent\n'
+               '5 x Sapphire\n'
+               '1 x Clarity Robe recipe\n'
+               '3 x Clarity Robe piece\n'
+               '3 x Silver mold',
+
+    'reinforcement': 'Materials needed for reinforcement:\n'
+                     '1 x Solvent\n'
+                     '12 x Pelt\n'
+                     '2 x Stick\n'
+                     '6 x Charcoal\n'
+                     '4 x Bone\n'
+                     '1 x Thread\n'
+                     '2 x Powder\n'
+                     '5 x Coal\n'
+                     '\n'
+                     '💧Mana: 33\n'
+                     '💰Gold: 1\n'
+                     '/wsr_ResPh_u115_confirm to make an order\n',
+
+    'repair': 'Materials needed for repair:\n'
+              '18 x Charcoal\n'
+              '22 x Powder\n'
+              '22 x Iron ore\n'
+              '12 x Bone\n'
+              '16 x Silver ore\n'
+              '19 x Coal\n'
+              '18 x Stick\n'
+              '80 x Pelt\n'
+              '19 x Cloth\n'
+              '\n'
+              '💧Mana: 226\n'
+              '💰Gold: 2\n'
+              '/wsr_mz1CQ_u115_confirm to make an order\n',
+}
+
+    #l = d['crafting']
+    #pprint(l)
+    for name, l in d.items():
+        print(name)
+        pprint(main(l,{'save': {'01': '', '02': '', '08': ''}}))
+
+
+
+
 
     #  'exchange': 'Here you can buy and sell some items.\n'
     #              'To find a tradable item just type:\n'
@@ -189,82 +301,3 @@ if __name__ == '__main__':
     #              '448 x 9💰 [Selling] /rm_blrd58fqqm6kjt667chg\n'
     #              '\n'
     #              'Your last 10 comitted trades: /trades',
-
-    'missing': 'Not enough materials. Missing:\n'
-            ' 11 x Powder\n'
-            ' 9 x Charcoal\n'
-            ' 9 x Stick\n'
-            ' 7 x Iron ore\n'
-            ' 64 x Pelt\n'
-            ' 1 x Silver ore\n'
-            ' 22 x Coal\n'
-            ' 2 x Bauxite\n'
-            ' 15 x Thread\n'
-            ' 1 x Solvent',
-
-    'sg_stock': '📦Storage (2181/4000):\n'
-                'Use /sg_{code} to trade some amount of resource for 1💰/pcs\n'
-                '\n'
-                '/sg_05 Coal (1)\n'
-                '/sg_03 Pelt (2)\n'
-                '/sg_02 Stick (2)\n'
-                '/sg_01 Thread (1)',
-
-    'stock': '📦Storage (1633/4000):\n'
-            'Bauxite (4)\n'
-            'Bone powder (9)\n'
-            'Bone (42)\n'
-            'Charcoal (19)\n'
-            'Cloth (127)\n'
-            'Coal (4)\n'
-            'Coke (10)\n'
-            'Crafted leather (1)\n'
-            'Iron ore (757)\n'
-            'Leather (109)\n'
-            'Magic stone (2)\n'
-            'Metal plate (2)\n'
-            'Pelt (226)\n'
-            'Powder (223)\n'
-            'Ruby (1)\n'
-            'Silver ore (13)\n'
-            'Solvent (5)\n'
-            'Thread (447)',
-
-    'more': '📦Your stock:\n'
-        '/a_11 Bauxite x 3\n'
-        '/a_21 Bone powder x 2\n'
-        '/a_04 Bone x 9\n'
-        '/a_06 Charcoal x 3\n'
-        '/a_09 Cloth x 4\n'
-        '/a_05 Coal x 7\n'
-        '/a_23 Coke x 3\n'
-        '/a_08 Iron ore x 2\n'
-        '/a_20 Leather x 7\n'
-        '/a_13 Magic stone x 1\n'
-        '/a_33 Metal plate x 3\n'
-        '/a_34 Metallic fiber x 1\n'
-        '/a_03 Pelt x 7\n'
-        '/a_07 Powder x 21\n'
-        '/a_31 Rope x 2\n'
-        '/a_10 Silver ore x 11\n'
-        '/a_16 Solvent x 2\n'
-        '/a_02 Stick x 1\n'
-        '/a_01 Thread x 9',
-
-    'clarity': 'Not enough materials to craft Clarity Robe.\n'
-            'Required:\n'
-            '15 x Leather\n'
-            '9 x Coke\n'
-            '12 x Rope\n'
-            '7 x Solvent\n'
-            '5 x Sapphire\n'
-            '1 x Clarity Robe recipe\n'
-            '3 x Clarity Robe piece\n'
-            '3 x Silver mold',
-}
-
-    #l = d['crafting']
-    #pprint(l)
-    for name, l in d.items():
-        print(name)
-        pprint(main(l,{'save': {'01': '', '02': '', '08': ''}}))
