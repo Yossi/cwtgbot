@@ -133,7 +133,7 @@ def main(text, user_data):
     more_match = re.search(r'📦Your stock:', text)
     generic_match = re.search(r'(.+)\((\d+)\)', text)
     exchange_match = re.search(r'Your deals \((\d+)/(\d+)\):', text)
-    withdraw_match = re.search(r'Not enough materials|Materials needed for repair', text)
+    withdraw_match = re.search(r'Not enough materials|Materials needed for', text)
     refund_match = re.search(r'\/g_deposit [aestchwpmkr]{0,3}\d+ (\d+)?', text)
 
     if storage_match:
