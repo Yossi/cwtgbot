@@ -135,14 +135,14 @@ def restart(update, context):
 def error(update, context):
     # add all the dev user_ids in this list. You can also add ids of channels or groups.
     devs = LIST_OF_ADMINS
-    # we want to notify the user of this problem. This will always work, but not notify users if the update is an 
-    # callback or inline query, or a poll update. In case you want this, keep in mind that sending the message 
+    # we want to notify the user of this problem. This will always work, but not notify users if the update is an
+    # callback or inline query, or a poll update. In case you want this, keep in mind that sending the message
     # could fail
     if not update:
         return
     if update.effective_message:
         text = "Hey. I'm sorry to inform you that an error happened while I tried to handle your update. " \
-               "My developer(s) will be notified."
+               "My developer has been notified."
         update.effective_message.reply_text(text)
     # This traceback is created with accessing the traceback object from the sys.exc_info, which is returned as the
     # third value of the returned tuple. Then we use the traceback.format_tb to get the traceback as a string, which
