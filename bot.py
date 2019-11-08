@@ -112,8 +112,8 @@ def setting_saver(update, context, section):
 
 @send_typing_action
 @log
-def forward(update, context):
-    '''main function that deals with forwarded messages that are the meat and potatos of this bot'''
+def incoming(update, context):
+    '''main function that deals with incoming messages that are the meat and potatos of this bot'''
     responses = main(update.message.text, context.user_data)
     for response in responses:
         logging.info(f'bot said:\n{response}')
@@ -228,11 +228,6 @@ Example:
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
 
-@log
-def direct(update, context):
-    '''pass along things people say to the bot'''
-    pass
-
 dispatcher.add_handler(CommandHandler('test', test))
 dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('settings', settings))
@@ -241,8 +236,8 @@ dispatcher.add_handler(CommandHandler('save', save))
 dispatcher.add_handler(CommandHandler('ignore', ignore))
 dispatcher.add_handler(CommandHandler('ping', ping))
 dispatcher.add_handler(CommandHandler('pong', pong))
-dispatcher.add_handler(MessageHandler(Filters.forwarded, forward))
-dispatcher.add_handler(MessageHandler(Filters.text, direct))
+dispatcher.add_handler(MessageHandler(Filters.forwarded, incoming))
+dispatcher.add_handler(MessageHandler(Filters.text, incoming))
 dispatcher.add_handler(CommandHandler('r', restart))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('say', say))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_error_handler(error)
