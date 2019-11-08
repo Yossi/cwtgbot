@@ -210,9 +210,11 @@ Any message with list of missing items - Create /g_withdraw command that you nee
 A message with /g_deposit commands from this bot - Create /g_withdraw command to get your stuff back out.
 
 Some /settings available too.
+
+Paste in a few /g_withdraw commands - Create a more efficent /g_withdraw command.
 """
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode=ParseMode.HTML)
 
 @log
 def settings(update, context):
