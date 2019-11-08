@@ -55,10 +55,10 @@ def log(func):
         name = update.effective_user.username
         #pprint(update.to_dict())
         context.user_data['meta'] = {
-            'last_talked': update.message['date'],
-            'user_details': update.message.to_dict()['from']
+            'last_talked': update.effective_message['date'],
+            'user_details': update.effective_message.to_dict()['from']
         }
-        logging.info(f'{name} ({id}) said:\n{update.message.text}')
+        logging.info(f'{name} ({id}) said:\n{update.effective_message.text}')
         return func(update, context, *args, **kwargs)
     return wrapped
 
@@ -114,10 +114,10 @@ def setting_saver(update, context, section):
 @log
 def incoming(update, context):
     '''main function that deals with incoming messages that are the meat and potatos of this bot'''
-    responses = main(update.message.text, context.user_data)
+    responses = main(update.effective_message.text, context.user_data)
     for response in responses:
         logging.info(f'bot said:\n{response}')
-        context.bot.send_message(chat_id=update.message.chat_id, text=response, parse_mode=ParseMode.HTML)
+        context.bot.send_message(chat_id=update.effective_message.chat_id, text=response, parse_mode=ParseMode.HTML)
 
 @restricted
 def restart(update, context):
