@@ -183,7 +183,11 @@ def say(update, context):
 @log
 def start(update, context):
     '''intro function'''
-    text = "Note to self: add greeting/instructions here"
+    text = """
+Bot primarily for helping manage your relationship with guild stock.
+
+See /help for more details.
+"""
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
 
