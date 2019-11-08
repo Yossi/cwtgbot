@@ -3,6 +3,7 @@ import os
 import pickle
 from pprint import pprint
 from pathlib import Path
+from collections import defaultdict
 
 from util import scrape_data, is_witching_hour
 
@@ -129,6 +130,19 @@ def main(text, user_data):
         command.append('</code>')
         ret.append(''.join(command))
 
+    def consolidate():
+        '''consolidate /g_withdraw commands'''
+        command = ['<code>/g_withdraw']
+        count = defaultdict(int)
+        it = iter(' '.join((_.strip() for _ in text.split('/g_withdraw'))).strip().split())
+        for item, n in zip(it, it):
+            count[item] += int(n)
+        for n, item in enumerate(sorted(count.items())):
+            if not (n + 1) % 9:
+                command.append('</code>\n<code>/g_withdraw')
+            command.append(f' {item[0]} {item[1]}')
+        command.append('</code>')
+        ret.append(''.join(command))
 
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
     more_match = re.search(r'📦Your stock:', text)
@@ -136,6 +150,7 @@ def main(text, user_data):
     exchange_match = re.search(r'Your deals \((\d+)/(\d+)\):', text)
     withdraw_match = re.search(r'Not enough materials|Materials needed for', text)
     refund_match = re.search(r'\/g_deposit [aestchwpmkr]{0,3}\d+ (\d+)?', text)
+    consolidate_match = re.search(r'\/g_withdraw', text)
 
     if storage_match:
         storage(storage_match)
@@ -149,6 +164,8 @@ def main(text, user_data):
         withdraw()
     elif refund_match:
         refund()
+    elif consolidate_match:
+        consolidate()
     else:
         ret.append('What should I do with this?')
 
@@ -290,17 +307,24 @@ if __name__ == '__main__':
     'equipment':
         '🏷Gloves (1) /bind_a16\n'
         '🏷Royal Guard Cape (1) /bind_a26',
+
+    'consolidate':
+        '/g_withdraw 09 13 02 10 11 1 05 37 08 4 17 2 01 6 06 21'
+        '/g_withdraw 04 39 13 4 07 19 16 2 10 3 03 24 '
+        '/g_withdraw 13 3 15 1 08 6 01 5 04 10 03 23 05 19 16 1 '
+        '/g_withdraw 11 2 09 4 02 10 06 8 07 10 '
+        '/g_withdraw 07 19 08 8 05 19 04 35 02 30 06 14 10 4 13 7',
 }
 
-    #l = d['crafting']
-    #pprint(l)
+    name = 'consolidate'
+    d = {name: d[name]}
     for name, l in d.items():
         print(name)
-        pprint(main(l,{'save': {'01': '', '02': '', '08': ''}}))
+        #pprint(l)
+        pprint(main(l, {'save': {'01': '', '02': '', '08': ''}}))
 
 
 
-#/g_withdraw 09 13 02 10 11 1 05 37 08 4 17 2 01 6 06 21 /g_withdraw 04 39 13 4 07 19 16 2 10 3 03 24 /g_withdraw 13 3 15 1 08 6 01 5 04 10 03 23 05 19 16 1 /g_withdraw 11 2 09 4 02 10 06 8 07 10 /g_withdraw 07 19 08 8 05 19 04 35 02 30 06 14 10 4 13 7
 
 
 

@@ -238,6 +238,7 @@ dispatcher.add_handler(CommandHandler('ping', ping))
 dispatcher.add_handler(CommandHandler('pong', pong))
 dispatcher.add_handler(MessageHandler(Filters.forwarded, incoming))
 dispatcher.add_handler(MessageHandler(Filters.text, incoming))
+dispatcher.add_handler(CommandHandler('g_withdraw', incoming)) # odd are the first thing on the line will be interpreted as as command
 dispatcher.add_handler(CommandHandler('r', restart))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('say', say))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_error_handler(error)
