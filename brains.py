@@ -27,12 +27,17 @@ def main(text, user_data):
         ret.append(f'{percent_full}% full')
         items = text.split('\n')[1:]
         if items[0].startswith('Use /sg_{code} to trade some amount of resource for '):
-            items = items[2:]
+            items = (''.join(item.partition(' ')[::-1]) for item in items[2:])
         generic(items)
 
     def more(items):
         '''handles /more output'''
-        generic(('%s (%s)' % item.partition(' ')[2].partition(' x ')[::2] for item in items[1:]))
+        def tidy(items):
+            for item in items[1:]:
+                slash, _ = item.partition(' ')[::2]
+                name, count = _.partition(' x ')[::2]
+                yield f'{name} ({count}) {slash}'
+        generic(tidy(items))
 
     def generic(items):
         '''does most of the work sorting a list of items into /wts and /g_deposit buckets'''
@@ -46,7 +51,10 @@ def main(text, user_data):
             name = name.replace('📃', '')
             if name.startswith('/sg_'):
                 name = name.partition(' ')[2]
-            id = name_to_id[name.lower()]
+            id = name_to_id.get(name.lower())
+            if not id:
+                id = item.strip().rpartition('_')[2]
+            if id in ('100', '501', 'a16', 'a26'): continue # list of undepositable ids
             count_total = int(match[2])
             if id in user_data.get('save', {}):
                 max_weight = 1000 // id_to_weight[id]
@@ -316,7 +324,7 @@ if __name__ == '__main__':
         '/g_withdraw 07 19 08 8 05 19 04 35 02 30 06 14 10 4 13 7',
 }
 
-    name = 'consolidate'
+    name = 'sg_stock'
     d = {name: d[name]}
     for name, l in d.items():
         print(name)
