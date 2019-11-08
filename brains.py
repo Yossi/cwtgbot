@@ -150,7 +150,7 @@ def main(text, user_data):
     exchange_match = re.search(r'Your deals \((\d+)/(\d+)\):', text)
     withdraw_match = re.search(r'Not enough materials|Materials needed for', text)
     refund_match = re.search(r'\/g_deposit [aestchwpmkr]{0,3}\d+ (\d+)?', text)
-    consolidate_match = re.search(r'\/g_withdraw', text)
+    consolidate_match = re.search(r'^\/g_withdraw', text)
 
     if storage_match:
         storage(storage_match)
