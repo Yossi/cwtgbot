@@ -181,6 +181,16 @@ def say(update, context):
         pass # TODO: list most recent speakers
 
 @log
+def mlm(update, context):
+    '''get me more stamina if you want'''
+    messages = ("If you're goingto recruit a new player and already have enough stamina yourself, why not use my /promo code instead?\nI'm a collector and can use every extra bit of stamina.",
+        'Join the Chat Wars! First MMORPG in Telegram. Use this invite link to receive 10💰 as a welcome gift:\nhttps://telegram.me/chtwrsbot?start=ad53406f0a3544689bed29057419ae15',
+    )
+    for message in messages:
+        logging.info(f'bot said:\n{message}')
+        context.bot.send_message(chat_id=update.effective_message.chat_id, text=message, parse_mode=ParseMode.HTML)
+
+@log
 def start(update, context):
     '''intro function'''
     text = """
@@ -188,19 +198,6 @@ Bot primarily for helping manage your relationship with guild stock.
 
 See /help for more details.
 """
-    logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
-
-@log
-def ping(update, context):
-    '''show signs of life'''
-    text = "/pong"
-    logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
-@log
-def pong(update, context):
-    '''ǝɟᴉl ɟo suƃᴉs ʍoɥs'''
-    text = "/ping"
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
 
@@ -234,6 +231,19 @@ Example:
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
 
+@log
+def ping(update, context):
+    '''show signs of life'''
+    text = "/pong"
+    logging.info(f'bot said:\n{text}')
+    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+@log
+def pong(update, context):
+    '''ǝɟᴉl ɟo suƃᴉs ʍoɥs'''
+    text = "/ping"
+    logging.info(f'bot said:\n{text}')
+    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+
 dispatcher.add_handler(CommandHandler('test', test))
 dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('settings', settings))
@@ -247,6 +257,7 @@ dispatcher.add_handler(MessageHandler(Filters.text, incoming))
 dispatcher.add_handler(CommandHandler('g_withdraw', incoming))
 dispatcher.add_handler(CommandHandler('r', restart))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('say', say))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
+dispatcher.add_handler(CommandHandler('mlm', mlm))
 dispatcher.add_error_handler(error)
 
 logging.info('bot started')
