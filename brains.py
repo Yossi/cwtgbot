@@ -18,7 +18,7 @@ with open('data.dict', 'rb') as fp:
 
 
 def main(text, user_data):
-    '''deals with all forwarded messages'''
+    '''returns a list of strings that are then each sent as a separate message'''
     ret = []
 
     def storage(m):
@@ -54,7 +54,7 @@ def main(text, user_data):
             id = name_to_id.get(name.lower())
             if not id:
                 id = item.strip().rpartition('_')[2]
-            if id in ('100', '501', 'a16', 'a26'): continue # list of undepositable ids
+            if id in ('100', '501', 'a16', 'a26', 'tch'): continue # list of undepositable ids
             count_total = int(match[2])
             if id in user_data.get('save', {}):
                 max_weight = 1000 // id_to_weight[id]
@@ -319,8 +319,8 @@ if __name__ == '__main__':
     'consolidate':
         '/g_withdraw 09 13 02 10 11 1 05 37 08 4 17 2 01 6 06 21'
         '/g_withdraw 04 39 13 4 07 19 16 2 10 3 03 24 '
-        '/g_withdraw 13 3 15 1 08 6 01 5 04 10 03 23 05 19 16 1 '
-        '/g_withdraw 11 2 09 4 02 10 06 8 07 10 '
+        '/g_withdraw 13 3 15 1 08 6 01 5 04 10 03 23 05 19 16 1\n'
+        '/g_withdraw 11 2 09 4 02 10 06 8 07 10 \n'
         '/g_withdraw 07 19 08 8 05 19 04 35 02 30 06 14 10 4 13 7',
 }
 
