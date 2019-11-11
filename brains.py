@@ -123,6 +123,18 @@ def main(text, user_data):
         if matches:
             ret.append(withdraw_parts(matches))
 
+    def rerequest(items):
+        '''you asked for a withdrawal and then you wandered off to look at squirrels too long? i gotchu fam'''
+        response = ['Timeout expired. Please resend:']
+        matches = []
+        for item in items:
+            match = re.search(r'(?P<name>.+) x (?P<number>\d+)', item)
+            if not match: continue
+            response.append(match.string)
+            matches.append(match)
+        response = "\n".join(response)
+        ret.append(f'{response}\n{withdraw_parts(matches)}')
+
     def withdraw_parts(matches):
         '''builds withdraw commands'''
         command = ['<code>/g_withdraw']
@@ -157,6 +169,7 @@ def main(text, user_data):
     withdraw_match = re.search(r'Not enough materials|Materials needed for', text)
     refund_match = re.search(r'\/g_deposit [aestchwpmkr]{0,3}\d+ (\d+)?', text)
     consolidate_match = re.search(r'^\/g_withdraw', text)
+    rerequest_match = re.search(r'\/g_receive', text)
 
     if storage_match:
         storage(storage_match)
@@ -172,6 +185,8 @@ def main(text, user_data):
         refund()
     elif consolidate_match:
         consolidate()
+    elif rerequest_match:
+        rerequest(text.split('\n'))
     else:
         ret.append('What should I do with this?')
 
@@ -320,9 +335,17 @@ if __name__ == '__main__':
         '/g_withdraw 13 3 15 1 08 6 01 5 04 10 03 23 05 19 16 1\n'
         '/g_withdraw 11 2 09 4 02 10 06 8 07 10 \n'
         '/g_withdraw 07 19 08 8 05 19 04 35 02 30 06 14 10 4 13 7',
+
+    'missed':
+        'Withdrawing:\n'
+        'Iron ore x 60\n'
+        'Powder x 60\n'
+        'Stick x 60\n'
+        'Recipient shall send to bot:\n'
+        '/g_receive bn48vanqqm6g62k9bsj0',
 }
 
-    name = 'sg_stock'
+    name = 'missed'
     d = {name: d[name]}
     for name, l in d.items():
         print(name)
