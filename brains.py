@@ -113,21 +113,19 @@ def main(text, user_data):
 
     def withdraw():
         '''process missing items messages'''
-        command = [f'{text}\n<code>']
         matches = re.finditer(r'(?P<number>\d+) x (?P<name>.+)', text)
         if matches:
-            withdraw_parts(command, matches)
+            ret.append(f'{text}\n{withdraw_parts(matches)}')
 
     def refund():
         '''process returned /g_deposit message from ourselves'''
-        command = ['<code>']
         matches = re.finditer(r'\/g_deposit (?P<id>[aestchwpmkr]{0,3}\d+) (?P<number>\d+)?', text)
         if matches:
-            withdraw_parts(command, matches)
+            ret.append(withdraw_parts(matches))
 
-    def withdraw_parts(command, matches):
+    def withdraw_parts(matches):
         '''builds withdraw commands'''
-        command.append('/g_withdraw')
+        command = ['<code>/g_withdraw']
         for n, match in enumerate(matches):
             if not (n + 1) % 9:
                 command.append('</code>\n<code>/g_withdraw')
@@ -136,7 +134,7 @@ def main(text, user_data):
                 d['id'] = name_to_id[d['name'].lower()]
             command.append(f' {d["id"]} {d["number"] if d["number"] else "1"}')
         command.append('</code>')
-        ret.append(''.join(command))
+        return ''.join(command)
 
     def consolidate():
         '''consolidate /g_withdraw commands'''
