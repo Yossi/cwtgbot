@@ -6,7 +6,6 @@ from functools import wraps
 from pprint import pprint
 from collections import defaultdict
 
-#import telegram
 from telegram import ParseMode
 from telegram import ChatAction
 from telegram.utils.helpers import mention_html
@@ -23,9 +22,6 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s\n%(message)s', level=log
 persistence = PicklePersistence(filename='user.persist')
 updater = Updater(token=TOKEN, persistence=persistence, use_context=True)
 dispatcher = updater.dispatcher
-
-#bot = telegram.Bot(token=TOKEN)
-#print(bot.get_me())
 
 def send_typing_action(func):
     '''decorator that sends typing action while processing func command.'''
@@ -61,17 +57,6 @@ def log(func):
         logging.info(f'{name} ({id}) said:\n{update.effective_message.text}')
         return func(update, context, *args, **kwargs)
     return wrapped
-
-@restricted
-@log
-def test(update, context):
-    '''test function that may have unpredictable results at any time'''
-
-    pprint(meta())
-    text = '<code>test</code>\n'\
-           '/second_line_code\n'
-    logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode=ParseMode.HTML)
 
 @send_typing_action
 @log
@@ -244,7 +229,6 @@ def pong(update, context):
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
 
-dispatcher.add_handler(CommandHandler('test', test))
 dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('settings', settings))
 dispatcher.add_handler(CommandHandler('help', help))
