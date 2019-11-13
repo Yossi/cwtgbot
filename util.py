@@ -1,7 +1,7 @@
 import pickle
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime, time, timedelta
+from datetime import datetime, time
 
 def scrape_data(fp):
     '''get itemcode table and stuff it in a pickle'''
@@ -20,7 +20,6 @@ def meta():
     with open('user.persist', 'rb') as fp:
         d = pickle.load(fp)
     return d
-
 
 def is_witching_hour():
     '''return True if market is closed'''
