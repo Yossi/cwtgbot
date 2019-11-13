@@ -15,12 +15,6 @@ def scrape_data(fp):
         data[name.text.lower()] = code.text.lower(), int(weight.text) if weight.text else 1
     pickle.dump(data, fp)
 
-def meta():
-    '''unfinshed. may be part of the "recent speakers" functionality'''
-    with open('user.persist', 'rb') as fp:
-        d = pickle.load(fp)
-    return d
-
 def is_witching_hour():
     '''return True if market is closed'''
     closed_times = (
@@ -35,5 +29,3 @@ if __name__ == '__main__':
     from pprint import pprint
 
     #print(is_witching_hour())
-
-    pprint(meta())

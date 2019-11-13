@@ -14,7 +14,6 @@ from telegram.ext import Updater, PicklePersistence
 from telegram.ext import CommandHandler, MessageHandler
 from telegram.ext import Filters
 
-from util import meta
 from brains import main, id_to_name
 from secrets import TOKEN, LIST_OF_ADMINS
 
