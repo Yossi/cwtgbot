@@ -169,7 +169,7 @@ def say(update, context):
                            f'{talker["meta"]["last_talked"]}, @{talker["meta"]["user_details"]["username"]}, '
                            f'{talker["meta"]["user_details"]["first_name"]} {talker["meta"]["user_details"].get("last_name", "")}\n'
                            f'<code>/say {id} </code>'
-                           for id, talker in meta()['user_data'].items() if talker.get('meta', '')
+                           for id, talker in d['user_data'].items() if talker.get('meta', '')
                           ), reverse=True)[:5]
         text = '\n'.join(speakers)
         context.bot.send_message(chat_id=update.effective_message.chat_id, text=text, parse_mode=ParseMode.HTML)
