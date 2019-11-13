@@ -1,6 +1,7 @@
 import os, sys
 import logging
 import traceback
+import pickle
 from threading import Thread
 from functools import wraps
 from pprint import pprint
@@ -161,9 +162,18 @@ def say(update, context):
     if context.args:
         text=' '.join(context.args[1:])
         context.bot.send_message(chat_id=context.args[0], text=text, parse_mode='Markdown')
-        logging.info(f'bot said:\n{text}')
     else:
-        pass # TODO: list most recent speakers
+        with open('user.persist', 'rb') as fp:
+            d = pickle.load(fp)
+        speakers = sorted((
+                           f'{talker["meta"]["last_talked"]}, @{talker["meta"]["user_details"]["username"]}, '
+                           f'{talker["meta"]["user_details"]["first_name"]} {talker["meta"]["user_details"].get("last_name", "")}\n'
+                           f'<code>/say {id} </code>'
+                           for id, talker in meta()['user_data'].items() if talker.get('meta', '')
+                          ), reverse=True)[:5]
+        text = '\n'.join(speakers)
+        context.bot.send_message(chat_id=update.effective_message.chat_id, text=text, parse_mode=ParseMode.HTML)
+    logging.info(f'bot said:\n{text}')
 
 @log
 def mlm(update, context):
