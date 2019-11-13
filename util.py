@@ -1,7 +1,7 @@
 import pickle
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 def scrape_data(fp):
     '''get itemcode table and stuff it in a pickle'''
@@ -14,6 +14,13 @@ def scrape_data(fp):
         name, code, weight, item_type = row.findAll('td')
         data[name.text.lower()] = code.text.lower(), int(weight.text) if weight.text else 1
     pickle.dump(data, fp)
+
+def meta():
+    '''unfinshed. may be part of the "recent speakers" functionality'''
+    with open('user.persist', 'rb') as fp:
+        d = pickle.load(fp)
+    return d
+
 
 def is_witching_hour():
     '''return True if market is closed'''
@@ -29,3 +36,5 @@ if __name__ == '__main__':
     from pprint import pprint
 
     #print(is_witching_hour())
+
+    pprint(meta())
