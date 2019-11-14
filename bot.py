@@ -110,7 +110,7 @@ def start(update, context):
     '''intro function'''
     text = 'Bot primarily for helping manage your relationship with guild stock.\n'\
            '\n'\
-           'See /help for more details.''
+           'See /help for more details.'
 
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
