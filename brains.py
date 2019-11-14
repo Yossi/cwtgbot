@@ -40,7 +40,8 @@ def main(text, user_data):
         generic(tidy(items))
 
     def generic(items):
-        '''does most of the work sorting a list of items into /wts and /g_deposit buckets'''
+        '''does most of the work sorting a list of items into /wts and /g_deposit buckets.
+           expects an iterator of strings in the form ['<Item Name> (<Item Count>)']'''
         sales = []
         deposits = []
         for item in items:
@@ -115,52 +116,50 @@ def main(text, user_data):
         '''process missing items messages'''
         matches = re.finditer(r'(?P<number>\d+) x (?P<name>.+)', text)
         if matches:
-            ret.append(f'{text}\n{withdraw_parts(matches)}')
+            ret.append(f'{text}\n{withdraw_parts((match.groupdict() for match in matches))}')
 
     def refund():
         '''process returned /g_deposit message from ourselves'''
         matches = re.finditer(r'\/g_deposit (?P<id>[aestchwpmkr]{0,3}\d+) (?P<number>\d+)?', text)
         if matches:
-            ret.append(withdraw_parts(matches))
+            ret.append(withdraw_parts((match.groupdict() for match in matches)))
 
-    def rerequest(items):
+    def rerequest():
         '''you asked for a withdrawal and then you wandered off to look at squirrels too long? i gotchu fam'''
+        matches = list(re.finditer(r'(?P<name>.+) x (?P<number>\d+)', text))
         response = ['Timeout expired. Please resend:']
-        matches = []
-        for item in items:
-            match = re.search(r'(?P<name>.+) x (?P<number>\d+)', item)
-            if not match: continue
-            response.append(match.string)
-            matches.append(match)
+        for match in matches:
+            response.append(match.string[match.start():match.end()])
         response = "\n".join(response)
-        ret.append(f'{response}\n{withdraw_parts(matches)}')
+        ret.append(f'{response}\n{withdraw_parts((match.groupdict() for match in matches))}')
+
+    def consolidate():
+        '''consolidate /g_withdraw commands'''
+        response = []
+        command = []
+        count = defaultdict(int)
+        matches = re.finditer(r'(?P<id>[aestchwpmkr]{0,3}\d+) (?P<number>\d+)', text)
+        for match in matches:
+            d = match.groupdict()
+            count[d['id']] += int(d['number'])
+        for id, number in count.items():
+            response.append(f'{id_to_name[id].capitalize()} x {number}\n')
+            command.append({'id': id, 'number': number})
+        ret.append(f'{"".join(response)}\n{withdraw_parts(command)}')
 
     def withdraw_parts(matches):
-        '''builds withdraw commands'''
+        '''builds withdraw commands.
+           expects an iterator of dicts with one key named "number" and the other named "id" or "name"'''
         command = ['<code>/g_withdraw']
-        for n, match in enumerate(matches):
+        for n, d in enumerate(matches):
             if not (n + 1) % 9:
                 command.append('</code>\n<code>/g_withdraw')
-            d = match.groupdict()
             if d.get('name'):
                 d['id'] = name_to_id[d['name'].lower()]
             command.append(f' {d["id"]} {d["number"] if d["number"] else "1"}')
         command.append('</code>')
         return ''.join(command)
 
-    def consolidate():
-        '''consolidate /g_withdraw commands'''
-        command = ['<code>/g_withdraw']
-        count = defaultdict(int)
-        it = iter(' '.join((_.strip() for _ in text.split('/g_withdraw'))).strip().split())
-        for item, n in zip(it, it):
-            count[item] += int(n)
-        for n, item in enumerate(sorted(count.items())):
-            if not (n + 1) % 9:
-                command.append('</code>\n<code>/g_withdraw')
-            command.append(f' {item[0]} {item[1]}')
-        command.append('</code>')
-        ret.append(''.join(command))
 
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
     more_match = re.search(r'📦Your stock:', text)
@@ -186,7 +185,7 @@ def main(text, user_data):
     elif consolidate_match:
         consolidate()
     elif rerequest_match:
-        rerequest(text.split('\n'))
+        rerequest()
     else:
         ret.append('What should I do with this?')
 
@@ -330,7 +329,7 @@ if __name__ == '__main__':
         '🏷Royal Guard Cape (1) /bind_a26',
 
     'consolidate':
-        '/g_withdraw 09 13 02 10 11 1 05 37 08 4 17 2 01 6 06 21'
+        '/g_withdraw a09 13 02 10 11 1 05 37 08 4 17 2 01 6 06 21'
         '/g_withdraw 04 39 13 4 07 19 16 2 10 3 03 24 '
         '/g_withdraw 13 3 15 1 08 6 01 5 04 10 03 23 05 19 16 1\n'
         '/g_withdraw 11 2 09 4 02 10 06 8 07 10 \n'
@@ -343,9 +342,9 @@ if __name__ == '__main__':
         'Stick x 60\n'
         'Recipient shall send to bot:\n'
         '/g_receive bn48vanqqm6g62k9bsj0',
-}
+    }
 
-    name = 'missed'
+    name = 'consolidate'
     d = {name: d[name]}
     for name, l in d.items():
         print(name)
