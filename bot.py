@@ -137,7 +137,7 @@ def help(update, context):
            '\n'\
            'Some /settings available too.\n'\
            '\n'\
-           'Paste in a few /g_withdraw commands - Create a more efficent /g_withdraw command.'
+           'Paste in multiple /g_withdraw commands - Create a more efficent /g_withdraw command.'
 
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode=ParseMode.HTML)
