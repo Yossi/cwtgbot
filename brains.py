@@ -162,7 +162,7 @@ def main(text, user_data):
         return ''.join(command)
 
     def warehouse():
-        now = datetime.utcnow().time()
+        now = datetime.utcnow().isoformat()
         warehouse = user_data.get('warehouse', {})
 
         data = {}
@@ -186,6 +186,7 @@ def main(text, user_data):
             key = 'other'
 
         warehouse[key] = {'timestamp': now, 'data': data}
+        ret.append(key)
 
 
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)

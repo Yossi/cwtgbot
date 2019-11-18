@@ -208,7 +208,15 @@ def pong(update, context):
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
 
+@send_typing_action
+@log
+def warehouse(update, context):
+    text = context.user_data['warehouse']
+    logging.info(f'bot said:\n{text}')
+    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+
 @restricted
+@log
 def restart(update, context):
     def stop_and_restart():
         """Gracefully stop the Updater and replace the current process with a new one"""
@@ -252,6 +260,7 @@ dispatcher.add_handler(CommandHandler('pong', pong))
 dispatcher.add_handler(MessageHandler(Filters.forwarded, incoming))
 dispatcher.add_handler(MessageHandler(Filters.text, incoming))
 dispatcher.add_handler(CommandHandler('g_withdraw', incoming))
+dispatcher.add_handler(CommandHandler('warehouse', warehouse))
 dispatcher.add_handler(CommandHandler('r', restart))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('say', say))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_error_handler(error)
