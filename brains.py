@@ -1,6 +1,7 @@
 import re
 import os
 import pickle
+from datetime import datetime
 from pprint import pprint
 from pathlib import Path
 from collections import defaultdict
@@ -55,7 +56,7 @@ def main(text, user_data):
             id = name_to_id.get(name.lower())
             if not id:
                 id = item.strip().rpartition('_')[2]
-            if id in ('100', '501', 'a16', 'a26', 'tch'): continue # list of undepositable ids
+            if id in ('100', '501', 'a16', 'a26', 'tch'): continue # partial list of undepositable ids
             count_total = int(match[2])
             if id in user_data.get('save', {}):
                 max_weight = 1000 // id_to_weight[id]
@@ -160,6 +161,32 @@ def main(text, user_data):
         command.append('</code>')
         return ''.join(command)
 
+    def warehouse():
+        now = datetime.utcnow().time()
+        warehouse = user_data.get('warehouse', {})
+
+        data = {}
+        for row in text.split('\n')[1:]:
+            s = row.split()
+            data[s[0]] = s[-1]
+
+        id_sample = list(data.keys())[0]
+        if id_sample[0].isdigit():
+            if int(id_sample) <= 36:
+                key = 'res'
+            else:
+                key = 'alch'
+        elif id_sample[0] in 'sp':
+            key = 'misc'
+        elif id_sample[0] == 'r':
+            key = 'rec'
+        elif id_sample[0] == 'k':
+            key = 'parts'
+        elif id_sample[0] in 'wuea':
+            key = 'other'
+
+        warehouse[key] = {'timestamp': now, 'data': data}
+
 
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
     more_match = re.search(r'📦Your stock:', text)
@@ -169,6 +196,7 @@ def main(text, user_data):
     refund_match = re.search(r'\/g_deposit [aestchwpmkr]{0,3}\d+ (\d+)?', text)
     consolidate_match = re.search(r'^\/g_withdraw', text)
     rerequest_match = re.search(r'\/g_receive', text)
+    warehouse_match = re.search(r'Guild Warehouse:', text)
 
     if storage_match:
         storage(storage_match)
@@ -186,6 +214,8 @@ def main(text, user_data):
         consolidate()
     elif rerequest_match:
         rerequest()
+    elif warehouse_match:
+        warehouse()
     else:
         ret.append('What should I do with this?')
 
@@ -342,9 +372,66 @@ if __name__ == '__main__':
         'Stick x 60\n'
         'Recipient shall send to bot:\n'
         '/g_receive bn48vanqqm6g62k9bsj0',
+    
+    'warehouse':
+        'Guild Warehouse:\n'
+        'w97 Nightfall Bow x 2\n'
+        'w39c Composite Bow x 1\n'
+        'w39b Composite Bow x 1\n'
+        'w33 Thundersoul Sword x 2\n'
+        'w31b War hammer x 1\n'
+        'w28 Champion Sword x 1\n'
+        'u188 Thundersoul Sword x 1\n'
+        'u187 Ghost Gloves x 1\n'
+        'u186 Hunter dagger x 1\n'
+        'u184 Hunter Boots x 1\n'
+        'u183 ⚡+3 Hunter Armor x 1\n'
+        'u180 Clarity Bracers x 1\n'
+        'u178 Order Shield x 1\n'
+        'u167 ⚡+1 Ghost Armor x 1\n'
+        'u166 ⚡+3 Champion Sword x 1\n'
+        'u164 Thundersoul Sword x 1\n'
+        'u163 Ghost Helmet x 1\n'
+        'u162 Clarity Circlet x 1\n'
+        'u161 ⚡+3 Divine Circlet x 1\n'
+        'u160 \U0001f9df\u200d♂️ Fleder Scimitar x 1\n'
+        'u159 \U0001f9df\u200d♂️ Demon Bracers x 1\n'
+        'u158 Clarity Shoes x 1\n'
+        'u154 ⚡+1 Ghost Boots x 1\n'
+        'u148 Hunter dagger x 1\n'
+        'u147 Blessed Cloak x 1\n'
+        'u146 Hunter Boots x 1\n'
+        'u145 Hunter Helmet x 1\n'
+        'u130 ⚡+3 Forest Bow x 1\n'
+        'u129 ⚡+1 Ghost Boots x 1\n'
+        'u126 ⚡+1 Lion Gloves x 1\n'
+        'u118 ⚡+3 Mithril shield x 1\n'
+        'u102 ⚡+3 Mithril helmet x 1\n'
+        'u100 ⚡+3 Mithril axe x 1\n'
+        'u091 ⚡+3 Hunter Helmet x 1\n'
+        'u061 ⚡+1 Imperial Axe x 1\n'
+        'u060 ⚡+3 Hunter Bow x 1\n'
+        'u056 ⚡+3 Mithril gauntlets x 1\n'
+        'u051 ⚡+1 Lightning Bow x 1\n'
+        'u041 ⚡+3 Crusader Gauntlets x 1\n'
+        'e123 \U0001f9df\u200d♂️ Demon Robe x 1\n'
+        'e106 \U0001f9df\u200d♂️ Witch Circlet x 1\n'
+        'a73 Blessed Cloak x 3\n'
+        'a67 Divine Robe x 1\n'
+        'a64 Demon Circlet x 1\n'
+        'a63 Demon Robe x 1\n'
+        'a61 Lion Boots x 1\n'
+        'a58 Ghost Gloves x 1\n'
+        'a57c Ghost Boots x 1\n'
+        'a57a Ghost Boots x 1\n'
+        'a36c Clarity Robe x 1\n'
+        'a35b Hunter Gloves x 1\n'
+        'a34a Hunter Boots x 1\n'
+        'a33b Hunter Helmet x 1\n'
+        'a32b Hunter Armor x 1',
     }
 
-    name = 'consolidate'
+    name = 'warehouse'
     d = {name: d[name]}
     for name, l in d.items():
         print(name)
