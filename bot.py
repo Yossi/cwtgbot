@@ -95,6 +95,7 @@ def restricted(func):
         return func(update, context, *args, **kwargs)
     return wrapped
 
+
 @send_typing_action
 @log
 def incoming(update, context):
@@ -210,8 +211,9 @@ def pong(update, context):
 
 @send_typing_action
 @log
-def warehouse(update, context):
-    text = context.user_data['warehouse']
+def now(update, context):
+    '''what time is it'''
+    text = datetime.utcnow().isoformat()
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
 
@@ -257,6 +259,7 @@ dispatcher.add_handler(CommandHandler('save', save))
 dispatcher.add_handler(CommandHandler('ignore', ignore))
 dispatcher.add_handler(CommandHandler('ping', ping))
 dispatcher.add_handler(CommandHandler('pong', pong))
+dispatcher.add_handler(CommandHandler('now', now))
 dispatcher.add_handler(MessageHandler(Filters.forwarded, incoming))
 dispatcher.add_handler(MessageHandler(Filters.text, incoming))
 dispatcher.add_handler(CommandHandler('g_withdraw', incoming))

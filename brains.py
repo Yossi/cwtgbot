@@ -8,6 +8,7 @@ from collections import defaultdict
 
 from util import scrape_data, is_witching_hour
 
+
 if not Path("data.dict").is_file():
     with open('data.dict', 'wb') as fp:
         scrape_data(fp)
@@ -161,7 +162,7 @@ def main(text, user_data):
         command.append('</code>')
         return ''.join(command)
 
-    def warehouse():
+    def warehouse_in():
         now = datetime.utcnow().isoformat()
         warehouse = user_data.get('warehouse', {})
 
@@ -216,7 +217,7 @@ def main(text, user_data):
     elif rerequest_match:
         rerequest()
     elif warehouse_match:
-        warehouse()
+        warehouse_in()
     else:
         ret.append('What should I do with this?')
 
