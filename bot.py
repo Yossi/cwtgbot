@@ -2,6 +2,7 @@ import os, sys
 import logging
 import traceback
 import pickle
+from datetime import datetime
 from threading import Thread
 from functools import wraps
 from pprint import pprint
@@ -14,7 +15,8 @@ from telegram.ext import Updater, PicklePersistence
 from telegram.ext import CommandHandler, MessageHandler
 from telegram.ext import Filters
 
-from brains import main, id_to_name
+from brains import main, warehouse_crafting
+from brains import id_to_name, name_to_id
 from secrets import TOKEN, LIST_OF_ADMINS
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s\n%(message)s', level=logging.INFO)
@@ -104,6 +106,15 @@ def incoming(update, context):
     for response in responses:
         logging.info(f'bot said:\n{response}')
         context.bot.send_message(chat_id=update.effective_message.chat_id, text=response, parse_mode=ParseMode.HTML)
+
+@send_typing_action
+@log
+def warehouse(update, context):
+    responses = warehouse_crafting(context.user_data['warehouse'])
+    for response in responses:
+        logging.info(f'bot said:\n{response}')
+        context.bot.send_message(chat_id=update.effective_message.chat_id, text=response, parse_mode=ParseMode.HTML)
+
 
 @send_typing_action
 @log
@@ -264,6 +275,7 @@ dispatcher.add_handler(MessageHandler(Filters.forwarded, incoming))
 dispatcher.add_handler(MessageHandler(Filters.text, incoming))
 dispatcher.add_handler(CommandHandler('g_withdraw', incoming))
 dispatcher.add_handler(CommandHandler('warehouse', warehouse))
+dispatcher.add_handler(CommandHandler('w', warehouse))
 dispatcher.add_handler(CommandHandler('r', restart))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('say', say))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_error_handler(error)

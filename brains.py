@@ -1,12 +1,13 @@
 import re
 import os
 import pickle
-from datetime import datetime
+from datetime import datetime, timedelta
+from dateutil import parser
 from pprint import pprint
 from pathlib import Path
 from collections import defaultdict
 
-from util import scrape_data, is_witching_hour
+from util import scrape_data, is_witching_hour, emoji_number
 
 
 if not Path("data.dict").is_file():
@@ -169,7 +170,7 @@ def main(text, user_data):
         data = {}
         for row in text.split('\n')[1:]:
             s = row.split()
-            data[s[0]] = s[-1]
+            data[s[0]] = int(s[-1])
 
         id_sample = list(data.keys())[0]
         if id_sample[0].isdigit():
@@ -223,6 +224,23 @@ def main(text, user_data):
 
     return ret
 
+def warehouse_crafting(warehouse):
+    hours = 2
+    responses = []
+    #responses.append(warehouse)
+    now = datetime.utcnow()
+    if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
+    (now - parser.parse(rec['timestamp'])) < timedelta(hours=hours) and (now - parser.parse(parts['timestamp'])) < timedelta(hours=hours):
+        output = []
+        for x in range(1,103):
+            x = f'{x:02}'
+            if any(((r := rec['data'].get(f'r{x}', 0)), (k := parts['data'].get(f'k{x}', 0)))):
+                output.append(f'<code>{name_to_id[(item := id_to_name["r"+x].rpartition(" ")[0])]}</code> {x} {item.title()}')
+                output.append(f'Recipe{"s" if r != 1 else ""}: {emoji_number(r)}  {id_to_name["k"+x].rpartition(" ")[2].title()}{"s" if k != 1 else ""}: {emoji_number(k)}')
+        responses.append('\n'.join(output))
+    else:
+        responses.append('Missing recent guild stock state (&lt; 2 hours old). Please forward the output from /g_stock_parts and /g_stock_rec and try again')
+    return responses
 
 
 if __name__ == '__main__':
