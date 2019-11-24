@@ -261,6 +261,14 @@ def say(update, context):
         context.bot.send_message(chat_id=update.effective_message.chat_id, text=text, parse_mode=ParseMode.HTML)
     logging.info(f'bot said:\n{text}')
 
+@restricted
+@log
+def clear(update, context):
+    '''used to wipe parts of user_data for testing'''
+    text = str(context.user_data.pop('warehouse', 'None'))
+    logging.info(f'bot said:\n{text}')
+    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode=ParseMode.HTML)
+
 
 dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('mlm', mlm))
@@ -278,6 +286,7 @@ dispatcher.add_handler(CommandHandler('warehouse', warehouse))
 dispatcher.add_handler(CommandHandler('w', warehouse))
 dispatcher.add_handler(CommandHandler('r', restart))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('say', say))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
+dispatcher.add_handler(CommandHandler('clear', clear))
 dispatcher.add_error_handler(error)
 
 logging.info('bot started')
