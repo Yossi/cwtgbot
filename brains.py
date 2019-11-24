@@ -141,7 +141,7 @@ def main(text, user_data):
         response = []
         command = []
         count = defaultdict(int)
-        matches = re.finditer(r'(?P<id>[aestchwpmkr]{0,3}\d+) (?P<number>\d+)', text)
+        matches = re.finditer(r'(?P<id>[aestchwpmkr]{0,3}\d+)\s+(?P<number>\d+)', text)
         for match in matches:
             d = match.groupdict()
             count[d['id']] += int(d['number'])
