@@ -233,14 +233,29 @@ def warehouse_crafting(warehouse):
     if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
     (now - parser.parse(rec['timestamp'])) < timedelta(hours=hours) and (now - parser.parse(parts['timestamp'])) < timedelta(hours=hours):
         output = []
-        for x in range(1,103):
-            x = f'{x:02}'
+        for n in range(1,103):
+            if 1 <= n <= 18 or 59 <= n <= 61:
+                parts_needed = 3
+            elif 100 <= n <= 102:
+                parts_needed = 4
+            elif 19 <= n <= 58 or n in (91, 96, 97):
+                parts_needed = 5
+            elif 78 <= n <= 90 or 92 <= n <= 95 or n in (98, 99):
+                parts_needed = 6
+            elif 62 <= n <= 77:
+                parts_needed = 0
+
+            x = f'{n:02}'
             if any(((r := rec['data'].get(f'r{x}', 0)), (k := parts['data'].get(f'k{x}', 0)))):
-                output.append(f'<code>{name_to_id[(item := id_to_name["r"+x].rpartition(" ")[0])]}</code> {x} {item.title()}')
-                output.append(f'Recipe{"s" if r != 1 else ""}: {emoji_number(r)}  {id_to_name["k"+x].rpartition(" ")[2].title()}{"s" if k != 1 else ""}: {emoji_number(k)}')
+                if k // parts_needed and r:
+                    ready = '✅'
+                else:
+                    ready = '❌'
+                output.append(f'<code>{name_to_id[(item := id_to_name["r"+x].rpartition(" ")[0])]}</code> {x} {item.title()}: {parts_needed}')
+                output.append(f'{ready} Recipe{"s" if r != 1 else ""}: {emoji_number(r)}  {id_to_name["k"+x].rpartition(" ")[2].title()}{"s" if k != 1 else ""}: {emoji_number(k)}')
         responses.append('\n'.join(output))
     else:
-        responses.append('Missing recent guild stock state (&lt; 2 hours old). Please forward the output from /g_stock_parts and /g_stock_rec and try again')
+        responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_parts and /g_stock_rec and try again')
     return responses
 
 
