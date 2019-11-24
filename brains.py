@@ -56,8 +56,9 @@ def main(text, user_data):
             if name.startswith('/sg_'):
                 name = name.partition(' ')[2]
             id = name_to_id.get(name.lower())
-            if not id:
+            if not id and '_' in name:
                 id = item.strip().rpartition('_')[2]
+            if id not in id_to_name: continue
             if id in ('100', '501', 'a16', 'a26', 'tch'): continue # partial list of undepositable ids
             count_total = int(match[2])
             if id in user_data.get('save', {}):
