@@ -188,6 +188,7 @@ def main(text, context):
             key = 'other'
 
         warehouse[key] = {'timestamp': now, 'data': data}
+        context.user_data['warehouse'] = warehouse
         ret.append(key)
 
 

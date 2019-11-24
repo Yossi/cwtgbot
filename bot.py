@@ -110,7 +110,8 @@ def incoming(update, context):
 @send_typing_action
 @log
 def warehouse(update, context):
-    responses = warehouse_crafting(context.user_data['warehouse'])
+    '''show a summary of what parts are ready to craft'''
+    responses = warehouse_crafting(context.user_data.get('warehouse', {}))
     for response in responses:
         logging.info(f'bot said:\n{response}')
         context.bot.send_message(chat_id=update.effective_message.chat_id, text=response, parse_mode=ParseMode.HTML)
