@@ -20,7 +20,7 @@ with open('data.dict', 'rb') as fp:
     name_to_id = {v: k for k, v in id_to_name.items()}
 
 
-def main(text, user_data):
+def main(text, context):
     '''returns a list of strings that are then each sent as a separate message'''
     ret = []
 
@@ -61,9 +61,9 @@ def main(text, user_data):
             if id not in id_to_name: continue
             if id in ('100', '501', 'a16', 'a26', 'tch'): continue # partial list of undepositable ids
             count_total = int(match[2])
-            if id in user_data.get('save', {}):
+            if id in context.user_data.get('save', {}):
                 max_weight = 1000 // id_to_weight[id]
-                count_keep = user_data['save'][id]
+                count_keep = context.user_data['save'][id]
                 if not count_keep:
                     count_keep = count_total
                 count_keep = min(int(count_keep), count_total)
@@ -74,8 +74,8 @@ def main(text, user_data):
                 sales.append(f'/wts_{id}_{count_keep}_1000 {name}')
                 if count_deposit:
                     deposits.append(f'<code>/g_deposit {id}{" "+str(count_deposit) if count_deposit != 1 else ""}</code> {name}')
-            elif id in user_data.get('ignore', {}):
-                count_keep = user_data['ignore'][id]
+            elif id in context.user_data.get('ignore', {}):
+                count_keep = context.user_data['ignore'][id]
                 if not count_keep:
                     count_keep = count_total
                 count_keep = min(int(count_keep), count_total)
@@ -114,7 +114,7 @@ def main(text, user_data):
             else:
                 active_slots -= 1
         pprint(res)
-        pprint(user_data)
+        pprint(context.user_data)
 
     def withdraw():
         '''process missing items messages'''
@@ -166,8 +166,7 @@ def main(text, user_data):
 
     def warehouse_in():
         now = datetime.utcnow().isoformat()
-        warehouse = user_data.get('warehouse', {})
-
+        warehouse = context.user_data.get('warehouse', {})
         data = {}
         for row in text.split('\n')[1:]:
             s = row.split()

@@ -102,7 +102,7 @@ def restricted(func):
 @log
 def incoming(update, context):
     '''main function that deals with incoming messages that are the meat and potatos of this bot'''
-    responses = main(update.effective_message.text, context.user_data)
+    responses = main(update.effective_message.text, context)
     for response in responses:
         logging.info(f'bot said:\n{response}')
         context.bot.send_message(chat_id=update.effective_message.chat_id, text=response, parse_mode=ParseMode.HTML)
