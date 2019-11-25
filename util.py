@@ -27,7 +27,7 @@ def is_witching_hour():
 
 def emoji_number(n):
     digits = {
-        0:'0️⃣',
+        0:'0⃣',
         1:'1️⃣',
         2:'2️⃣',
         3:'3️⃣',
