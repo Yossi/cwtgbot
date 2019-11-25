@@ -233,6 +233,7 @@ def warehouse_crafting(warehouse):
     if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
     (now - parser.parse(rec['timestamp'])) < timedelta(hours=hours) and (now - parser.parse(parts['timestamp'])) < timedelta(hours=hours):
         output = []
+        page_counter = 0
         for n in range(1,103):
             if 1 <= n <= 18 or 59 <= n <= 61:
                 parts_needed = 3
@@ -253,6 +254,12 @@ def warehouse_crafting(warehouse):
                     ready = '❌'
                 output.append(f'<code>{name_to_id[(item := id_to_name["r"+x].rpartition(" ")[0])]}</code> {x} {item.title()}: {parts_needed}')
                 output.append(f'{ready} Recipe{"s" if r != 1 else ""}: {emoji_number(r)}  {id_to_name["k"+x].rpartition(" ")[2].title()}{"s" if k != 1 else ""}: {emoji_number(k)}')
+                page_counter += 1
+                if page_counter >= 50:
+                    responses.append('\n'.join(output))
+                    page_counter = 0
+                    output = []
+
         responses.append('\n'.join(output))
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_parts and /g_stock_rec and try again')
