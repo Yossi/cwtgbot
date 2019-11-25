@@ -246,14 +246,27 @@ def warehouse_crafting(warehouse):
             elif 62 <= n <= 77:
                 parts_needed = 0
 
-            x = f'{n:02}'
-            if any(((r := rec['data'].get(f'r{x}', 0)), (k := parts['data'].get(f'k{x}', 0)))):
-                if k // parts_needed and r:
-                    ready = '✅'
-                else:
-                    ready = '❌'
-                output.append(f'<code>{name_to_id[(item := id_to_name["r"+x].rpartition(" ")[0])]}</code> {x} {item.title()}: {parts_needed}')
-                output.append(f'{ready} Recipe{"s" if r != 1 else ""}: {emoji_number(r)}  {id_to_name["k"+x].rpartition(" ")[2].title()}{"s" if k != 1 else ""}: {emoji_number(k)}')
+            id = f'{n:02}'
+            count_recipies = rec['data'].get(f'r{id}', 0)
+            count_parts = parts['data'].get(f'k{id}', 0)
+            if count_recipies or count_parts:
+                complete_parts_sets = count_parts // parts_needed
+                parts_missing_for_next_set = count_parts % parts_needed
+                recipies_missing = complete_parts_sets - count_recipies
+                num_craftable = min(count_recipies, complete_parts_sets)
+                ready = '✅' if num_craftable else '❌'
+                name = id_to_name["r"+id].rpartition(" ")[0]
+                finished_part_id = name_to_id[name]
+                part_name = id_to_name["k"+id].rpartition(" ")[2].title()
+
+                output.append(f'{ready} {id} {name.title()} <code>{finished_part_id}</code>')
+                output.append(f'{emoji_number(parts_needed)} {part_name}s per recipe')
+                output.append(f'{emoji_number(count_recipies)} Recipe{"s" if count_recipies != 1 else ""}')
+                output.append(f'{emoji_number(count_parts)} {part_name}{"s" if count_parts != 1 else ""}')
+                if num_craftable:
+                    output.append(f'{emoji_number(num_craftable)} Craftable')
+                output.append(' ')
+            
                 page_counter += 1
                 if page_counter >= 50:
                     responses.append('\n'.join(output))
