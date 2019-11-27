@@ -112,7 +112,7 @@ def incoming(update, context):
 @log
 def warehouse(update, context):
     '''show a summary of what parts are ready to craft'''
-    responses = warehouse_crafting(context.user_data.get('warehouse', {}))
+    responses = warehouse_crafting(context)
     for response in responses:
         logging.info(f'bot said:\n{response}')
         context.bot.send_message(chat_id=update.effective_message.chat_id, text=response, parse_mode=ParseMode.HTML)

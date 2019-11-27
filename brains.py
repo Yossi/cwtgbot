@@ -225,10 +225,10 @@ def main(text, context):
 
     return ret
 
-def warehouse_crafting(warehouse):
+def warehouse_crafting(context):
+    warehouse = context.user_data.get('warehouse', {})
     hours = 2
     responses = []
-    #responses.append(warehouse)
     now = datetime.utcnow()
     if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
     (now - parser.parse(rec['timestamp'])) < timedelta(hours=hours) and (now - parser.parse(parts['timestamp'])) < timedelta(hours=hours):
@@ -259,16 +259,19 @@ def warehouse_crafting(warehouse):
                 finished_part_id = name_to_id[name]
                 part_name = id_to_name["k"+id].rpartition(" ")[2].title()
 
+                if not num_craftable and not context.args:# and context.args[0].lower() == 'all':
+                    continue
+
                 output.append(f'{ready} {id} {name.title()} <code>{finished_part_id}</code>')
-                output.append(f'{emoji_number(parts_needed)} {part_name}s per recipe')
-                output.append(f'{emoji_number(count_recipies)} Recipe{"s" if count_recipies != 1 else ""}')
-                output.append(f'{emoji_number(count_parts)} {part_name}{"s" if count_parts != 1 else ""}')
                 if num_craftable:
-                    output.append(f'{emoji_number(num_craftable)} Craftable')
+                    output.append(f'<code> {num_craftable}</code> Can be made')
+                output.append(f'<code>{parts_needed} {part_name}s per recipe</code>')
+                output.append(f'<code>  {count_recipies} Recipe{"s" if count_recipies != 1 else ""}</code>')
+                output.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code>')
                 output.append(' ')
             
                 page_counter += 1
-                if page_counter >= 50:
+                if page_counter >= 20:
                     responses.append('\n'.join(output))
                     page_counter = 0
                     output = []
