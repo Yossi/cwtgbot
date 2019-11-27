@@ -3,6 +3,7 @@ import pytz
 from pyluach import dates, hebrewcal
 from lunarcalendar import Converter, Solar
 
+from util import hebrew_numeral
 import sesDate
 
 def emeryradio():
@@ -35,6 +36,7 @@ def emeryradio():
     cwWeekdayNames = ["Mânotag", "Ziestag", "Mittawehha", "Jhonarestag", "Frîatag", "Sunnûnabund", "Sunnûntag", "Mânotag"]
     cwPeriodNames = ["Night", "Morning", "Day", "Evening", "Night"]
     hebMonthNames = ["Adar", "Nisan", "Iyyar", "Sivan", "Tammuz", "Av", "Elul", "Tishrei", "Marcheshvan", "Kislev", "Tevet", "Shevat", "Adar", "Adar"]
+    hebMonthNamesIvrit = ["אדר", "ניסן", "אייר", "סיוון", "תמוז", "אב", "אלול", "תשרי", "מרחשוון", "כסלו", "טבת", "שבט", "אדר", "אדר"]
     timeToPeriodChange = (-(cwadt.timestamp() % 21600) + 21600) / 3
     timeToBattle = (-((cwtdt.timestamp() - 21600) % 86400) + 86400) / 3
     timeToArena = (-((cwtdt.timestamp() + 51300) % 259200) + 259200) / 3
@@ -68,7 +70,8 @@ def emeryradio():
     output.append('')
 
     output.append(f"Equivalent dates (in P{pacificD}T; dates change at midnight)")
-    output.append(f'{heb.year} {hebMonthNames[heb.month]}{" I" if hebrewcal.Year(heb.year).leap and heb.month > 11 else ""}{"I" if (hebrewcal.Year(heb.year).leap and heb.month == 13) else ""} {heb.day}')
+    output.append(f'{heb.year} {hebMonthNames[heb.month]}{" I" if hebrewcal.Year(heb.year).leap and heb.month > 11 else ""}{"I" if (hebrewcal.Year(heb.year).leap and heb.month == 13) else ""} {heb.day}' +
+                  f' ({hebrew_numeral(heb.day)} {hebMonthNamesIvrit[heb.month]}{(" ב" if heb.month == 13 else " א") if hebrewcal.Year(heb.year).leap and heb.month > 11 else ""} {hebrew_numeral(heb.year)})')
     output.append(f'{yin.year+2698}/{yin.year+2638}年{yin.month}月{yin.day}日')
     output.append(f'{ses.natural.year:0>5d}.{ses.natural.season:0>1d}.{ses.natural.day:0>2d} (cyclic: {ses.cyclic.great}.{ses.cyclic.small}.{ses.cyclic.year}:{ses.cyclic.season}.{ses.cyclic.week}.{ses.cyclic.day})')
 

@@ -2,6 +2,7 @@ import pickle
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, time
+import yaml
 
 def scrape_data(fp):
     '''get itemcode table and stuff it in a pickle'''
@@ -26,6 +27,8 @@ def is_witching_hour():
     return any((start < now < end for start, end in closed_times))
 
 def emoji_number(n):
+    '''convert numbers to emoji'''
+    # doesn't actually look good
     digits = {
         0:'0⃣',
         1:'1️⃣',
@@ -42,6 +45,33 @@ def emoji_number(n):
     if n in digits:
         return digits[n]
     return ''.join([digits[int(x)] for x in str(n)])
+
+hsn = yaml.load(open('data/hebrew-special-numbers/styles/default.yml', encoding="utf8"), Loader=yaml.SafeLoader)
+def hebrew_numeral(val, gershayim=True):
+    '''get hebrew numerals for the number in val'''
+    def add_gershayim(s):
+        if len(s) == 1:
+            return s + hsn['separators']['geresh']
+        else:
+            return ''.join([s[:-1], hsn['separators']['gershayim'], s[-1:]])
+
+    k, val = divmod(val, 1000) # typically you leave off the thousands when writing the year
+
+    if val in hsn['specials']:
+        retval = hsn['specials'][val]
+        return add_gershayim(retval) if gershayim else retval
+
+    parts = []
+    rest = str(val)
+    l = len(rest) - 1
+    for n, d in enumerate(rest):
+        digit = int(d)
+        if digit == 0: continue
+        power = 10 ** (l-n)
+        parts.append(hsn['numerals'][power * digit])
+    retval = ''.join(parts)
+
+    return add_gershayim(retval) if gershayim else retval
 
 
 if __name__ == '__main__':
