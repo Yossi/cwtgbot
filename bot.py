@@ -2,7 +2,7 @@ import os, sys
 import logging
 import traceback
 import pickle
-from datetime import datetime
+from datetime import datetime, timezone
 from threading import Thread
 from functools import wraps
 from pprint import pprint
@@ -15,6 +15,7 @@ from telegram.ext import Updater, PicklePersistence
 from telegram.ext import CommandHandler, MessageHandler
 from telegram.ext import Filters
 
+from emeryradio import emeryradio
 from brains import main, warehouse_crafting
 from brains import id_to_name, name_to_id
 from secrets import TOKEN, LIST_OF_ADMINS
@@ -229,6 +230,13 @@ def now(update, context):
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
 
+@send_typing_action
+@log
+def time(update, context):
+    text = emeryradio()
+    logging.info(f'bot said:\n{text}')
+    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+
 @restricted
 @log
 def restart(update, context):
@@ -280,7 +288,7 @@ dispatcher.add_handler(CommandHandler('ignore', ignore))
 dispatcher.add_handler(CommandHandler('ping', ping))
 dispatcher.add_handler(CommandHandler('pong', pong))
 dispatcher.add_handler(CommandHandler('now', now))
-dispatcher.add_handler(CommandHandler('time', now))
+dispatcher.add_handler(CommandHandler('time', time))
 dispatcher.add_handler(MessageHandler(Filters.forwarded, incoming))
 dispatcher.add_handler(MessageHandler(Filters.text, incoming))
 dispatcher.add_handler(CommandHandler('g_withdraw', incoming))
