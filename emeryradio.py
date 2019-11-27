@@ -66,7 +66,7 @@ def emeryradio():
     output.append(f'{utcdt.astimezone(WPS).strftime("%A %H:%M")} WPS')
     output.append("  ╰ GMT+8: Singapore, Manila, Hong Kong")
     output.append('')
-    
+
     output.append(f"Equivalent dates (in P{pacificD}T; dates change at midnight)")
     output.append(f'{heb.year} {hebMonthNames[heb.month]}{" I" if hebrewcal.Year(heb.year).leap and heb.month > 11 else ""}{"I" if (hebrewcal.Year(heb.year).leap and heb.month == 13) else ""} {heb.day}')
     output.append(f'{yin.year+2698}/{yin.year+2638}年{yin.month}月{yin.day}日')

@@ -269,7 +269,7 @@ def warehouse_crafting(context):
                 output.append(f'<code>  {count_recipies} Recipe{"s" if count_recipies != 1 else ""}</code>')
                 output.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code>')
                 output.append(' ')
-            
+
                 page_counter += 1
                 if page_counter >= 20:
                     responses.append('\n'.join(output))
@@ -431,7 +431,7 @@ if __name__ == '__main__':
         'Stick x 60\n'
         'Recipient shall send to bot:\n'
         '/g_receive bn48vanqqm6g62k9bsj0',
-    
+
     'warehouse':
         'Guild Warehouse:\n'
         'w97 Nightfall Bow x 2\n'
