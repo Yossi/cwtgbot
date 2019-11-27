@@ -221,7 +221,7 @@ def main(text, context):
     elif warehouse_match:
         warehouse_in()
     else:
-        ret.append('What should I do with this?')
+        ret.append('Unclear what to do with this.')
 
     return ret
 
