@@ -259,7 +259,9 @@ def warehouse_crafting(context):
                 finished_part_id = name_to_id[name]
                 part_name = id_to_name["k"+id].rpartition(" ")[2].title()
 
-                if not num_craftable and not context.args:# and context.args[0].lower() == 'all':
+                if not num_craftable and not context.args:
+                    continue
+                if context.args and context.args[0].lower() != 'all' and context.args[0].lower() not in name:
                     continue
 
                 output.append(f'{ready} {id} {name.title()} <code>{finished_part_id}</code>')
@@ -276,7 +278,10 @@ def warehouse_crafting(context):
                     page_counter = 0
                     output = []
 
-        responses.append('\n'.join(output))
+        if len((result := '\n'.join(output))):
+            responses.append(result)
+        else:
+            responses.append('No matches in stock')
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_parts and /g_stock_rec and try again')
     return responses
