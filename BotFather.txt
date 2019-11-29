@@ -10,6 +10,7 @@ If you are trying to repair/craft/brew something and are missing items, forward 
 save - pass a list of item codes that you want to hide in exchange rather than deposit
 ignore - pass a list of item codes that the bot should ignore
 mlm - skems plz ktnx
+time - ingame time & time to next battle & time to arena reset & other stuff. Time!
 
 /setabouttext@BotFather
 Bot that generates the commands you need to manage your inventory while a guild member
