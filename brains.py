@@ -86,7 +86,10 @@ def main(text, context):
                 deposits.append(f'<code>/g_deposit {id}{" "+str(count_total) if count_total != 1 else ""}</code> {name}')
 
         if sales:
-            sales = '\n'.join(sorted(sales))
+            if len(sales) == 1:
+                sales = sales[0].split()[0]
+            else:
+                sales = '\n'.join(sorted(sales))
             if is_witching_hour():
                 matches = re.finditer(r'\/wts_(?P<id>\d+)_(?P<number>\d+)_1000 (?P<name>.+)', sales)
                 fire_sale = ['Market is closed so you get deposit commands.\nForward this message back to the bot after battle to get the withdraw commands for a refund.\n']
