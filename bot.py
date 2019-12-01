@@ -256,7 +256,7 @@ def restart(update, context):
 def say(update, context):
     if context.args:
         text=' '.join(context.args[1:])
-        context.bot.send_message(chat_id=context.args[0], text=text, parse_mode='Markdown')
+        context.bot.send_message(chat_id=context.args[0], text=text, parse_mode=ParseMode.HTML)
     else:
         with open('user.persist', 'rb') as fp:
             d = pickle.load(fp)
