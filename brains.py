@@ -20,8 +20,9 @@ with open('data.dict', 'rb') as fp:
     name_to_id = {v: k for k, v in id_to_name.items()}
 
 
-def main(text, context):
+def main(update, context):
     '''returns a list of strings that are then each sent as a separate message'''
+    text = update.effective_message.text
     ret = []
 
     def storage(m):
