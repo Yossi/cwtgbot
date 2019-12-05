@@ -5,7 +5,7 @@ import pickle
 from datetime import datetime, timezone
 from threading import Thread
 from functools import wraps
-from pprint import pprint
+import pprint
 from collections import defaultdict
 
 from telegram import ParseMode
@@ -77,11 +77,12 @@ def log(func):
     def wrapped(update, context, *args, **kwargs):
         id = update.effective_user.id
         name = update.effective_user.username
-        #pprint(update.to_dict())
+        #pprint.pprint(update.to_dict())
         context.user_data['meta'] = {
             'last_talked': update.effective_message['date'],
             'user_details': update.effective_message.to_dict()['from']
         }
+        #logging.info(pprint.pformat(update.to_dict()))
         logging.info(f'{name} ({id}) said:\n{update.effective_message.text}')
         return func(update, context, *args, **kwargs)
     return wrapped
