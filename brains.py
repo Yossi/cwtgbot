@@ -1,7 +1,7 @@
 import re
 import os
 import pickle
-from datetime import datetime, timedelta
+import datetime
 from dateutil import parser
 from pprint import pprint
 from pathlib import Path
@@ -169,32 +169,37 @@ def main(update, context):
         return ''.join(command)
 
     def warehouse_in():
-        now = datetime.utcnow().isoformat()
-        warehouse = context.user_data.get('warehouse', {})
-        data = {}
-        for row in text.split('\n')[1:]:
-            s = row.split()
-            data[s[0]] = int(s[-1])
+        if not hasattr(update.message.forward_from, 'id') or update.message.forward_from.id not in [408101137]: # @chtwrsbot
+            ret.append('Must be a forward from @chtwrsbot. Try again.')
+        else:
+            now = update.message.forward_date
+            warehouse = context.user_data.get('warehouse', {})
+            data = {}
+            for row in text.split('\n')[1:]:
+                s = row.split()
+                data[s[0]] = int(s[-1])
 
-        id_sample = list(data.keys())[0]
-        if id_sample[0].isdigit():
-            if int(id_sample) <= 36:
-                key = 'res'
+            id_sample = list(data.keys())[0]
+            if id_sample[0].isdigit():
+                if int(id_sample) <= 36:
+                    key = 'res'
+                else:
+                    key = 'alch'
+            elif id_sample[0] in 'sp':
+                key = 'misc'
+            elif id_sample[0] == 'r':
+                key = 'rec'
+            elif id_sample[0] == 'k':
+                key = 'parts'
+            elif id_sample[0] in 'wuea':
+                key = 'other'
+
+            if not warehouse.get(key) or now > warehouse[key].get('timestamp', datetime.datetime.min):
+                warehouse[key] = {'timestamp': now, 'data': data}
+                context.user_data['warehouse'] = warehouse
+                ret.append(key)
             else:
-                key = 'alch'
-        elif id_sample[0] in 'sp':
-            key = 'misc'
-        elif id_sample[0] == 'r':
-            key = 'rec'
-        elif id_sample[0] == 'k':
-            key = 'parts'
-        elif id_sample[0] in 'wuea':
-            key = 'other'
-
-        warehouse[key] = {'timestamp': now, 'data': data}
-        context.user_data['warehouse'] = warehouse
-        ret.append(key)
-
+                ret.append(f'{key}, but not newer than data on file')
 
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
     more_match = re.search(r'📦Your stock:', text)
@@ -233,9 +238,9 @@ def warehouse_crafting(context):
     warehouse = context.user_data.get('warehouse', {})
     hours = 2
     responses = []
-    now = datetime.utcnow()
+    now = datetime.datetime.utcnow()
     if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
-    (now - parser.parse(rec['timestamp'])) < timedelta(hours=hours) and (now - parser.parse(parts['timestamp'])) < timedelta(hours=hours):
+    (now - parser.parse(rec['timestamp'])) < datetime.timedelta(hours=hours) and (now - parser.parse(parts['timestamp'])) < datetime.timedelta(hours=hours):
         output = []
         page_counter = 0
         for n in range(1,103):
