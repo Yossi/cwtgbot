@@ -256,6 +256,7 @@ def warehouse_crafting(context):
                 complete_parts_sets = count_parts // parts_needed
                 parts_missing_for_next_set = count_parts % parts_needed
                 recipies_missing = complete_parts_sets - count_recipies
+                things_missing = int(not bool(count_recipies)) + max(parts_needed - count_parts, 0)
                 num_craftable = min(count_recipies, complete_parts_sets)
                 ready = '✅' if num_craftable else '❌'
                 name = id_to_name["r"+id].rpartition(" ")[0]
@@ -264,8 +265,13 @@ def warehouse_crafting(context):
 
                 if not num_craftable and not context.args:
                     continue
-                if context.args and context.args[0].lower() != 'all' and context.args[0].lower() not in name:
-                    continue
+                if context.args and context.args[0].lower() != 'all':
+                    if context.args[0].lower() in name:
+                        pass
+                    elif context.args[0].isdigit() and 0 < things_missing <= int(context.args[0]):
+                        pass
+                    else:
+                        continue
 
                 output.append(f'{ready} {id} {name.title()} <code>{finished_part_id}</code>')
                 if num_craftable:
