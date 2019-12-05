@@ -2,7 +2,6 @@ import re
 import os
 import pickle
 import datetime
-from dateutil import parser
 from pprint import pprint
 from pathlib import Path
 from collections import defaultdict
@@ -240,7 +239,7 @@ def warehouse_crafting(context):
     responses = []
     now = datetime.datetime.utcnow()
     if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
-    (now - parser.parse(rec['timestamp'])) < datetime.timedelta(hours=hours) and (now - parser.parse(parts['timestamp'])) < datetime.timedelta(hours=hours):
+    (now - rec['timestamp']) < datetime.timedelta(hours=hours) and (now - parts['timestamp']) < datetime.timedelta(hours=hours):
         output = []
         page_counter = 0
         for n in range(1,103):
