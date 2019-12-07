@@ -172,7 +172,12 @@ def main(update, context):
             ret.append('Must be a forward from @chtwrsbot. Try again.')
         else:
             now = update.message.forward_date
-            warehouse = context.user_data.get('warehouse', {})
+            warehouse = {}
+            try:
+                with open('warehouse.dict', 'rb') as warehouseFile:
+                    warehouse = pickle.load(warehouseFile)
+            except IOError:
+                pass # Ignore if warehouse.dict doesn't exist or can't be opened.
             data = {}
             for row in text.split('\n')[1:]:
                 s = row.split()
@@ -195,7 +200,8 @@ def main(update, context):
 
             if not warehouse.get(key) or now > warehouse[key].get('timestamp', datetime.datetime.min):
                 warehouse[key] = {'timestamp': now, 'data': data}
-                context.user_data['warehouse'] = warehouse
+                with open('warehouse.dict', 'wb') as warehouseFile
+                    pickle.dump(warehouse, warehouseFile)
                 ret.append(key)
             else:
                 ret.append(f'{key}, but not newer than data on file')
@@ -548,3 +554,4 @@ if __name__ == '__main__':
     #              '448 x 9💰 [Selling] /rm_blrd58fqqm6kjt667chg\n'
     #              '\n'
     #              'Your last 10 comitted trades: /trades',
+
