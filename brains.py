@@ -167,17 +167,22 @@ def main(update, context):
         command.append('</code>')
         return ''.join(command)
 
+    def warehouse_load_saved(ignore_exceptions):
+        try:
+            with open('warehouse.dict', 'rb') as warehouseFile:
+                return pickle.load(warehouseFile)
+        except IOError:
+            if not ignore_exceptions:
+                raise
+            else:
+                return {} # Ignore if warehouse.dict doesn't exist or can't be opened.
+
     def warehouse_in():
         if not hasattr(update.message.forward_from, 'id') or update.message.forward_from.id not in [408101137]: # @chtwrsbot
             ret.append('Must be a forward from @chtwrsbot. Try again.')
         else:
             now = update.message.forward_date
-            warehouse = {}
-            try:
-                with open('warehouse.dict', 'rb') as warehouseFile:
-                    warehouse = pickle.load(warehouseFile)
-            except IOError:
-                pass # Ignore if warehouse.dict doesn't exist or can't be opened.
+            warehouse = warehouse_load_saved(True)
             data = {}
             for row in text.split('\n')[1:]:
                 s = row.split()
@@ -240,7 +245,7 @@ def main(update, context):
     return ret
 
 def warehouse_crafting(context):
-    warehouse = context.user_data.get('warehouse', {})
+    warehouse = warehouse_load_saved(True)
     hours = 2
     responses = []
     now = datetime.datetime.utcnow()
