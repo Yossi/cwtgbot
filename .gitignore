@@ -127,5 +127,5 @@ dmypy.json
 secrets.py
 user.persist
 data.dict
-
+warehouse.dict
 sandbox/

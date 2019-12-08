@@ -6,7 +6,7 @@ from pprint import pprint
 from pathlib import Path
 from collections import defaultdict
 
-from util import scrape_data, is_witching_hour, emoji_number
+from util import scrape_data, is_witching_hour, warehouse_load_saved
 
 
 if not Path("data.dict").is_file():
@@ -172,7 +172,7 @@ def main(update, context):
             ret.append('Must be a forward from @chtwrsbot. Try again.')
         else:
             now = update.message.forward_date
-            warehouse = context.user_data.get('warehouse', {})
+            warehouse = warehouse_load_saved(True)
             data = {}
             for row in text.split('\n')[1:]:
                 s = row.split()
@@ -195,7 +195,8 @@ def main(update, context):
 
             if not warehouse.get(key) or now > warehouse[key].get('timestamp', datetime.datetime.min):
                 warehouse[key] = {'timestamp': now, 'data': data}
-                context.user_data['warehouse'] = warehouse
+                with open('warehouse.dict', 'wb') as warehouseFile:
+                    pickle.dump(warehouse, warehouseFile)
                 ret.append(key)
             else:
                 ret.append(f'{key}, but not newer than data on file')
@@ -234,7 +235,7 @@ def main(update, context):
     return ret
 
 def warehouse_crafting(context):
-    warehouse = context.user_data.get('warehouse', {})
+    warehouse = warehouse_load_saved(True)
     hours = 2
     responses = []
     now = datetime.datetime.utcnow()
