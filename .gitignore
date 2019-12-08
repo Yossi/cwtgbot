@@ -123,9 +123,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-.vscode/
+# Project specific
 secrets.py
 user.persist
 data.dict
 warehouse.dict
-sandbox/
