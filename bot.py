@@ -17,7 +17,7 @@ from telegram.ext import CommandHandler, MessageHandler
 from telegram.ext import Filters
 
 from emeryradio import emeryradio
-from brains import main, warehouse_crafting
+from brains import main, warehouse_crafting, stock_list
 from brains import id_to_name, name_to_id
 from secrets import TOKEN, LIST_OF_ADMINS
 
@@ -119,6 +119,14 @@ def warehouse(update, context):
         logging.info(f'bot said:\n{response}')
         context.bot.send_message(chat_id=update.effective_message.chat_id, text=response, parse_mode=ParseMode.HTML)
 
+@send_typing_action
+@log
+def stock(update, context):
+    '''show a list of parts we have in order of quantity'''
+    responses = stock_list(context)
+    for response in responses:
+        logging.info(f'bot said:\n{response}')
+        context.bot.send_message(chat_id=update.effective_message.chat_id, text=response, parse_mode=ParseMode.HTML)
 
 @send_typing_action
 @log
@@ -296,6 +304,7 @@ dispatcher.add_handler(MessageHandler(Filters.text, incoming))
 dispatcher.add_handler(CommandHandler('g_withdraw', incoming))
 dispatcher.add_handler(CommandHandler('warehouse', warehouse))
 dispatcher.add_handler(CommandHandler('w', warehouse))
+dispatcher.add_handler(CommandHandler('stock', stock))
 dispatcher.add_handler(CommandHandler('r', restart))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('say', say))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('clear', clear))

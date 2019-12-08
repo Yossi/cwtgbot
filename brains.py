@@ -234,6 +234,20 @@ def main(update, context):
 
     return ret
 
+def stock_list(context):
+    warehouse = warehouse_load_saved(True)
+    hours = 2
+    responses = []
+    now = datetime.datetime.utcnow()
+    if (res := warehouse.get('res', {})) and (now - res['timestamp']) < datetime.timedelta(hours=hours):
+        output = []
+        for id in sorted(res['data'], key=res['data'].get, reverse=True):
+            output.append(f'<code>{id}</code> {id_to_name[id].title()} x {res["data"][id]}')
+        responses.append('\n'.join(output))
+    else:
+        responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_res and try again')
+    return responses
+
 def warehouse_crafting(context):
     warehouse = warehouse_load_saved(True)
     hours = 2
