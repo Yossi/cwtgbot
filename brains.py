@@ -205,7 +205,7 @@ def main(update, context):
 
             if not warehouse.get(key) or now > warehouse[key].get('timestamp', datetime.datetime.min):
                 warehouse[key] = {'timestamp': now, 'data': data}
-                with open('warehouse.dict', 'wb') as warehouseFile
+                with open('warehouse.dict', 'wb') as warehouseFile:
                     pickle.dump(warehouse, warehouseFile)
                 ret.append(key)
             else:
@@ -559,4 +559,3 @@ if __name__ == '__main__':
     #              '448 x 9💰 [Selling] /rm_blrd58fqqm6kjt667chg\n'
     #              '\n'
     #              'Your last 10 comitted trades: /trades',
-
