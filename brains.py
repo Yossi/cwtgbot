@@ -6,7 +6,7 @@ from pprint import pprint
 from pathlib import Path
 from collections import defaultdict
 
-from util import scrape_data, is_witching_hour, emoji_number
+from util import scrape_data, is_witching_hour, warehouse_load_saved
 
 
 if not Path("data.dict").is_file():
@@ -166,16 +166,6 @@ def main(update, context):
             command.append(f' {d["id"]} {d["number"] if d["number"] else "1"}')
         command.append('</code>')
         return ''.join(command)
-
-    def warehouse_load_saved(ignore_exceptions):
-        try:
-            with open('warehouse.dict', 'rb') as warehouseFile:
-                return pickle.load(warehouseFile)
-        except IOError:
-            if not ignore_exceptions:
-                raise
-            else:
-                return {} # Ignore if warehouse.dict doesn't exist or can't be opened.
 
     def warehouse_in():
         if not hasattr(update.message.forward_from, 'id') or update.message.forward_from.id not in [408101137]: # @chtwrsbot
