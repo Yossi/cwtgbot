@@ -12,6 +12,7 @@ ignore - pass a list of item codes that the bot should ignore
 time - ingame time & time to next battle & time to arena reset & other stuff. Time!
 warehouse - list equipment ready to be crafted
 stock - list guild stock
+alch - list alchemy ingredients
 mlm - skems plz ktnx
 
 /setabouttext@BotFather

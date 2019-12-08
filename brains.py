@@ -248,6 +248,20 @@ def stock_list(context):
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_res and try again')
     return responses
 
+def alch_list(context):
+    warehouse = warehouse_load_saved(True)
+    hours = 2
+    responses = []
+    now = datetime.datetime.utcnow()
+    if (alch := warehouse.get('alch', {})) and (age := now - alch['timestamp']) < datetime.timedelta(hours=hours):
+        output = [f'Based on /g_stock_alch data {age.seconds // 60} minutes old:\n']
+        for id in sorted(alch['data'], key=alch['data'].get, reverse=True):
+            output.append(f'<code>{id}</code> {id_to_name[id].title()} x {alch["data"][id]}')
+        responses.append('\n'.join(output))
+    else:
+        responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_alch and try again')
+    return responses
+
 def warehouse_crafting(context):
     warehouse = warehouse_load_saved(True)
     hours = 2
