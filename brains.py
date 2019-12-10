@@ -123,7 +123,7 @@ def main(update, context):
         '''process missing items messages'''
         matches = re.finditer(r'(?P<number>\d+) x (?P<name>.+)', text)
         if matches:
-            ret.append(f'{text}\n{withdraw_parts((match.groupdict() for match in matches))}')
+            ret.append(f'{text}\nRecipient shall send to guild leader/squire:\n{withdraw_parts((match.groupdict() for match in matches))}')
 
     def refund():
         '''process returned /g_deposit message from ourselves'''

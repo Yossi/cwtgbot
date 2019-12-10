@@ -16,6 +16,6 @@ alch - list alchemy ingredients
 mlm - skems plz ktnx
 
 /setabouttext@BotFather
-Bot that generates the commands you need to manage your inventory while a guild member
+Bot that generates the commands you need to manage your inventory while a member of a guild
 
 /setuserpic@BotFather
