@@ -272,8 +272,9 @@ def restart(update, context):
 @restricted
 @log
 def say(update, context):
+    '''say things as the bot'''
     if context.args:
-        text=' '.join(context.args[1:])
+        text = ' '.join(context.args[1:])
         context.bot.send_message(chat_id=context.args[0], text=text, parse_mode=ParseMode.HTML)
     else:
         with open('user.persist', 'rb') as fp:

@@ -204,7 +204,7 @@ def main(update, context):
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
     more_match = re.search(r'📦Your stock:', text)
     generic_match = re.search(r'(.+)\((\d+)\)', text)
-    exchange_match = re.search(r'Your deals \((\d+)/(\d+)\):', text)
+    #exchange_match = re.search(r'Your deals \((\d+)/(\d+)\):', text)
     withdraw_match = re.search(r'Not enough materials|Materials needed for', text)
     refund_match = re.search(r'\/g_deposit [aestchwpmkr]{0,3}\d+ (\d+)?', text)
     consolidate_match = re.search(r'^\/g_withdraw', text)
@@ -217,8 +217,8 @@ def main(update, context):
         more(text.split('\n'))
     elif generic_match:
         generic(text.split('\n'))
-    elif exchange_match:
-        exchange(exchange_match)
+    #elif exchange_match:
+    #    exchange(exchange_match)
     elif withdraw_match:
         withdraw()
     elif refund_match:
