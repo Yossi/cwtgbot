@@ -202,14 +202,14 @@ def main(update, context):
                 ret.append(f'{key}, but not newer than data on file')
 
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
-    more_match = re.search(r'📦Your stock:', text)
+    more_match = '📦Your stock:' in text
     generic_match = re.search(r'(.+)\((\d+)\)', text)
     #exchange_match = re.search(r'Your deals \((\d+)/(\d+)\):', text)
     withdraw_match = re.search(r'Not enough materials|Materials needed for', text)
     refund_match = re.search(r'\/g_deposit [aestchwpmkr]{0,3}\d+ (\d+)?', text)
-    consolidate_match = re.search(r'^\/g_withdraw', text)
-    rerequest_match = re.search(r'\/g_receive', text)
-    warehouse_match = re.search(r'Guild Warehouse:', text)
+    consolidate_match = text.startswith('/g_withdraw')
+    rerequest_match = '/g_receive' in text
+    warehouse_match = 'Guild Warehouse:' in text
 
     if storage_match:
         storage(storage_match)
