@@ -180,7 +180,7 @@ def main(update, context):
 
             id_sample = list(data.keys())[0]
             if id_sample[0].isdigit():
-                if int(id_sample) <= 36:
+                if int(id_sample) <= 38:
                     key = 'res'
                 else:
                     key = 'alch'
