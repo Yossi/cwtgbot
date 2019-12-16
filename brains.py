@@ -173,6 +173,7 @@ def main(update, context):
         else:
             now = update.message.forward_date
             warehouse = warehouse_load_saved(True)
+            guild = context.user_data.get('guild', '')
             data = {}
             for row in text.split('\n')[1:]:
                 s = row.split()
@@ -193,13 +194,17 @@ def main(update, context):
             elif id_sample[0] in 'wuea':
                 key = 'other'
 
-            if not warehouse.get(key) or now > warehouse[key].get('timestamp', datetime.datetime.min):
-                warehouse[key] = {'timestamp': now, 'data': data}
+            if not warehouse.get(guild):
+                warehouse[guild] = {}
+            if not warehouse[guild].get(key) or now > warehouse[guild][key].get('timestamp', datetime.datetime.min):
+                warehouse[guild][key] = {'timestamp': now, 'data': data}
                 with open('warehouse.dict', 'wb') as warehouseFile:
                     pickle.dump(warehouse, warehouseFile)
                 ret.append(key)
             else:
                 ret.append(f'{key}, but not newer than data on file')
+        if not guild:
+            ret.append("Your guild affiliation is not on file with this bot. Consider forwarding something that indicates what guild you're in. Eg: /me or /report or /hero")
 
     def guild(match):
         if not hasattr(update.message.forward_from, 'id') or update.message.forward_from.id not in [408101137]: # @chtwrsbot
@@ -246,10 +251,13 @@ def main(update, context):
 
 def stock_list(context):
     warehouse = warehouse_load_saved(True)
-    hours = 2
+    guild = context.user_data.get('guild', '')
+    if not warehouse.get(guild):
+        warehouse[guild] = {}
+    hours = 1.5
     responses = []
     now = datetime.datetime.utcnow()
-    if (res := warehouse.get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
+    if (res := warehouse[guild].get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_res data {age.seconds // 60} minutes old:\n']
         for id in sorted(res['data'], key=res['data'].get, reverse=True):
             output.append(f'<code>{id}</code> {id_to_name[id].title()} x {res["data"][id]}')
@@ -260,10 +268,13 @@ def stock_list(context):
 
 def alch_list(context):
     warehouse = warehouse_load_saved(True)
-    hours = 2
+    guild = context.user_data.get('guild', '')
+    if not warehouse.get(guild):
+        warehouse[guild] = {}
+    hours = 1.5
     responses = []
     now = datetime.datetime.utcnow()
-    if (alch := warehouse.get('alch', {})) and (age := now - alch['timestamp']) < datetime.timedelta(hours=hours):
+    if (alch := warehouse[guild].get('alch', {})) and (age := now - alch['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_alch data {age.seconds // 60} minutes old:\n']
         for id in sorted(alch['data'], key=alch['data'].get, reverse=True):
             output.append(f'<code>{id}</code> {id_to_name[id].title()} x {alch["data"][id]}')
@@ -274,10 +285,13 @@ def alch_list(context):
 
 def warehouse_crafting(context):
     warehouse = warehouse_load_saved(True)
-    hours = 2
+    guild = context.user_data.get('guild', '')
+    if not warehouse.get(guild):
+        warehouse[guild] = {}
+    hours = 1.5
     responses = []
     now = datetime.datetime.utcnow()
-    if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
+    if (rec := warehouse[guild].get('rec', {})) and (parts := warehouse[guild].get('parts', {})) and \
     (age_rec := now - rec['timestamp']) < datetime.timedelta(hours=hours) and (age_parts := now - parts['timestamp']) < datetime.timedelta(hours=hours):
         older_command = '/g_stock_parts' if age_parts >= age_rec else '/g_stock_rec'
         output = [f'Based on {older_command} data {max(age_rec, age_parts).seconds // 60} minutes old:\n']

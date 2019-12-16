@@ -281,7 +281,7 @@ def say(update, context):
         with open('user.persist', 'rb') as fp:
             d = pickle.load(fp)
         speakers = sorted((
-                           f'{talker["meta"]["last_talked"]}, @{talker["meta"]["user_details"]["username"]}, '
+                           f'{talker["meta"]["last_talked"]}, [{talker.get("guild","")}] @{talker["meta"]["user_details"]["username"]}, '
                            f'{talker["meta"]["user_details"]["first_name"]} {talker["meta"]["user_details"].get("last_name", "")}\n'
                            f'<code>/say {id} </code>'
                            for id, talker in d['user_data'].items() if talker.get('meta', '')
