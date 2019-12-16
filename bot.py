@@ -20,6 +20,7 @@ from emeryradio import emeryradio
 from brains import main, warehouse_crafting
 from brains import stock_list, alch_list
 from brains import id_to_name, name_to_id
+from util import warehouse_load_saved
 from secrets import TOKEN, LIST_OF_ADMINS
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s\n%(message)s', level=logging.INFO)
@@ -294,10 +295,30 @@ def say(update, context):
 def user_data(update, context):
     '''see and clear user_data'''
     text = str(context.user_data)
-    if context.args and context.args[0] == 'clear':
-        context.user_data.pop(context.args[1], None)
+    if context.args and context.args[0] == 'clear' and len(context.args) > 1:
+        context.user_data.pop(' '.join(context.args[1:]), None)
     logging.info(f'bot said:\n{text}')
     context.bot.send_message(chat_id=update.effective_message.chat_id, text=text, parse_mode=ParseMode.HTML)
+
+@restricted
+@log
+def chat_data(update, context):
+    '''See and clear chat_data'''
+    text = str(context.chat_data)
+    if context.args and context.args[0] == 'clear' and len(context.args) > 1:
+        context.chat_data.pop(' '.join(context.args[1:]), None)
+    logging.info(f'bot said:\n{text}')
+    context.bot.send_message(chat_id=update.effective_message.chat_id, text=text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+
+@restricted
+@log
+def warehouse_data(update, context):
+    '''See and clear warehouse_data'''
+    text = str(warehouse_load_saved())
+    if context.args and context.args[0] == 'clear':
+        os.remove('warehouse.dict')
+    logging.info(f'bot said:\n{text}')
+    context.bot.send_message(chat_id=update.effective_message.chat_id, text=text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
 
 dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('mlm', mlm))
@@ -319,6 +340,8 @@ dispatcher.add_handler(CommandHandler('alch', alch))
 dispatcher.add_handler(CommandHandler('r', restart))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('say', say))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('user_data', user_data))
+dispatcher.add_handler(CommandHandler('chat_data', chat_data))
+dispatcher.add_handler(CommandHandler('warehouse_data', warehouse_data))
 dispatcher.add_error_handler(error)
 
 logging.info('bot started')

@@ -73,7 +73,7 @@ def hebrew_numeral(val, gershayim=True):
 
     return add_gershayim(retval) if gershayim else retval
 
-def warehouse_load_saved(ignore_exceptions):
+def warehouse_load_saved(ignore_exceptions=True):
     try:
         with open('warehouse.dict', 'rb') as warehouseFile:
             return pickle.load(warehouseFile)
