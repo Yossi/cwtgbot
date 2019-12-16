@@ -201,6 +201,13 @@ def main(update, context):
             else:
                 ret.append(f'{key}, but not newer than data on file')
 
+    def guild(match):
+        if not hasattr(update.message.forward_from, 'id') or update.message.forward_from.id not in [408101137]: # @chtwrsbot
+            ret.append('Must be a forward from @chtwrsbot. Try again.')
+        else:
+            context.user_data['guild'] = match.groupdict()['guild']
+            ret.append(f'Recording you as a member of [{context.user_data["guild"]}] Guild')
+
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
     more_match = '📦Your stock:' in text
     generic_match = re.search(r'(.+)\((\d+)\)', text)
@@ -210,6 +217,7 @@ def main(update, context):
     consolidate_match = text.startswith('/g_withdraw')
     rerequest_match = '/g_receive' in text
     warehouse_match = 'Guild Warehouse:' in text
+    guild_match = re.search(r'(?P<castle_sign>[(🐺🐉🌑🦌🥔🦅🦈)])\[(?P<guild>[A-Z\d]{2,3})\]', text)
 
     if storage_match:
         storage(storage_match)
@@ -229,6 +237,8 @@ def main(update, context):
         rerequest()
     elif warehouse_match:
         warehouse_in()
+    elif guild_match:
+        guild(guild_match)
     else:
         ret.append('Unclear what to do with this.')
 
