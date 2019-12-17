@@ -228,6 +228,14 @@ def setting_saver(update, context, section):
 
 @send_typing_action
 @log
+def location(update, context):
+    context.user_data['location'] = update.message.location.latitude, update.message.location.longitude
+    text = f'Saving your location as {context.user_data["location"]}'
+    logging.info(f'bot said:\n{text}')
+    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+
+@send_typing_action
+@log
 def ping(update, context):
     '''show signs of life'''
     text = "/pong"
@@ -330,6 +338,7 @@ dispatcher.add_handler(CommandHandler('ping', ping))
 dispatcher.add_handler(CommandHandler('pong', pong))
 dispatcher.add_handler(CommandHandler('now', now))
 dispatcher.add_handler(CommandHandler('time', time))
+dispatcher.add_handler(MessageHandler(Filters.location, location))
 dispatcher.add_handler(MessageHandler(Filters.forwarded, incoming))
 dispatcher.add_handler(MessageHandler(Filters.text, incoming))
 dispatcher.add_handler(CommandHandler('g_withdraw', incoming))
