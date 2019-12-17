@@ -15,6 +15,7 @@ from telegram.utils.helpers import mention_html
 from telegram.ext import Updater, PicklePersistence
 from telegram.ext import CommandHandler, MessageHandler
 from telegram.ext import Filters
+from timezonefinder import TimezoneFinder
 
 from emeryradio import emeryradio
 from brains import main, warehouse_crafting
@@ -229,10 +230,13 @@ def setting_saver(update, context, section):
 @send_typing_action
 @log
 def location(update, context):
+    tf = TimezoneFinder()
+    latitude, longitude = update.message.location.latitude, update.message.location.longitude
     context.user_data['location'] = update.message.location.latitude, update.message.location.longitude
-    text = f'Saving your location as {context.user_data["location"]}'
+    context.user_data['timezone'] = tf.timezone_at(lng=longitude, lat=latitude)
+    text = f'Saving your location as {context.user_data["location"]} making your timezone be {context.user_data["timezone"]}'
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode=ParseMode.HTML)
 
 @send_typing_action
 @log
