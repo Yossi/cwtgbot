@@ -302,7 +302,7 @@ def say(update, context):
         context.bot.send_message(chat_id=update.effective_message.chat_id, text=text, parse_mode=ParseMode.HTML)
     logging.info(f'bot said:\n{text}')
 
-@restricted
+#@restricted
 @log
 def user_data(update, context):
     '''see and clear user_data'''
