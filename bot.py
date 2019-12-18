@@ -21,7 +21,7 @@ from emeryradio import emeryradio
 from brains import main, warehouse_crafting
 from brains import stock_list, alch_list
 from brains import id_to_name, name_to_id
-from util import warehouse_load_saved
+from util import warehouse_load_saved, send
 from secrets import TOKEN, LIST_OF_ADMINS
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s\n%(message)s', level=logging.INFO)
@@ -109,7 +109,7 @@ def incoming(update, context):
     responses = main(update, context)
     for response in responses:
         logging.info(f'bot said:\n{response}')
-        context.bot.send_message(chat_id=update.effective_message.chat_id, text=response, parse_mode=ParseMode.HTML)
+        send(response, update, context)
 
 @send_typing_action
 @log
@@ -118,7 +118,7 @@ def warehouse(update, context):
     responses = warehouse_crafting(context)
     for response in responses:
         logging.info(f'bot said:\n{response}')
-        context.bot.send_message(chat_id=update.effective_message.chat_id, text=response, parse_mode=ParseMode.HTML)
+        send(response, update, context)
 
 @send_typing_action
 @log
@@ -127,7 +127,7 @@ def stock(update, context):
     responses = stock_list(context)
     for response in responses:
         logging.info(f'bot said:\n{response}')
-        context.bot.send_message(chat_id=update.effective_message.chat_id, text=response, parse_mode=ParseMode.HTML)
+        send(response, update, context)
 
 @send_typing_action
 @log
@@ -136,7 +136,7 @@ def alch(update, context):
     responses = alch_list(context)
     for response in responses:
         logging.info(f'bot said:\n{response}')
-        context.bot.send_message(chat_id=update.effective_message.chat_id, text=response, parse_mode=ParseMode.HTML)
+        send(response, update, context)
 
 @send_typing_action
 @log
@@ -147,7 +147,7 @@ def start(update, context):
            'See /help for more details.'
 
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+    send(text, update, context)
 
 @send_typing_action
 @log
@@ -158,7 +158,7 @@ def mlm(update, context):
     )
     for message in messages:
         logging.info(f'bot said:\n{message}')
-        context.bot.send_message(chat_id=update.effective_message.chat_id, text=message, parse_mode=ParseMode.HTML)
+        send(message, update, context)
 
 @send_typing_action
 @log
@@ -176,7 +176,7 @@ def help(update, context):
            'Some /settings available too.\n'\
 
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode=ParseMode.HTML)
+    send(text, update, context)
 
 @send_typing_action
 @log
@@ -190,7 +190,7 @@ def settings(update, context):
            '`/save 01 02,150 03` 👈 Save all thread, all pelt and 150 sticks. Rest of the sticks get deposited.'
 
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+    send(text, update, context)
 
 @send_typing_action
 @log
@@ -227,7 +227,7 @@ def setting_saver(update, context, section):
 
     text = '\n'.join(res)
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+    send(text, update, context)
 
 @send_typing_action
 @log
@@ -238,7 +238,7 @@ def location(update, context):
     context.user_data['timezone'] = tf.timezone_at(lng=longitude, lat=latitude)
     text = f'Saving your location as {context.user_data["location"]} making your timezone be {context.user_data["timezone"]}'
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode=ParseMode.HTML)
+    send(text, update, context)
 
 @send_typing_action
 @log
@@ -246,14 +246,14 @@ def ping(update, context):
     '''show signs of life'''
     text = "/pong"
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+    send(text, update, context)
 @send_typing_action
 @log
 def pong(update, context):
     '''ǝɟᴉl ɟo suƃᴉs ʍoɥs'''
     text = "/ping"
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+    send(text, update, context)
 
 @send_typing_action
 @log
@@ -261,14 +261,14 @@ def now(update, context):
     '''what time is it'''
     text = datetime.utcnow().isoformat()
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+    send(text, update, context)
 
 @send_typing_action
 @log
 def time(update, context):
     text = emeryradio()
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.message.chat_id, text=text, parse_mode='Markdown')
+    send(text, update, context)
 
 @restricted
 @log
@@ -301,7 +301,7 @@ def say(update, context):
                            for id, talker in d['user_data'].items() if talker.get('meta', '')
                           ), reverse=True)[:max(len(d['user_data']), 5)]
         text = '\n'.join(speakers)
-        context.bot.send_message(chat_id=update.effective_message.chat_id, text=text, parse_mode=ParseMode.HTML)
+        send(text, update, context)
     logging.info(f'bot said:\n{text}')
 
 #@restricted
@@ -312,7 +312,7 @@ def user_data(update, context):
     if context.args and context.args[0] == 'clear' and len(context.args) > 1:
         context.user_data.pop(' '.join(context.args[1:]), None)
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.effective_message.chat_id, text=text, parse_mode=ParseMode.HTML)
+    send(text, update, context)
 
 @restricted
 @log
@@ -322,7 +322,7 @@ def chat_data(update, context):
     if context.args and context.args[0] == 'clear' and len(context.args) > 1:
         context.chat_data.pop(' '.join(context.args[1:]), None)
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.effective_message.chat_id, text=text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+    send(text, update, context)
 
 @restricted
 @log
@@ -332,7 +332,7 @@ def warehouse_data(update, context):
     if context.args and context.args[0] == 'clear':
         os.remove('warehouse.dict')
     logging.info(f'bot said:\n{text}')
-    context.bot.send_message(chat_id=update.effective_message.chat_id, text=text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+    send(text, update, context)
 
 dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('mlm', mlm))

@@ -1,5 +1,6 @@
 import pickle
 import requests
+from telegram import ParseMode
 from bs4 import BeautifulSoup
 from datetime import datetime, time
 import yaml
@@ -83,6 +84,8 @@ def warehouse_load_saved(ignore_exceptions=True):
         else:
             return {} # Ignore if warehouse.dict doesn't exist or can't be opened.
 
+def send(text, update, context):
+    context.bot.send_message(chat_id=update.effective_message.chat_id, text=text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
 
 if __name__ == '__main__':
     from pprint import pprint
