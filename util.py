@@ -74,10 +74,13 @@ def hebrew_numeral(val, gershayim=True):
 
     return add_gershayim(retval) if gershayim else retval
 
-def warehouse_load_saved(ignore_exceptions=True):
+def warehouse_load_saved(ignore_exceptions=True, guild='full'):
     try:
         with open('warehouse.dict', 'rb') as warehouseFile:
-            return pickle.load(warehouseFile)
+            if guild == 'full':
+                return pickle.load(warehouseFile)
+            return pickle.load(warehouseFile).get(guild, {})
+
     except IOError:
         if not ignore_exceptions:
             raise

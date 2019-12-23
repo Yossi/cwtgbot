@@ -256,14 +256,11 @@ def main(update, context):
     return ret
 
 def stock_list(context):
-    warehouse = warehouse_load_saved(True)
-    guild = context.user_data.get('guild', '')
-    if not warehouse.get(guild):
-        warehouse[guild] = {}
+    warehouse = warehouse_load_saved(guild = context.user_data.get('guild', ''))
     hours = 1.5
     responses = []
     now = datetime.datetime.utcnow()
-    if (res := warehouse[guild].get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
+    if (res := warehouse.get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_res data {age.seconds // 60} minutes old:\n']
         for id in sorted(res['data'], key=res['data'].get, reverse=True):
             output.append(f'<code>{id}</code> {id_to_name[id].title()} x {res["data"][id]}')
@@ -273,14 +270,11 @@ def stock_list(context):
     return responses
 
 def alch_list(context):
-    warehouse = warehouse_load_saved(True)
-    guild = context.user_data.get('guild', '')
-    if not warehouse.get(guild):
-        warehouse[guild] = {}
+    warehouse = warehouse_load_saved(guild = context.user_data.get('guild', ''))
     hours = 1.5
     responses = []
     now = datetime.datetime.utcnow()
-    if (alch := warehouse[guild].get('alch', {})) and (age := now - alch['timestamp']) < datetime.timedelta(hours=hours):
+    if (alch := warehouse.get('alch', {})) and (age := now - alch['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_alch data {age.seconds // 60} minutes old:\n']
         for id in sorted(alch['data'], key=alch['data'].get, reverse=True):
             output.append(f'<code>{id}</code> {id_to_name[id].title()} x {alch["data"][id]}')
@@ -290,14 +284,11 @@ def alch_list(context):
     return responses
 
 def warehouse_crafting(context):
-    warehouse = warehouse_load_saved(True)
-    guild = context.user_data.get('guild', '')
-    if not warehouse.get(guild):
-        warehouse[guild] = {}
+    warehouse = warehouse_load_saved(guild = context.user_data.get('guild', ''))
     hours = 1.5
     responses = []
     now = datetime.datetime.utcnow()
-    if (rec := warehouse[guild].get('rec', {})) and (parts := warehouse[guild].get('parts', {})) and \
+    if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
     (age_rec := now - rec['timestamp']) < datetime.timedelta(hours=hours) and (age_parts := now - parts['timestamp']) < datetime.timedelta(hours=hours):
         older_command = '/g_stock_parts' if age_parts >= age_rec else '/g_stock_rec'
         output = [f'Based on {older_command} data {max(age_rec, age_parts).seconds // 60} minutes old:\n']
