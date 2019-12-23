@@ -168,6 +168,12 @@ def main(update, context):
         return ''.join(command)
 
     def warehouse_in():
+        followup = {
+            'res': '/stock',
+            'alch': '/alch',
+            'rec': '/warehouse',
+            'parts': '/w 1'
+        }
         if not hasattr(update.message.forward_from, 'id') or update.message.forward_from.id not in [408101137]: # @chtwrsbot
             ret.append('Must be a forward from @chtwrsbot. Try again.')
         else:
@@ -200,7 +206,7 @@ def main(update, context):
                 warehouse[guild][key] = {'timestamp': now, 'data': data}
                 with open('warehouse.dict', 'wb') as warehouseFile:
                     pickle.dump(warehouse, warehouseFile)
-                ret.append(key)
+                ret.append(followup.get(key, key))
             else:
                 ret.append(f'{key}, but not newer than data on file')
         if not guild:
