@@ -16,6 +16,7 @@ from telegram.ext import Updater, PicklePersistence
 from telegram.ext import CommandHandler, MessageHandler
 from telegram.ext import Filters
 from timezonefinder import TimezoneFinder
+from titlecase import titlecase
 
 from emeryradio import emeryradio
 from brains import main, warehouse_crafting
@@ -220,7 +221,7 @@ def setting_saver(update, context, section):
         name = id_to_name.get(id, 'unknown')
         count = context.user_data[section][id]
         id_count = f'{id}{"," if count else ""}{count}'
-        res.append(f' `{id_count}` {name.title()}')
+        res.append(f' `{id_count}` {titlecase(name)}')
         cmd.append(id_count)
     if settings:
         res.append(f'`{" ".join(cmd)}`')

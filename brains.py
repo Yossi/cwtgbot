@@ -5,6 +5,7 @@ import datetime
 from pprint import pprint
 from pathlib import Path
 from collections import defaultdict
+from titlecase import titlecase
 
 from util import scrape_data, is_witching_hour, warehouse_load_saved
 
@@ -263,7 +264,7 @@ def stock_list(context):
     if (res := warehouse.get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_res data {age.seconds // 60} minutes old:\n']
         for id in sorted(res['data'], key=res['data'].get, reverse=True):
-            output.append(f'<code>{id}</code> {id_to_name[id].title()} x {res["data"][id]}')
+            output.append(f'<code>{id}</code> {titlecase(id_to_name[id])} x {res["data"][id]}')
         responses.append('\n'.join(output))
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_res and try again')
@@ -277,7 +278,7 @@ def alch_list(context):
     if (alch := warehouse.get('alch', {})) and (age := now - alch['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_alch data {age.seconds // 60} minutes old:\n']
         for id in sorted(alch['data'], key=alch['data'].get, reverse=True):
-            output.append(f'<code>{id}</code> {id_to_name[id].title()} x {alch["data"][id]}')
+            output.append(f'<code>{id}</code> {titlecase(id_to_name[id])} x {alch["data"][id]}')
         responses.append('\n'.join(output))
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_alch and try again')
@@ -317,7 +318,7 @@ def warehouse_crafting(context):
                 ready = '✅' if num_craftable else '❌'
                 name = id_to_name["r"+id].rpartition(" ")[0]
                 finished_part_id = name_to_id[name]
-                part_name = id_to_name["k"+id].rpartition(" ")[2].title()
+                part_name = titlecase(id_to_name["k"+id].rpartition(" ")[2])
 
                 if not num_craftable and not context.args:
                     continue
@@ -329,7 +330,7 @@ def warehouse_crafting(context):
                     else:
                         continue
 
-                output.append(f'{ready} {id} {name.title()} <code>{finished_part_id}</code>')
+                output.append(f'{ready} {id} {titlecase(name)} <code>{finished_part_id}</code>')
                 if num_craftable:
                     output.append(f'<code> {num_craftable}</code> Can be made')
                 output.append(f'<code>{parts_needed} {part_name}s per recipe</code>')
