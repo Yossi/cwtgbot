@@ -27,26 +27,6 @@ def is_witching_hour():
     now = datetime.utcnow().time()
     return any((start < now < end for start, end in closed_times))
 
-def emoji_number(n):
-    '''convert numbers to emoji'''
-    # doesn't actually look good
-    digits = {
-        0:'0⃣',
-        1:'1️⃣',
-        2:'2️⃣',
-        3:'3️⃣',
-        4:'4️⃣',
-        5:'5️⃣',
-        6:'6️⃣',
-        7:'7️⃣',
-        8:'8️⃣',
-        9:'9️⃣',
-       10:'🔟',
-    }
-    if n in digits:
-        return digits[n]
-    return ''.join([digits[int(x)] for x in str(n)])
-
 hsn = yaml.load(open('data/hebrew-special-numbers/styles/default.yml', encoding="utf8"), Loader=yaml.SafeLoader)
 def hebrew_numeral(val, gershayim=True):
     '''get hebrew numerals for the number in val'''
@@ -92,5 +72,6 @@ def send(text, update, context):
 
 if __name__ == '__main__':
     from pprint import pprint
-
-    print(emoji_number(10))
+    from pathlib import Path
+    if not Path("data2.dict").is_file() or True:
+    
