@@ -4,17 +4,17 @@ from telegram import ParseMode
 from bs4 import BeautifulSoup
 from datetime import datetime, time
 import yaml
+import csv
 
 def scrape_data(fp):
     '''get itemcode table and stuff it in a pickle'''
     data = {}
-    wiki_url = "https://chatwars-wiki.de/index.php?title=Master_List_of_Item_Codes"
-    page = requests.get(wiki_url, headers={'User-Agent': 'Mozilla/5.0'})
-    soup = BeautifulSoup(page.content, features="html.parser")
-    table = soup.find("table", {"class": "sortable wikitable smwtable"})
-    for row in table.findAll('tr')[1:]:
-        name, code, weight, item_type = row.findAll('td')
-        data[name.text.lower()] = code.text.lower(), int(weight.text) if weight.text else 1
+    step = 500
+    for offset in range(0, step*4, step):
+        url = f'https://chatwars-wiki.de/index.php?title=Special:Ask/mainlabel%3DItem-20Name/format%3Dcsv/searchlabel%3DCSV/sort%3DItemID/order%3Dasc/offset%3D{offset}/limit%3D{step}/-5B-5BItemID::%2B-5D-5D/-3FItemID/-3FWeight/-3FItemType%3DType/prettyprint%3Dtrue/unescape%3Dtrue'
+        result = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+        for item in csv.DictReader(result.content.decode('utf-8')[1:].splitlines()):
+            data[item['Item Name'].lower()] = item['ItemID'].lower(), int(item['Weight']) if item['Weight'] else 1
     pickle.dump(data, fp)
 
 def is_witching_hour():
@@ -74,4 +74,9 @@ if __name__ == '__main__':
     from pprint import pprint
     from pathlib import Path
     if not Path("data2.dict").is_file() or True:
+        with open('data2.dict', 'wb') as fp:
+            scrape_data2(fp)
     
+    with open('data.dict', 'rb') as fp:
+        data = pickle.load(fp)
+        pprint(data)
