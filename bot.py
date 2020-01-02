@@ -188,7 +188,7 @@ def settings(update, context):
            'Add a space-separated list of IDs after the command to save or ignore. You can limit how many of an item are affected by attaching an amount to the ID with a comma. Using the command with nothing else will show you what you have stored.\n'\
            '\n'\
            'Example:\n'\
-           '`/save 01 02,150 03` 👈 Save all thread, all pelt and 150 sticks. Rest of the sticks get deposited.'
+           '<code>/save 01 02,150 03</code> 👈 Save all thread, all pelt and 150 sticks. Rest of the sticks get deposited.'
 
     logging.info(f'bot said:\n{text}')
     send(text, update, context)
@@ -221,10 +221,10 @@ def setting_saver(update, context, section):
         name = id_to_name.get(id, 'unknown')
         count = context.user_data[section][id]
         id_count = f'{id}{"," if count else ""}{count}'
-        res.append(f' `{id_count}` {titlecase(name)}')
+        res.append(f' <code>{id_count}</code> {titlecase(name)}')
         cmd.append(id_count)
     if settings:
-        res.append(f'`{" ".join(cmd)}`')
+        res.append(f'<code>{" ".join(cmd)}</code>')
 
     text = '\n'.join(res)
     logging.info(f'bot said:\n{text}')
