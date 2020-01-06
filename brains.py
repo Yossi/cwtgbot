@@ -206,7 +206,7 @@ def main(update, context):
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
     more_match = '📦Your stock:' in text
     generic_match = re.search(r'(.+)\((\d+)\)', text)
-    withdraw_match = re.search(r'Not enough materials|Materials needed for', text)
+    withdraw_match = re.search(r'Not enough materials|Materials needed for|Not enough resources', text)
     refund_match = re.search(r'\/g_deposit [aestchwpmkr]{0,3}\d+ (\d+)?', text)
     consolidate_match = text.startswith('/g_withdraw')
     rerequest_match = '/g_receive' in text
