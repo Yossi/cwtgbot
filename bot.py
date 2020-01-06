@@ -27,7 +27,7 @@ from secrets import TOKEN, LIST_OF_ADMINS
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s\n%(message)s', level=logging.INFO)
 
-persistence = PicklePersistence(filename='user.persist')
+persistence = PicklePersistence(filename='user.persist', on_flush=False)
 updater = Updater(token=TOKEN, persistence=persistence, use_context=True)
 dispatcher = updater.dispatcher
 
@@ -276,6 +276,7 @@ def time(update, context):
 def restart(update, context):
     def stop_and_restart():
         """Gracefully stop the Updater and replace the current process with a new one"""
+        persistence.flush()
         updater.stop()
         os.execl(sys.executable, sys.executable, *sys.argv)
 
