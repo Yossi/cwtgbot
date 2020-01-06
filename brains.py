@@ -103,23 +103,6 @@ def main(update, context):
         if deposits:
             ret.append('\n'.join(sorted(deposits)))
 
-    def exchange(m):
-        '''unfinished business. non functional at this time'''
-        res = {}
-        current_deals = int(m[1])
-        total_slots = int(m[2])
-        active_slots = total_slots
-
-        matches = re.finditer(r'(?P<name>\w+)\n(?P<number>\d+) x (?P<price>\d+)💰 \[Selling\] (?P<command>\/rm_\w+)', text)
-        for match in matches:
-            d = match.groupdict()
-            if d['price'] == '1000' and d['number'] != '1000':
-                res[name_to_id[match['name'].lower()]] = d
-            else:
-                active_slots -= 1
-        pprint(res)
-        pprint(context.user_data)
-
     def withdraw():
         '''process missing items messages'''
         matches = re.finditer(r'(?P<number>\d+) x (?P<name>.+)', text)
@@ -223,7 +206,6 @@ def main(update, context):
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
     more_match = '📦Your stock:' in text
     generic_match = re.search(r'(.+)\((\d+)\)', text)
-    #exchange_match = re.search(r'Your deals \((\d+)/(\d+)\):', text)
     withdraw_match = re.search(r'Not enough materials|Materials needed for', text)
     refund_match = re.search(r'\/g_deposit [aestchwpmkr]{0,3}\d+ (\d+)?', text)
     consolidate_match = text.startswith('/g_withdraw')
@@ -237,8 +219,6 @@ def main(update, context):
         more(text.split('\n'))
     elif generic_match:
         generic(text.split('\n'))
-    #elif exchange_match:
-    #    exchange(exchange_match)
     elif withdraw_match:
         withdraw()
     elif refund_match:
