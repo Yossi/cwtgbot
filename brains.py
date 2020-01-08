@@ -300,6 +300,7 @@ def warehouse_crafting(context):
                 finished_part_id = name_to_id[name]
                 part_name = titlecase(id_to_name["k"+id].rpartition(" ")[2])
 
+                # Getting through this gauntlet without hitting a continue means you get displayed
                 if not num_craftable and not context.args:
                     continue
                 if context.args and context.args[0].lower() != 'all':
@@ -307,6 +308,13 @@ def warehouse_crafting(context):
                         pass
                     elif context.args[0].isdigit() and 0 < things_missing <= int(context.args[0]):
                         pass
+                    elif context.args[0].lower().startswith('overstock'):
+                        try:
+                            multiple = int(context.args[1])
+                        except IndexError:
+                            multiple = 2
+                        if count_parts/parts_needed <= multiple and count_recipies <= multiple:
+                            continue
                     else:
                         continue
 
