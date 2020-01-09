@@ -203,6 +203,14 @@ def main(update, context):
             context.user_data['guild'] = match.groupdict()['guild']
             ret.append(f'Recording you as a member of [{context.user_data["guild"]}] Guild')
 
+    def inspect():
+        output = []
+        for match in re.finditer(r'(?P<equip_name>.+) \/.+_(?P<equip_id>.+)', text):
+            match = match.groupdict()
+            output.append(f'/inspect_{match["equip_id"]} {match["equip_name"]}')
+        ret.append('\n'.join(output))
+
+    equipment_match = '🎽Equipment' in text
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
     more_match = '📦Your stock:' in text
     generic_match = re.search(r'(.+)\((\d+)\)', text)
@@ -213,7 +221,9 @@ def main(update, context):
     warehouse_match = 'Guild Warehouse:' in text
     guild_match = re.search(r'(?P<castle_sign>[(🐺🐉🌑🦌🥔🦅🦈)])\[(?P<guild>[A-Z\d]{2,3})\]', text)
 
-    if storage_match:
+    if equipment_match:
+        inspect()
+    elif storage_match:
         storage(storage_match)
     elif more_match:
         more(text.split('\n'))
@@ -334,7 +344,7 @@ def warehouse_crafting(context):
 
         result = '\n'.join(output)
         responses.append(result)
-        if result.strip().endswith(':'):
+        if result.rstrip().endswith(':'):
             responses.append('No matches in stock')
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_parts and /g_stock_rec and try again')
