@@ -6,7 +6,7 @@ from lunarcalendar import Converter, Solar
 from util import hebrew_numeral
 import sesDate
 
-def emeryradio():
+def emeryradio(user_data):
     output = []
     wkdyformat = ("%A")
     dateformat = ("%F")

@@ -267,7 +267,7 @@ def now(update, context):
 @send_typing_action
 @log
 def time(update, context):
-    text = emeryradio()
+    text = emeryradio(context.user_data)
     logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
