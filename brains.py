@@ -343,7 +343,8 @@ def warehouse_crafting(context):
                     output = []
 
         result = '\n'.join(output)
-        responses.append(result)
+        if result:
+            responses.append(result)
         if result.rstrip().endswith(':'):
             responses.append('No matches in stock')
     else:
