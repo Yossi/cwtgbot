@@ -21,7 +21,7 @@ from titlecase import titlecase
 from emeryradio import emeryradio
 from brains import main, warehouse_crafting
 from brains import stock_list, alch_list
-from brains import id_to_name, name_to_id
+from brains import id_lookup
 from util import warehouse_load_saved, send
 from secrets import TOKEN, LIST_OF_ADMINS
 
@@ -218,7 +218,7 @@ def setting_saver(update, context, section):
     res = [f'{"Saving" if section == "save" else "Ignoring"} {"these" if len(settings) > 1 else "this"}:']
     cmd = [f'/{section}']
     for id in settings:
-        name = id_to_name.get(id, 'unknown')
+        name = id_lookup.get(id, {}).get('Name', 'unknown')
         count = context.user_data[section][id]
         id_count = f'{id}{"," if count else ""}{count}'
         res.append(f' <code>{id_count}</code> {titlecase(name)}')

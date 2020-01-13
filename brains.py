@@ -15,9 +15,11 @@ if not Path("data.dict").is_file():
         scrape_data(fp)
 with open('data.dict', 'rb') as fp:
     data = pickle.load(fp)
-    id_to_weight = dict(data.values())
-    id_to_name = {v[0]: k for k, v in data.items()}
-    name_to_id = {v: k for k, v in id_to_name.items()}
+    id_lookup = {}
+    name_lookup = {}
+    for item in data:
+        id_lookup[item['ItemID']] = item
+        name_lookup[item['Name']] = item
 
 
 def main(update, context):
@@ -56,14 +58,14 @@ def main(update, context):
             name = name.replace('📃', '')
             if name.startswith('/sg_'):
                 name = name.partition(' ')[2]
-            id = name_to_id.get(name.lower())
+            id = name_lookup.get(name.lower(), {}).get('ItemID')
             if not id and '_' in name:
                 id = item.strip().rpartition('_')[2]
-            if id not in id_to_name: continue
-            if id in ('100', '501', 'a16', 'a26', 'tch'): continue # partial list of undepositable ids
+            if id not in id_lookup: continue
+            if not id_lookup[id]['Guild']: continue
             count_total = int(match[2])
             if id in context.user_data.get('save', {}):
-                max_weight = 1000 // id_to_weight[id]
+                max_weight = 1000 // id_lookup[id]['Weight']
                 count_keep = context.user_data['save'][id]
                 if not count_keep:
                     count_keep = count_total
@@ -134,7 +136,7 @@ def main(update, context):
             d = match.groupdict()
             count[d['id']] += int(d['number'])
         for id, number in count.items():
-            response.append(f'{id_to_name[id].capitalize()} x {number}\n')
+            response.append(f'{id_lookup[id]["Name"].capitalize()} x {number}\n')
             command.append({'id': id, 'number': number})
         ret.append(f'{"".join(response)}\n{withdraw_parts(command)}')
 
@@ -150,7 +152,7 @@ def main(update, context):
         matches = list(matches)
         for match in matches:
             if match.get('name'):
-                match['id'] = name_to_id[match['name'].strip().lower()]
+                match['id'] = name_lookup[match['name'].strip().lower()]['ItemID']
 
             if match['id'][0].isdigit():
                 if int(match['id']) <= 38:
@@ -299,7 +301,7 @@ def stock_list(context):
     if (res := warehouse.get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_res data {age.seconds // 60} minutes old:\n']
         for id in sorted(res['data'], key=res['data'].get, reverse=True):
-            output.append(f'<code>{id}</code> {titlecase(id_to_name[id])} x {res["data"][id]}')
+            output.append(f'<code>{id}</code> {titlecase(id_lookup[id]["Name"])} x {res["data"][id]}')
         responses.append('\n'.join(output))
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_res and try again')
@@ -313,7 +315,7 @@ def alch_list(context):
     if (alch := warehouse.get('alch', {})) and (age := now - alch['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_alch data {age.seconds // 60} minutes old:\n']
         for id in sorted(alch['data'], key=alch['data'].get, reverse=True):
-            output.append(f'<code>{id}</code> {titlecase(id_to_name[id])} x {alch["data"][id]}')
+            output.append(f'<code>{id}</code> {titlecase(id_lookup[id]["Name"])} x {alch["data"][id]}')
         responses.append('\n'.join(output))
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_alch and try again')
@@ -351,9 +353,9 @@ def warehouse_crafting(context):
                 things_missing = int(not bool(count_recipies)) + max(parts_needed - count_parts, 0)
                 num_craftable = min(count_recipies, complete_parts_sets)
                 ready = '✅' if num_craftable else '❌'
-                name = id_to_name["r"+id].rpartition(" ")[0]
-                finished_part_id = name_to_id[name]
-                part_name = titlecase(id_to_name["k"+id].rpartition(" ")[2])
+                name = id_lookup["r"+id]['Name'].rpartition(" ")[0]
+                finished_part_id = name_lookup[name]['ItemID']
+                part_name = titlecase(id_lookup["k"+id]['Name'].rpartition(" ")[2])
 
                 # Getting through this gauntlet without hitting a continue means you get displayed
                 if not num_craftable and not context.args:

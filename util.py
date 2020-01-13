@@ -5,16 +5,26 @@ from bs4 import BeautifulSoup
 from datetime import datetime, time
 import yaml
 import csv
+from urllib.parse import quote
 
 def scrape_data(fp):
     '''get itemcode table and stuff it in a pickle'''
-    data = {}
+    data = []
     step = 500
     for offset in range(0, step*4, step):
-        url = f'https://chatwars-wiki.de/index.php?title=Special:Ask/mainlabel%3DItem-20Name/format%3Dcsv/searchlabel%3DCSV/sort%3DItemID/order%3Dasc/offset%3D{offset}/limit%3D{step}/-5B-5BItemID::%2B-5D-5D/-3FItemID/-3FWeight/-3FItemType%3DType/prettyprint%3Dtrue/unescape%3Dtrue'
+        base = 'https://chatwars-wiki.de/index.php?title=Special:Ask/'
+        settings = f'format=csv/searchlabel=CSV/offset={offset}/limit={step}/prettyprint=true/unescape=true'
+        q = '/mainlabel=Name/[[ItemID::+]]/?ItemID/?Weight/?BoolExchange=Exchange/?BoolDepositGuild=Guild'
+        query = quote(q, safe='=/:+').replace('%', '-')
+        url = base+quote(settings+query, safe=':/')
         result = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
         for item in csv.DictReader(result.content.decode('utf-8')[1:].splitlines()):
-            data[item['Item Name'].lower()] = item['ItemID'].lower(), int(item['Weight']) if item['Weight'] else 1
+            item['Name'] = item['Name'].lower()
+            item['ItemID'] = item['ItemID'].lower()
+            item['Weight'] = int(item['Weight']) if item['Weight'] else 1
+            item['Exchange'] = item['Exchange'] == 'true'
+            item['Guild'] = item['Guild'] == 'true'
+            data.append(item)
     pickle.dump(data, fp)
 
 def is_witching_hour():
