@@ -117,7 +117,7 @@ def main(update, context):
 
     def rerequest():
         '''you asked for a withdrawal and then you wandered off to look at squirrels too long? i gotchu fam'''
-        matches = list(re.finditer(r'(?P<name>.+) x (?P<number>\d+)', text))
+        matches = list(re.finditer(r'(?P<name>[^⚡️+\d\v]+) x (?P<number>\d+)', text))
         response = ['Timeout expired. Please resend:']
         for match in matches:
             response.append(match.string[match.start():match.end()])
@@ -197,7 +197,7 @@ def main(update, context):
             ret.append("Your guild affiliation is not on file with this bot. Consider forwarding something that indicates what guild you're in. Eg: /me or /report or /hero")
 
     def guild(match):
-        if not hasattr(update.message.forward_from, 'id') or update.message.forward_from.id not in [408101137]: # @chtwrsbot
+        if not hasattr(update.message.forward_from, 'id') or update.message.forward_from.id not in [408101137]: # @chtwrsbot  (265204902 is cw3)
             ret.append('Must be a forward from @chtwrsbot. Try again.')
         else:
             context.user_data['guild'] = match.groupdict()['guild']
