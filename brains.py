@@ -141,15 +141,60 @@ def main(update, context):
     def withdraw_parts(matches):
         '''builds withdraw commands.
            expects an iterator of dicts with one key named "number" and the other named "id" or "name"'''
+        warehouse = warehouse_load_saved(guild = context.user_data.get('guild', ''))
+        hours = 1.5
+        now = datetime.datetime.utcnow()
+        notice = ''
+        command_suffixes = set()
+
+        matches = list(matches)
+        for match in matches:
+            if match.get('name'):
+                match['id'] = name_to_id[match['name'].strip().lower()]
+
+            if match['id'][0].isdigit():
+                if int(match['id']) <= 38:
+                    command_suffixes.add('res')
+                else:
+                    command_suffixes.add('alch')
+            elif match['id'][0] in 'sp':
+                command_suffixes.add('misc')
+            elif match['id'][0] == 'r':
+                command_suffixes.add('rec')
+            elif match['id'][0] == 'k':
+                command_suffixes.add('parts')
+            elif match['id'][0] in 'wuea':
+                command_suffixes.add('other')
+        print(command_suffixes)
+
+        guild_stock = {}
+        for suffix in command_suffixes:
+            pass
+
+        if False and (res := warehouse.get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
+            pass
+        else:
+            res = None
+            #notice = 'Missing current guild stock state. Consider forwarding /g_stock_res and trying again.'
         command = ['<code>/g_withdraw']
+        missing = []
         for n, d in enumerate(matches):
             if not (n + 1) % 9:
                 command.append('</code>\n<code>/g_withdraw')
-            if d.get('name'):
-                d['id'] = name_to_id[d['name'].lower()]
-            command.append(f' {d["id"]} {d["number"] if d["number"] else "1"}')
+            d["number"] = d["number"] if d["number"] else "1"
+            if res:
+                diff = int(d["number"]) - res['data'].get(d['id'], 0)
+                if diff > 0:
+                    missing.append(f'<code>/wtb_{d["id"]}_{diff}</code>')
+                    d['number'] = res['data'].get(d['id'], 0)
+            if d['number']:
+                command.append(f' {d["id"]} {d["number"]}')
         command.append('</code>')
-        return ''.join(command)
+        if missing:
+            missing = '\n'.join([f"\nBased on data {age.seconds // 60} minutes old, need to buy:"] + missing)
+        else:
+            missing = ''
+        return ''.join(command) + missing + notice
 
     def warehouse_in():
         followup = {
