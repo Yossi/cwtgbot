@@ -280,7 +280,8 @@ def main(update, context):
         rerequest_match,
         warehouse_match,
         guild_match,
-        equipment_match,]
+        equipment_match,
+    ]
     #print(matches)
 
     if storage_match:

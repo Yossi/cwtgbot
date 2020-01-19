@@ -101,7 +101,7 @@ if __name__ == '__main__':
     if not Path("data2.dict").is_file() or True:
         with open('data2.dict', 'wb') as fp:
             scrape_data2(fp)
-    
+
     with open('data.dict', 'rb') as fp:
         data = pickle.load(fp)
         pprint(data)
