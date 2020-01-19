@@ -268,9 +268,20 @@ def main(update, context):
     warehouse_match = 'Guild Warehouse:' in text
     guild_match = re.search(r'(?P<castle_sign>[(🐺🐉🌑🦌🥔🦅🦈)])\[(?P<guild>[A-Z\d]{2,3})\]', text)
 
-    if equipment_match:
-        inspect()
-    elif storage_match:
+    matches = [
+        storage_match,
+        more_match,
+        generic_match,
+        withdraw_match,
+        refund_match,
+        consolidate_match,
+        rerequest_match,
+        warehouse_match,
+        guild_match,
+        equipment_match,]
+    #print(matches)
+
+    if storage_match:
         storage(storage_match)
     elif more_match:
         more(text.split('\n'))
@@ -288,6 +299,8 @@ def main(update, context):
         warehouse_in()
     elif guild_match:
         guild(guild_match)
+    elif equipment_match:
+        inspect()
     else:
         ret.append('Unclear what to do with this.')
 
