@@ -205,12 +205,12 @@ def main(update, context):
             'rec': '/warehouse',
             'parts': '/w 1'
         }
+        guild = context.user_data.get('guild', '')
         if not hasattr(update.message.forward_from, 'id') or update.message.forward_from.id not in [408101137]: # @chtwrsbot
             ret.append('Must be a forward from @chtwrsbot. Try again.')
         else:
             now = update.message.forward_date
             warehouse = warehouse_load_saved(True)
-            guild = context.user_data.get('guild', '')
             data = {}
             for row in text.split('\n')[1:]:
                 s = row.split()
