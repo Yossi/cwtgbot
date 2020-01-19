@@ -6,6 +6,7 @@ from datetime import datetime, time
 import yaml
 import csv
 from urllib.parse import quote
+import filetype
 
 def scrape_data(fp):
     '''get itemcode table and stuff it in a pickle'''
@@ -80,8 +81,19 @@ def warehouse_load_saved(ignore_exceptions=True, guild='full'):
         else:
             return {} # Ignore if warehouse.dict doesn't exist or can't be opened.
 
-def send(text, update, context):
-    context.bot.send_message(chat_id=update.effective_message.chat_id, text=text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+def send(payload, update, context):
+    chat_id=update.effective_message.chat_id
+    if isinstance(payload, str):
+        max_size = 4096
+        for text in [payload[i:i + max_size] for i in range(0, len(payload), max_size)]:
+            context.bot.send_message(chat_id=chat_id, text=text, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+    else:
+        kind = filetype.guess(payload.read(261))
+        payload.seek(0)
+        if kind and kind.mime.startswith('image'):
+            context.bot.send_photo(chat_id=update.effective_message.chat_id, photo=payload)
+        else:
+            context.bot.send_document(chat_id=chat_id, document=payload)
 
 if __name__ == '__main__':
     from pprint import pprint
