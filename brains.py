@@ -62,7 +62,7 @@ def main(update, context):
             if not id and '_' in name:
                 id = item.strip().rpartition('_')[2]
             if id not in id_lookup: continue
-            if not id_lookup[id]['Guild']: continue
+            if not id_lookup[id]['Guild'] and id[0] not in 'kr': continue
             count_total = int(match[2])
             if id in context.user_data.get('save', {}):
                 max_weight = 1000 // id_lookup[id]['Weight']
