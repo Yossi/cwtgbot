@@ -9,4 +9,5 @@ pytz
 PyYAML
 timezonefinder
 titlecase
+matplotlib
 filetype
