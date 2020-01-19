@@ -313,6 +313,9 @@ def stock_list(context):
     now = datetime.datetime.utcnow()
     if (res := warehouse.get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_res data {age.seconds // 60} minutes old:\n⚖️']
+        for x in range(1,39):
+            if f'{x:02}' in id_lookup:
+                res['data'][f'{x:02}'] = res['data'].get(f'{x:02}', 0)
         for id in sorted(res['data'], key=res['data'].get, reverse=True):
             trade = '✅' if id_lookup[id]['Exchange'] else '❌'
             output.append(f'{trade}<code>{id}</code> {titlecase(id_lookup[id]["Name"])} x {res["data"][id]}')
