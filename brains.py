@@ -252,12 +252,11 @@ def main(update, context):
 
     def inspect():
         output = []
-        for match in re.finditer(r'(?P<equip_name>.+) \/.+_(?P<equip_id>.+)', text):
+        for match in re.finditer(r'(?P<equip_name>.+) \/.{2,3}_(?P<equip_id>.+)', text):
             match = match.groupdict()
             output.append(f'/inspect_{match["equip_id"]} {match["equip_name"]}')
         ret.append('\n'.join(output))
 
-    equipment_match = '🎽Equipment' in text
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
     more_match = '📦Your stock:' in text
     generic_match = re.search(r'(.+)\((\d+)\)', text)
@@ -267,6 +266,7 @@ def main(update, context):
     rerequest_match = '/g_receive' in text
     warehouse_match = 'Guild Warehouse:' in text
     guild_match = re.search(r'(?P<castle_sign>[(🐺🐉🌑🦌🥔🦅🦈)])\[(?P<guild>[A-Z\d]{2,3})\]', text)
+    equipment_match = re.search(r'(?P<equip_name>.+) \/.{2,3}_(?P<equip_id>.+)', text)
 
     matches = [
         storage_match,
