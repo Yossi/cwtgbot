@@ -312,9 +312,10 @@ def stock_list(context):
     responses = []
     now = datetime.datetime.utcnow()
     if (res := warehouse.get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
-        output = [f'Based on /g_stock_res data {age.seconds // 60} minutes old:\n']
+        output = [f'Based on /g_stock_res data {age.seconds // 60} minutes old:\n⚖️']
         for id in sorted(res['data'], key=res['data'].get, reverse=True):
-            output.append(f'<code>{id}</code> {titlecase(id_lookup[id]["Name"])} x {res["data"][id]}')
+            trade = '✅' if id_lookup[id]['Exchange'] else '❌'
+            output.append(f'{trade}<code>{id}</code> {titlecase(id_lookup[id]["Name"])} x {res["data"][id]}')
         responses.append('\n'.join(output))
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_res and try again')
