@@ -41,7 +41,7 @@ def emeryradio(user_data):
     timeToBattle = (-((cwtdt.timestamp() - 21600) % 86400) + 86400) / 3
     timeToArena = (-((cwtdt.timestamp() + 51300) % 259200) + 259200) / 3
 
-    output.append("**Current time**:")
+    output.append("<b>Current time</b>:")
     output.append(f'{cwWeekdayNames[int(cwadt.weekday())]} {cwadt.strftime("%Y-%m-%d %H:%M.%S")} (adjusted; estimated)')
     output.append(f'{cwWeekdayNames[int(cwtdt.weekday())]} {cwtdt.strftime("%H:%M.%S")} (tabular)')
     output.append(f'{sunmoon} {cwPeriodNames[int(cwadt.hour/6)]}: next change in ≈{int(timeToPeriodChange/3600)}h {int((timeToPeriodChange%3600)/60)}′ {int(timeToPeriodChange%60)}″')
