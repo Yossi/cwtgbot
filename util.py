@@ -21,9 +21,12 @@ def scrape_data(fp):
         for item in csv.DictReader(result.content.decode('utf-8')[1:].splitlines()):
             item['Name'] = item['Name'].lower()
             item['ItemID'] = item['ItemID'].lower()
-            item['Weight'] = int(item['Weight']) if item['Weight'] else 1
+            item['Weight'] = int(item['Weight']) if item['Weight'] else None
             item['Exchange'] = item['Exchange'] == 'true'
-            item['Guild'] = item['Guild'] == 'true'
+            if item['Guild'] == '':
+                item['Guild'] = None
+            else:
+                item['Guild'] = item['Guild'] == 'true'
             data.append(item)
     pickle.dump(data, fp)
 
