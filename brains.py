@@ -325,14 +325,18 @@ def stock_list(context):
 
         sort_by_weight = {id: res['data'][id]*id_lookup[id]['Weight'] for id in res['data']}
         sort_by_weight = sorted(sort_by_weight, key=sort_by_weight.get, reverse=True)
-        x = [ [res['data'][id] for id in sort_by_weight],
-              [res['data'][id]*(id_lookup[id]['Weight']-1) for id in sort_by_weight] ]
+        x = [
+            [res['data'][id] for id in sort_by_weight],
+            [res['data'][id]*(id_lookup[id]['Weight']-1) if id_lookup[id]['Weight'] == 2 else 0 for id in sort_by_weight],
+            [res['data'][id]*(id_lookup[id]['Weight']-1) if id_lookup[id]['Weight'] >= 3 else 0 for id in sort_by_weight]
+        ]
         r = range(len(sort_by_weight))
         plt.clf() # clear plot, because it doesn't get cleared from last run
         plt.barh(r, x[0])
-        plt.barh(r, x[1], left=x[0])
+        plt.barh(r, x[1], left=x[0], color=(1, .6, 0)) # some color between yellow and orange
+        plt.barh(r, x[2], left=x[0], color='red')
         plt.yticks(r, [f'{id_lookup[id]["Name"]} {id}' for id in sort_by_weight], fontsize='8')
-        plt.legend(loc='upper right', labels=['Count', 'Weight'])
+        plt.legend(loc='upper right', labels=['Count', 'Double Weight', 'Triple Weight'])
         plt.subplots_adjust(left=0.3)
         buf = io.BytesIO()
         #buf.name = 'weight.png'
