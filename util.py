@@ -1,7 +1,6 @@
 import pickle
 import requests
 from telegram import ParseMode
-from bs4 import BeautifulSoup
 from datetime import datetime, time
 import yaml
 import csv
@@ -50,7 +49,7 @@ def hebrew_numeral(val, gershayim=True):
         else:
             return ''.join([s[:-1], hsn['separators']['gershayim'], s[-1:]])
 
-    k, val = divmod(val, 1000) # typically you leave off the thousands when writing the year
+    k, val = divmod(val, 1000)  # typically you leave off the thousands when writing the year
 
     if val in hsn['specials']:
         retval = hsn['specials'][val]
@@ -79,10 +78,10 @@ def warehouse_load_saved(ignore_exceptions=True, guild='full'):
         if not ignore_exceptions:
             raise
         else:
-            return {} # Ignore if warehouse.dict doesn't exist or can't be opened.
+            return {}  # Ignore if warehouse.dict doesn't exist or can't be opened.
 
 def send(payload, update, context):
-    chat_id=update.effective_message.chat_id
+    chat_id = update.effective_message.chat_id
     if isinstance(payload, str):
         max_size = 4096
         for text in [payload[i:i + max_size] for i in range(0, len(payload), max_size)]:
@@ -98,9 +97,9 @@ def send(payload, update, context):
 if __name__ == '__main__':
     from pprint import pprint
     from pathlib import Path
-    if not Path("data2.dict").is_file() or True:
-        with open('data2.dict', 'wb') as fp:
-            scrape_data2(fp)
+    if not Path("data.dict").is_file() or True:
+        with open('data.dict', 'wb') as fp:
+            scrape_data(fp)
 
     with open('data.dict', 'rb') as fp:
         data = pickle.load(fp)

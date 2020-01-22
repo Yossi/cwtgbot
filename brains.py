@@ -208,7 +208,7 @@ def main(update, context):
             'parts': '/w 1'
         }
         guild = context.user_data.get('guild', '')
-        if not hasattr(update.message.forward_from, 'id') or update.message.forward_from.id not in [408101137]: # @chtwrsbot
+        if not hasattr(update.message.forward_from, 'id') or update.message.forward_from.id not in [408101137]:  # @chtwrsbot
             ret.append('Must be a forward from @chtwrsbot. Try again.')
         else:
             now = update.message.forward_date
@@ -316,7 +316,7 @@ def stock_list(context):
     now = datetime.datetime.utcnow()
     if (res := warehouse.get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_res data {age.seconds // 60} minutes old:\n⚖️']
-        for x in range(1,39):
+        for x in range(1, 39):
             if f'{x:02}' in id_lookup:
                 res['data'][f'{x:02}'] = res['data'].get(f'{x:02}', 0)
         for id in sorted(res['data'], key=res['data'].get, reverse=True):
@@ -331,9 +331,9 @@ def stock_list(context):
             [res['data'][id]*(id_lookup[id]['Weight']-1) if id_lookup[id]['Weight'] >= 3 else 0 for id in sort_by_weight]
         ]
         r = range(len(sort_by_weight))
-        plt.clf() # clear plot, because it doesn't get cleared from last run
+        plt.clf()  # clear plot, because it doesn't get cleared from last run
         plt.barh(r, x[0])
-        plt.barh(r, x[1], left=x[0], color=(1, .6, 0)) # some color between yellow and orange
+        plt.barh(r, x[1], left=x[0], color=(1, .6, 0))  # some color between yellow and orange
         plt.barh(r, x[2], left=x[0], color='red')
         plt.yticks(r, [f'{id_lookup[id]["Name"]} {id}' for id in sort_by_weight], fontsize='8')
         plt.legend(loc='upper right', labels=['Count', 'Double Weight', 'Triple Weight'])
@@ -374,7 +374,7 @@ def warehouse_crafting(context):
         older_command = '/g_stock_parts' if age_parts >= age_rec else '/g_stock_rec'
         output = [f'Based on {older_command} data {max(age_rec, age_parts).seconds // 60} minutes old:\n']
         page_counter = 0
-        for n in range(1,103):
+        for n in range(1, 103):
 
             if 1 <= n <= 18 or 59 <= n <= 61:
                 parts_needed = 3

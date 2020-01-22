@@ -3,11 +3,10 @@ import logging
 import traceback
 import pickle
 import html
-from datetime import datetime, timezone
+from datetime import datetime
 from threading import Thread
 from functools import wraps
 import pprint
-from collections import defaultdict
 
 from telegram import ParseMode
 from telegram import ChatAction
