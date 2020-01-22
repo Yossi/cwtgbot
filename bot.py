@@ -1,8 +1,10 @@
-import os, sys
+import os
+import sys
 import logging
 import traceback
 import pickle
 import html
+import random
 from datetime import datetime
 from threading import Thread
 from functools import wraps
@@ -335,6 +337,14 @@ def warehouse_data(update, context):
     logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
+@log
+def destination(update, context):
+    '''choose a location to quest next'''
+    locations = '🌲🍄⛰'
+    text = random.choice(locations)
+    logging.info(f'bot said:\n{text}')
+    send(text, update, context)
+
 dispatcher.add_handler(CommandHandler('start', start))
 dispatcher.add_handler(CommandHandler('mlm', mlm))
 dispatcher.add_handler(CommandHandler('help', help))
@@ -358,6 +368,7 @@ dispatcher.add_handler(CommandHandler('say', say))#, filters=Filters.user(user_i
 dispatcher.add_handler(CommandHandler('user_data', user_data))
 dispatcher.add_handler(CommandHandler('chat_data', chat_data))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('warehouse_data', warehouse_data))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
+dispatcher.add_handler(CommandHandler('go', destination))
 dispatcher.add_error_handler(error)
 
 logging.info('bot started')
