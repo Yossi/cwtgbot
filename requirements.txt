@@ -10,3 +10,4 @@ timezonefinder
 titlecase
 matplotlib
 filetype
+astral

@@ -42,30 +42,33 @@ def is_witching_hour():
 
 hsn = yaml.load(open('data/hebrew-special-numbers/styles/default.yml', encoding="utf8"), Loader=yaml.SafeLoader)
 def hebrew_numeral(val, gershayim=True):
-    '''get hebrew numerals for the number in val'''
+    '''get hebrew numerals for the number(s) in val'''
     def add_gershayim(s):
         if len(s) == 1:
             return s + hsn['separators']['geresh']
         else:
             return ''.join([s[:-1], hsn['separators']['gershayim'], s[-1:]])
 
-    k, val = divmod(val, 1000)  # typically you leave off the thousands when writing the year
+    if not isinstance(val, int):
+        return [hebrew_numeral(v, gershayim) for v in val]
+    else:
+        k, val = divmod(val, 1000)  # typically you leave off the thousands when writing the year
 
-    if val in hsn['specials']:
-        retval = hsn['specials'][val]
+        if val in hsn['specials']:
+            retval = hsn['specials'][val]
+            return add_gershayim(retval) if gershayim else retval
+
+        parts = []
+        rest = str(val)
+        l = len(rest) - 1
+        for n, d in enumerate(rest):
+            digit = int(d)
+            if digit == 0: continue
+            power = 10 ** (l-n)
+            parts.append(hsn['numerals'][power * digit])
+        retval = ''.join(parts)
+
         return add_gershayim(retval) if gershayim else retval
-
-    parts = []
-    rest = str(val)
-    l = len(rest) - 1
-    for n, d in enumerate(rest):
-        digit = int(d)
-        if digit == 0: continue
-        power = 10 ** (l-n)
-        parts.append(hsn['numerals'][power * digit])
-    retval = ''.join(parts)
-
-    return add_gershayim(retval) if gershayim else retval
 
 def warehouse_load_saved(ignore_exceptions=True, guild='full'):
     try:
