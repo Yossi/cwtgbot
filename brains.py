@@ -271,11 +271,12 @@ def main(update, context):
         for match in re.finditer(r'(?P<equip_name>.+) \/.{2,3}_(?P<equip_id>.+)', text):
             match = match.groupdict()
             output.append(f'/inspect_{match["equip_id"]} {match["equip_name"]}')
+            output.sort()
         ret.append('\n'.join(output))
 
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
     more_match = '📦Your stock:' in text
-    generic_match = re.search(r'(.+)\((\d+)\)', text)
+    generic_match = re.search(r'(.+)\((\d+)\)(?!  ?\/)', text)
     withdraw_match = re.search(r'Not enough materials|Materials needed for|Not enough resources', text)
     refund_match = re.search(r'\/g_deposit [aestchwpmkr]{0,3}\d+ (\d+)?', text)
     consolidate_match = text.startswith('/g_withdraw')
