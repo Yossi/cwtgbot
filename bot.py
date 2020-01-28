@@ -19,7 +19,7 @@ from telegram.ext import Filters
 from timezonefinder import TimezoneFinder
 from titlecase import titlecase
 
-from emeryradio import emeryradio
+from tealeyes import tealeyes
 from brains import main, warehouse_crafting
 from brains import stock_list, alch_list
 from brains import id_lookup
@@ -268,7 +268,7 @@ def now(update, context):
 @send_typing_action
 @log
 def time(update, context):
-    text = emeryradio(context.user_data)
+    text = tealeyes(context.user_data)
     logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
