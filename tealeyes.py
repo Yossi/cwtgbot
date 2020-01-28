@@ -113,7 +113,7 @@ def tealeyes(user_data):
     output.append(f"{SEASON_EMOJI[season_int]} {CW_SEASONS[season_int]} season: {CW_SEASONS[season_int + 1]} in ≈{strfdelta(countdownSeason, longcountdownformat)}")
     output.append(f'')
 
-    output.append(f"<b>Chat Wars 3 (RU)</b>: {CW3_WEEKDAYS[cw3adt.weekday()]} {cw3adt.strftime(hmsformat)} /time3")
+    output.append(f"<b>Chat Wars 3 (RU)</b>: {CW3_WEEKDAYS[cw3adt.weekday()]} {cw3adt.strftime(hmsformat)}")# /time3
     output.append(f'')
 
     usertz_str = user_data.get('timezone')
