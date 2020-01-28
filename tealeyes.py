@@ -1,10 +1,11 @@
 import bisect
-from datetime import timedelta, datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 import pytz
 from pyluach import dates, hebrewcal
 from lunarcalendar import Converter, Solar
-from astral import Astral, Location, SUN_SETTING
+import astral
+from timezonefinder import TimezoneFinder
 
 from util import hebrew_numeral
 import sesDate
@@ -21,32 +22,36 @@ CW_WEEKDAYS = ["Mânotag", "Ziestag", "Mittawehha", "Jhonarestag", "Frîatag", "
 CW3_WEEKDAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье", "Понедельник"]
 HEB_MONTHS_ENG = ["Adar", "Nisan", "Iyyar", "Sivan", "Tammuz", "Av", "Elul", "Tishrei", "Marcheshvan", "Kislev", "Tevet", "Shevat", "Adar", "Adar"]
 HEB_MONTHS_VRT = ["אדר", "ניסן", "אייר", "סיוון", "תמוז", "אב", "אלול", "תשרי", "מרחשוון", "כסלו", "טבת", "שבט", "אדר", "אדר"]
-SEASON_EMOJI = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"]
-CLOCK_FACES = ["🕛", "🕧", "🕐", "🕜", "🕑", "🕝", "🕒", "🕞", "🕓", "🕟", "🕔", "🕠", "🕕", "🕡", "🕖", "🕢", "🕗", "🕣", "🕘", "🕤", "🕙", "🕥", "🕚", "🕦", "🕛"]
+SEASON_EMOJI = "♈♉♊♋♌♍♎♏♐♑♒♓"
+CLOCK_EMOJI = "🕛🕧🕐🕜🕑🕝🕒🕞🕓🕟🕔🕠🕕🕡🕖🕢🕗🕣🕘🕤🕙🕥🕚🕦🕛"
+
+DEPRESSION = 8 + 3/5
+SUN_YAT_SEN_ERA = 2698
+WRITERS_ERA = 2637
 
 def tealeyes(user_data):
     output = []
     hmsformat = ("%H:%M:%S")
-    whmformat = ("%A %H:%M")
+    weekdayhmformat = ("%A %H:%M")
     ymdhmsformat = ("%F %H:%M:%S")
     fullformat = ("%A %F %H:%M:%S")
     countdownformat= ("{H}﻿h {M}′ {S}″")
     longcountdownformat= ("{D}﻿d {H}﻿h {M}′")
 
-    tzshown = ( #these should be chat-specific or possibly guild-specific settings
-        ( pytz.timezone("US/Pacific"), "San Francisco, San Diego" ),
-        ( pytz.timezone("US/Eastern"), "Boston, Augusta, Havana, Indianapolis" ),
-        ( pytz.timezone("Etc/GMT"), "Accra" ),
-        ( pytz.timezone("Europe/Zurich"), "Amsterdam, Bern" ),
-        ( pytz.timezone("Europe/Moscow"), "Moscow" ),
-        ( pytz.timezone("Asia/Singapore"), "Singapore, Manila, Hong Kong" ),
-        ( pytz.timezone("Pacific/Auckland"), "Kirikiriroa" )
+    timeshown = ( #these should be chat-specific or possibly guild-specific settings
+        ( (37.791279, -122.399218), "San Francisco, San Diego" ), # Union Square
+        ( (42.356528, -71.055808), "Boston, Augusta, Havana" ), # Haymarket Square
+        ( (5.545631, -0.208266), "Accra" ), # Rawlings Park
+        ( (52.374366, 4.898069), "Amsterdam, Bern" ), # De Oude Kerk
+        ( (55.754118, 37.620386), "Moscow" ), # Red Square
+        ( (1.292379, 103.852276), "Singapore, Manila, Hong Kong" ), # St. Andrew's Cathedral
+        ( (-37.787329, 175.282472), "Kirikiriroa" ) # Garden Place
     )
 
-    adjustment = -37.0 #should be admin settings for this, as we may find these need adjusting
+    adjustment = -37.0 #there should be admin settings for this, as we may find these need adjusting
     adjustment3 = -37.0
     utcdt = datetime.now(timezone.utc)
-    #utcdt = datetime(2020,1,26,22,41,47,0,timezone.utc) #for testing
+    #utcdt = datetime(1912,1,1,10,0,0,0,timezone.utc) #for testing
     cwtdt = datetime.fromtimestamp(SPEED * (utcdt.timestamp() + CW_OFFSET), tz=timezone.utc)
     cw3tdt = datetime.fromtimestamp(SPEED * (utcdt.timestamp() + CW3_OFFSET), tz=timezone.utc)
     cwadt = datetime.fromtimestamp(cwtdt.timestamp() + SPEED * adjustment, tz=timezone.utc)
@@ -59,7 +64,7 @@ def tealeyes(user_data):
         return fmt.format(**d)
 
     def get_moon():
-        a=Astral()
+        a = astral.Astral()
         moon_phase = a.moon_phase(utcdt, rtype=float)
         lunation = moon_phase / 27.99
 
@@ -85,8 +90,8 @@ def tealeyes(user_data):
         i = bisect.bisect([a[0] for a in phase_strings], lunation)
         return phase_strings[i][1]
 
-    sunmoon = "🌞" if (6 < cwadt.hour < 18) else get_moon()
-    countdownArena = timedelta(hours=24) - (utcdt - datetime(1, 1, 1, 0, 15, 0, 0, timezone.utc)) / SPEED
+    sunmoon = '🌞' if (6 < cwadt.hour < 18) else '🌙'
+    countdownArena = (datetime(1, 1, 1, 8, 15, 0, 0, timezone.utc) - utcdt) % timedelta(hours=24)
     countdownBattle = ((datetime(1, 1, 1, 6, 0, 0, 0, timezone.utc) - cwtdt) / SPEED) % timedelta(hours=8)
     countdownPeriod = ((datetime(1, 1, 1, 0, 0, 0, 0, timezone.utc) - cwadt) / SPEED) % timedelta(hours=2)
 
@@ -122,9 +127,9 @@ def tealeyes(user_data):
 
         latlon = user_data.get('location')
         if latlon:
-            loc = Location(('', '', latlon[0], latlon[1], usertz_str, 0))
-            sunset = loc.time_at_elevation(-.8, direction=SUN_SETTING)
-            nightfall = loc.time_at_elevation(-8.5, direction=SUN_SETTING)
+            loc = astral.Location(('', '', latlon[0], latlon[1], usertz_str, 0))
+            sunset = loc.time_at_elevation(-.8, direction=astral.SUN_SETTING)
+            nightfall = loc.time_at_elevation(-8.5, direction=astral.SUN_SETTING)
 
             if workdt < sunset:
                 pass
@@ -133,27 +138,42 @@ def tealeyes(user_data):
             else:
                 heb = heb + 1
 
-        output.append(f"<b>Your time</b> ({usertz_str}):")
-        output.append(f'{workdt.strftime(fullformat)}')
+        output.append(f"<b>Your time</b>: {workdt.tzname()} (GMT{workdt.strftime('%z')})")
+        output.append(f'{get_moon()} {workdt.strftime(fullformat)}')
         output.append(
             f'{heb.year} {HEB_MONTHS_ENG[heb.month]}{(" II" if heb.month == 13 else " I")if hebrewcal.Year(heb.year).leap and heb.month > 11 else ""} ' +
-            f'{heb.day} ({hebrew_numeral(heb.day)}' +
-            f' {HEB_MONTHS_VRT[heb.month]}{(" ב" if heb.month == 13 else " א") if hebrewcal.Year(heb.year).leap and heb.month > 11 else ""} {hebrew_numeral(heb.year)})')
+            f'{heb.day} · {hebrew_numeral(heb.day)}' +
+            f' {HEB_MONTHS_VRT[heb.month]}{(" ב" if heb.month == 13 else " א") if hebrewcal.Year(heb.year).leap and heb.month > 11 else ""} {hebrew_numeral(heb.year)}')
         if heb_tom:
             heb = heb_tom
             output.append(
                 f'{heb.year} {HEB_MONTHS_ENG[heb.month]}{(" II" if heb.month == 13 else " I")if hebrewcal.Year(heb.year).leap and heb.month > 11 else ""} ' +
-                f'{heb.day} ({hebrew_numeral(heb.day)}' +
-                f' {HEB_MONTHS_VRT[heb.month]}{(" ב" if heb.month == 13 else " א") if hebrewcal.Year(heb.year).leap and heb.month > 11 else ""} {hebrew_numeral(heb.year)})')
-        output.append(f'{yin.year+2698}/{yin.year+2638}年{yin.month}月{yin.day}日')
-        output.append(f'{ses.natural.year:0>5d}.{ses.natural.season:0>1d}.{ses.natural.day:0>2d} (cyclic: {ses.cyclic.great}.{ses.cyclic.small}.{ses.cyclic.year}:{ses.cyclic.season}.{ses.cyclic.week}.{ses.cyclic.day})')
+                f'{heb.day} · {hebrew_numeral(heb.day)}' +
+                f' {HEB_MONTHS_VRT[heb.month]}{(" ב" if heb.month == 13 else " א") if hebrewcal.Year(heb.year).leap and heb.month > 11 else ""} {hebrew_numeral(heb.year)}')
+        output.append(f'{yin.year + SUN_YAT_SEN_ERA}/{yin.year + WRITERS_ERA}年{yin.month}月{yin.day}日')
+        output.append(f'{ses.natural.year:0>5d}.{ses.natural.season:0>1d}.{ses.natural.day:0>2d} · cyclic {ses.cyclic.great}.{ses.cyclic.small}.{ses.cyclic.year}:{ses.cyclic.season}.{ses.cyclic.week}.{ses.cyclic.day}')
         output.append(f'')
 
-    for tz in tzshown:
-        minutes = 60 * utcdt.astimezone(tz[0]).hour + utcdt.astimezone(tz[0]).minute
-        clockface = CLOCK_FACES[(minutes + 10) // 30 % 24]
-        output.append(f'{clockface} {utcdt.astimezone(tz[0]).strftime(whmformat)} {utcdt.astimezone(tz[0]).tzname()}')
-        output.append(f"  ╰ GMT{utcdt.astimezone(tz[0]).strftime('%z')} {tz[1]}")
+    for worktime in timeshown:
+        tz_str = TimezoneFinder().timezone_at(lat=worktime[0][0], lng=worktime[0][1])
+        tz = pytz.timezone(tz_str)
+        workdt = utcdt.astimezone(tz)
+        minutes = 60 * workdt.hour + workdt.minute
+        clockface = CLOCK_EMOJI[(minutes + 10) // 30 % 24]
+        if (clockface == '🕛'):
+            ampmindicator = '☀️' if (11 * 60 < minutes < 13 * 60) else '⚫'
+        else:
+            ampmindicator = '🅰' if minutes < 12 * 60 else '🅿️'
+        loc = astral.Location(('', '', worktime[0][0], worktime[0][1], tz_str, 0))
+        loc.solar_depression = DEPRESSION
+        if loc.sunrise(workdt) > workdt or loc.dusk(workdt) < workdt:
+            sunprogress = '🌃'
+        elif loc.sunset(workdt) < workdt < loc.dusk(workdt):
+            sunprogress = '🌆'
+        else:
+            sunprogress = '🏙️'
+        output.append(f'{clockface}{ampmindicator}{sunprogress} {utcdt.astimezone(tz).strftime(weekdayhmformat)} {utcdt.astimezone(tz).tzname()}')
+        output.append(f"  ╰ GMT{utcdt.astimezone(tz).strftime('%z')} {worktime[1]}")
 
     return '\n'.join(output)
 
