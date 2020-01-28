@@ -237,7 +237,7 @@ def location(update, context):
     tf = TimezoneFinder()
     latitude, longitude = update.message.location.latitude, update.message.location.longitude
     context.user_data['location'] = latitude[:-3], longitude[:-3]
-    context.user_data['timezone'] = tf.timezone_at(lng=longitude, lat=latitude)
+    context.user_data['timezone'] = tf.timezone_at(lat=latitude, lng=longitude)
     text = f'Saving your location as {context.user_data["location"]} making your timezone be {context.user_data["timezone"]}'
     logging.info(f'bot said:\n{text}')
     send(text, update, context)
