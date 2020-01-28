@@ -148,7 +148,6 @@ def main(update, context):
         warehouse = warehouse_load_saved(guild = context.user_data.get('guild', ''))
         hours = 1.5
         now = datetime.datetime.utcnow()
-        notice = ''
         command_suffixes = set()
 
         matches = list(matches)
@@ -169,28 +168,39 @@ def main(update, context):
                 command_suffixes.add('parts')
             elif match['id'][0] in 'wuea':
                 command_suffixes.add('other')
-        print(command_suffixes)
 
+        notice = ''
         guild_stock = {}
         for suffix in command_suffixes:
-            pass
+            suf = warehouse.get(suffix, {})
+            if suf:
+                age = now - suf['timestamp']
+                if age < datetime.timedelta(hours=hours):
+                    guild_stock.update(suf['data'])
+                else:
+                    guild_stock = {}
+                    break
+            else:
+                guild_stock = {}
+                break
 
-        if False and (res := warehouse.get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
-            pass
-        else:
-            res = None
-            #notice = 'Missing current guild stock state. Consider forwarding /g_stock_res and trying again.'
+        if not guild_stock:
+            for suffix in command_suffixes:
+                notice += f'\n/g_stock_{suffix}'
+
         command = ['<code>/g_withdraw']
         missing = []
         for n, d in enumerate(matches):
             if not (n + 1) % 9:
                 command.append('</code>\n<code>/g_withdraw')
             d["number"] = d["number"] if d["number"] else "1"
-            if res:
-                diff = int(d["number"]) - res['data'].get(d['id'], 0)
+
+            if guild_stock:
+                diff = int(d["number"]) - guild_stock.get(d['id'], 0)
                 if diff > 0:
                     missing.append(f'<code>/wtb_{d["id"]}_{diff}</code>')
-                    d['number'] = res['data'].get(d['id'], 0)
+                    d['number'] = guild_stock.get(d['id'], 0)
+
             if d['number']:
                 command.append(f' {d["id"]} {d["number"]}')
         command.append('</code>')
@@ -198,6 +208,10 @@ def main(update, context):
             missing = '\n'.join([f"\nBased on data {age.seconds // 60} minutes old, need to buy:"] + missing)
         else:
             missing = ''
+
+        if notice:
+            notice = '\nMissing current guild stock state. Consider forwarding:' + notice
+
         return ''.join(command) + missing + notice
 
     def warehouse_in():
