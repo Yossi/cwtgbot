@@ -198,14 +198,17 @@ def main(update, context):
             if guild_stock:
                 diff = int(d["number"]) - guild_stock.get(d['id'], 0)
                 if diff > 0:
-                    missing.append(f'<code>/wtb_{d["id"]}_{diff}</code>')
+                    if id_lookup[d['id']]['Exchange']:
+                        missing.append(f"<code>/wtb_{d['id']}_{diff}</code> {titlecase(id_lookup[d['id']]['Name'])}")
+                    else:
+                        missing.append(f"<code>/craft_{d['id']} {diff}</code> {titlecase(id_lookup[d['id']]['Name'])}")
                     d['number'] = guild_stock.get(d['id'], 0)
 
             if d['number']:
                 command.append(f' {d["id"]} {d["number"]}')
         command.append('</code>')
         if missing:
-            missing = '\n'.join([f"\nBased on data {age.seconds // 60} minutes old, need to buy:"] + missing)
+            missing = '\n'.join([f"\nBased on data {age.seconds // 60} minutes old, also need to get:"] + missing)
         else:
             missing = ''
 
