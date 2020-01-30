@@ -666,17 +666,19 @@ if __name__ == '__main__':
         'a32b Hunter Armor x 1',
     }
 
-    name = 'warehouse'
+    class Mock:
+        pass
+
+    u = Mock()
+    u.effective_message = Mock()
+    c = Mock()
+    name = 'missing'
     d = {name: d[name]}
     for name, l in d.items():
+        u.effective_message.text = l
+        c.user_data = {'save': {'01': '', '02': '', '08': ''}}
         print(name)
-        #pprint(l)
-        pprint(main(l, {'save': {'01': '', '02': '', '08': ''}}))
-
-
-
-
-
+        pprint(main(u, c))
 
     #  'exchange': 'Here you can buy and sell some items.\n'
     #              'To find a tradable item just type:\n'
