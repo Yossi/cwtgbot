@@ -198,10 +198,13 @@ def main(update, context):
             if guild_stock:
                 diff = int(d["number"]) - guild_stock.get(d['id'], 0)
                 if diff > 0:
-                    if id_lookup[d['id']]['Exchange']:
-                        missing.append(f"<code>/wtb_{d['id']}_{diff}</code> {titlecase(id_lookup[d['id']]['Name'])}")
+                    if d['id'][0] not in 'rk':
+                        if id_lookup[d['id']]['Exchange']:
+                            missing.append(f"<code>/wtb_{d['id']}_{diff}</code> {titlecase(id_lookup[d['id']]['Name'])}")
+                        else:
+                            missing.append(f"<code>/craft_{d['id']} {diff}</code> {titlecase(id_lookup[d['id']]['Name'])}")
                     else:
-                        missing.append(f"<code>/craft_{d['id']} {diff}</code> {titlecase(id_lookup[d['id']]['Name'])}")
+                        missing.append(f"<code>{d['id']} {diff}</code> {titlecase(id_lookup[d['id']]['Name'])}")
                     d['number'] = guild_stock.get(d['id'], 0)
 
             if d['number']:
