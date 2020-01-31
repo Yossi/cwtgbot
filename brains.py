@@ -340,6 +340,7 @@ def stock_list(context):
         for x in range(1, 39):
             if f'{x:02}' in id_lookup:
                 res['data'][f'{x:02}'] = res['data'].get(f'{x:02}', 0)
+
         for id in sorted(res['data'], key=res['data'].get, reverse=True):
             trade = '✅' if id_lookup[id]['Exchange'] else '❌'
             output.append(f'{trade}<code>{id}</code> {titlecase(id_lookup[id]["Name"])} x {res["data"][id]}')
@@ -377,8 +378,13 @@ def alch_list(context):
     now = datetime.datetime.utcnow()
     if (alch := warehouse.get('alch', {})) and (age := now - alch['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_alch data {age.seconds // 60} minutes old:\n']
+        for x in range(39, 70):
+            if f'{x:02}' in id_lookup:
+                alch['data'][f'{x:02}'] = alch['data'].get(f'{x:02}', 0)
+
         for id in sorted(alch['data'], key=alch['data'].get, reverse=True):
             output.append(f'<code>{id}</code> {titlecase(id_lookup[id]["Name"])} x {alch["data"][id]}')
+
         responses.append('\n'.join(output))
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_alch and try again')
