@@ -236,7 +236,7 @@ def setting_saver(update, context, section):
 def location(update, context):
     tf = TimezoneFinder()
     latitude, longitude = update.message.location.latitude, update.message.location.longitude
-    context.user_data['location'] = latitude[:-3], longitude[:-3]
+    context.user_data['location'] = round(latitude, 3), round(longitude, 3)
     context.user_data['timezone'] = tf.timezone_at(lat=latitude, lng=longitude)
     text = f'Saving your location as {context.user_data["location"]} making your timezone be {context.user_data["timezone"]}'
     logging.info(f'bot said:\n{text}')
