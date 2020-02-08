@@ -131,9 +131,9 @@ def tealeyes(user_data):
             sunset = loc.time_at_elevation(-.8, direction=astral.SUN_SETTING)
             nightfall = loc.time_at_elevation(-8.5, direction=astral.SUN_SETTING)
 
-            if workdt < sunset:
+            if workdt.time() < sunset.time():
                 pass
-            elif sunset < workdt < nightfall:
+            elif sunset.time() < workdt.time() < nightfall.time():
                 heb_tom = heb + 1
             else:
                 heb = heb + 1
