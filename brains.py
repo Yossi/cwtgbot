@@ -432,9 +432,7 @@ def warehouse_crafting(context):
                 if not num_craftable and not context.args:
                     continue
                 if context.args and context.args[0].lower() != 'all':
-                    if context.args[0].lower() in name:
-                        pass
-                    elif context.args[0].isdigit() and 0 < things_missing <= int(context.args[0]):
+                    if context.args[0].isdigit() and 0 < things_missing <= int(context.args[0]):
                         pass
                     elif context.args[0].lower().startswith('overstock'):
                         try:
@@ -444,7 +442,13 @@ def warehouse_crafting(context):
                         if count_parts/parts_needed <= multiple and count_recipies <= multiple:
                             continue
                     else:
-                        continue
+                        try:
+                            regex = re.compile(context.args[0].lower())
+                            matches = regex.findall(name)
+                            if not matches:
+                                continue
+                        except re.error:
+                            continue
 
                 output.append(f'{ready} {id} {titlecase(name)} <code>{finished_part_id}</code>')
                 if num_craftable:
