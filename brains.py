@@ -450,19 +450,22 @@ def warehouse_crafting(context):
                         except re.error:
                             continue
 
-                output.append(f'{ready} {id} {titlecase(name)} <code>{finished_part_id}</code>')
+                hold = []
+                hold.append(f'{ready} {id} {titlecase(name)} <code>{finished_part_id}</code>')
                 if num_craftable:
-                    output.append(f'<code> {num_craftable}</code> Can be made')
-                output.append(f'<code>{parts_needed} {part_name}s per recipe</code>')
-                output.append(f'<code>  {count_recipies} Recipe{"s" if count_recipies != 1 else ""}</code>')
-                output.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code>')
-                output.append(' ')
+                    hold.append(f'<code> {num_craftable}</code> Can be made')
+                hold.append(f'<code>{parts_needed} {part_name}s per recipe</code>')
+                hold.append(f'<code>  {count_recipies} Recipe{"s" if count_recipies != 1 else ""}</code>')
+                hold.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code>')
+                hold.append(' ')
+                hold = '\n'.join(hold)
 
-                page_counter += 1
-                if page_counter >= 20:
+                page_counter += len(hold)
+                if page_counter >= 3000: # tg officially supports messages as long as 4096, but the formatting gives up around 3000
                     responses.append('\n'.join(output))
                     page_counter = 0
                     output = []
+                output.append(hold)
 
         result = '\n'.join(output)
         if result:
