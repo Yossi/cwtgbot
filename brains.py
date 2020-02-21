@@ -189,10 +189,9 @@ def main(update, context):
                 notice += f'\n/g_stock_{suffix}'
 
         command = ['<code>/g_withdraw']
+        have = []
         missing = []
-        for n, d in enumerate(matches):
-            if not (n + 1) % 9:
-                command.append('</code>\n<code>/g_withdraw')
+        for d in matches:
             d["number"] = d["number"] if d["number"] else "1"
 
             if guild_stock:
@@ -208,17 +207,28 @@ def main(update, context):
                     d['number'] = guild_stock.get(d['id'], 0)
 
             if d['number']:
-                command.append(f' {d["id"]} {d["number"]}')
-        command.append('</code>')
+                have.append(f' {d["id"]} {d["number"]}')
+
+        if have:
+            command = ['<code>/g_withdraw']
+            for n, id in enumerate(have):
+                if not (n + 1) % 9:
+                    command.append('</code>\n<code>/g_withdraw')
+                command.append(id)
+            command.append('</code>\n\n')
+            command = ''.join(command)
+        else:
+            command = ''
+
         if missing:
-            missing = '\n'.join([f"\nBased on data {age.seconds // 60} minutes old, also need to get:"] + missing)
+            missing = '\n'.join([f"Based on data {age.seconds // 60} minutes old, need to get:"] + missing)
         else:
             missing = ''
 
         if notice:
-            notice = '\nMissing current guild stock state. Consider forwarding:' + notice
+            notice = 'Missing current guild stock state. Consider forwarding:' + notice
 
-        return ''.join(command) + missing + notice
+        return command + missing + notice
 
     def warehouse_in():
         followup = {
