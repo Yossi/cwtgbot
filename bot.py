@@ -17,7 +17,6 @@ from telegram.ext import Updater, PicklePersistence
 from telegram.ext import CommandHandler, MessageHandler
 from telegram.ext import Filters
 from timezonefinder import TimezoneFinder
-from titlecase import titlecase
 
 from tealeyes import tealeyes
 from brains import main, warehouse_crafting
@@ -219,10 +218,10 @@ def setting_saver(update, context, section):
     res = [f'{"Saving" if section == "save" else "Ignoring"} {"these" if len(settings) > 1 else "this"}:']
     cmd = [f'/{section}']
     for id in settings:
-        name = id_lookup.get(id, {}).get('Name', 'unknown')
+        name = id_lookup.get(id, {}).get('name', 'unknown')
         count = context.user_data[section][id]
         id_count = f'{id}{"," if count else ""}{count}'
-        res.append(f' <code>{id_count}</code> {titlecase(name)}')
+        res.append(f' <code>{id_count}</code> {name}')
         cmd.append(id_count)
     if settings:
         res.append(f'<code>{" ".join(cmd)}</code>')

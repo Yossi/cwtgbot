@@ -7,7 +7,6 @@ pyluach
 pytz
 PyYAML
 timezonefinder
-titlecase
 matplotlib
 filetype
 astral

@@ -9,25 +9,8 @@ import filetype
 
 def scrape_data(fp):
     '''get itemcode table and stuff it in a pickle'''
-    data = []
-    step = 500
-    for offset in range(0, step*4, step):
-        base = 'https://chatwars-wiki.de/index.php?title=Special:Ask/'
-        settings = f'format=csv/searchlabel=CSV/offset={offset}/limit={step}/prettyprint=true/unescape=true'
-        q = '/mainlabel=Name/[[ItemID::+]]/?ItemID/?Weight/?BoolExchange=Exchange/?BoolDepositGuild=Guild'
-        query = quote(q, safe='=/:+').replace('%', '-')
-        url = base+quote(settings+query, safe=':/')
-        result = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-        for item in csv.DictReader(result.content.decode('utf-8')[1:].splitlines()):
-            item['Name'] = item['Name'].lower()
-            item['ItemID'] = item['ItemID'].lower()
-            item['Weight'] = int(item['Weight']) if item['Weight'] else None
-            item['Exchange'] = item['Exchange'] == 'true'
-            if item['Guild'] == '':
-                item['Guild'] = None
-            else:
-                item['Guild'] = item['Guild'] == 'true'
-            data.append(item)
+    url = 'https://raw.githubusercontent.com/AVee/cw_wiki_sync/master/data/resources.json'
+    data = requests.get(url).json()['items']
     pickle.dump(data, fp)
 
 def is_witching_hour():

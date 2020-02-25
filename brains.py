@@ -6,13 +6,12 @@ import datetime
 from pprint import pprint
 from pathlib import Path
 from collections import defaultdict
-from titlecase import titlecase
 import matplotlib.pyplot as plt
 
 from util import scrape_data, is_witching_hour, warehouse_load_saved
 
 
-if not Path("data.dict").is_file():
+if not Path('data.dict').is_file():
     with open('data.dict', 'wb') as fp:
         scrape_data(fp)
 with open('data.dict', 'rb') as fp:
@@ -20,8 +19,8 @@ with open('data.dict', 'rb') as fp:
     id_lookup = {}
     name_lookup = {}
     for item in data:
-        id_lookup[item['ItemID']] = item
-        name_lookup[item['Name']] = item
+        id_lookup[item['id']] = item
+        name_lookup[item['name'].lower()] = item
 
 
 def main(update, context):
@@ -60,14 +59,14 @@ def main(update, context):
             name = name.replace('📃', '')
             if name.startswith('/sg_'):
                 name = name.partition(' ')[2]
-            id = name_lookup.get(name.lower(), {}).get('ItemID')
+            id = name_lookup.get(name.lower(), {}).get('id')
             if not id and '_' in name:
                 id = item.strip().rpartition('_')[2]
             if id not in id_lookup: continue
-            if not id_lookup[id]['Guild'] and id[0] not in 'kr': continue
+            if not id_lookup[id]['depositable'] and id[0] not in 'kr': continue
             count_total = int(match[2])
             if id in context.user_data.get('save', {}):
-                max_weight = 1000 // id_lookup[id]['Weight']
+                max_weight = 1000 // id_lookup[id]['weight']
                 count_keep = context.user_data['save'][id]
                 if not count_keep:
                     count_keep = count_total
@@ -138,7 +137,7 @@ def main(update, context):
             d = match.groupdict()
             count[d['id']] += int(d['number'])
         for id, number in count.items():
-            response.append(f'{id_lookup[id]["Name"].capitalize()} x {number}\n')
+            response.append(f'{id_lookup[id]["name"]} x {number}\n')
             command.append({'id': id, 'number': number})
         ret.append(f'{"".join(response)}\n{withdraw_parts(command)}')
 
@@ -153,7 +152,7 @@ def main(update, context):
         matches = list(matches)
         for match in matches:
             if match.get('name'):
-                match['id'] = name_lookup[match['name'].strip().lower()]['ItemID']
+                match['id'] = name_lookup[match['name'].strip().lower()]['id']
 
             if match['id'][0].isdigit():
                 if int(match['id']) <= 38:
@@ -198,12 +197,12 @@ def main(update, context):
                 diff = int(d["number"]) - guild_stock.get(d['id'], 0)
                 if diff > 0:
                     if d['id'][0] not in 'rk':
-                        if id_lookup[d['id']]['Exchange']:
-                            missing.append(f"<code>/wtb_{d['id']}_{diff}</code> {titlecase(id_lookup[d['id']]['Name'])}")
+                        if id_lookup[d['id']]['exchange']:
+                            missing.append(f"<code>/wtb_{d['id']}_{diff}</code> {id_lookup[d['id']]['name']}")
                         else:
-                            missing.append(f"<code>/craft_{d['id']} {diff}</code> {titlecase(id_lookup[d['id']]['Name'])}")
+                            missing.append(f"<code>/craft_{d['id']} {diff}</code> {id_lookup[d['id']]['name']}")
                     else:
-                        missing.append(f"<code>{d['id']} {diff}</code> {titlecase(id_lookup[d['id']]['Name'])}")
+                        missing.append(f"<code>{d['id']} {diff}</code> {id_lookup[d['id']]['name']}")
                     d['number'] = guild_stock.get(d['id'], 0)
 
             if d['number']:
@@ -352,22 +351,22 @@ def stock_list(context):
                 res['data'][f'{x:02}'] = res['data'].get(f'{x:02}', 0)
 
         for id in sorted(res['data'], key=res['data'].get, reverse=True):
-            trade = '✅' if id_lookup[id]['Exchange'] else '❌'
-            output.append(f'{trade}<code>{id}</code> {titlecase(id_lookup[id]["Name"])} x {res["data"][id]}')
+            trade = '✅' if id_lookup[id]['exchange'] else '❌'
+            output.append(f'{trade}<code>{id}</code> {id_lookup[id]["name"]} x {res["data"][id]}')
 
-        sort_by_weight = {id: res['data'][id]*id_lookup[id]['Weight'] for id in res['data']}
+        sort_by_weight = {id: res['data'][id]*id_lookup[id]['weight'] for id in res['data']}
         sort_by_weight = sorted(sort_by_weight, key=sort_by_weight.get, reverse=True)
         x = [
             [res['data'][id] for id in sort_by_weight],
-            [res['data'][id]*(id_lookup[id]['Weight']-1) if id_lookup[id]['Weight'] == 2 else 0 for id in sort_by_weight],
-            [res['data'][id]*(id_lookup[id]['Weight']-1) if id_lookup[id]['Weight'] >= 3 else 0 for id in sort_by_weight]
+            [res['data'][id]*(id_lookup[id]['weight']-1) if id_lookup[id]['weight'] == 2 else 0 for id in sort_by_weight],
+            [res['data'][id]*(id_lookup[id]['weight']-1) if id_lookup[id]['weight'] >= 3 else 0 for id in sort_by_weight]
         ]
         r = range(len(sort_by_weight))
         plt.clf()  # clear plot, because it doesn't get cleared from last run
         plt.barh(r, x[0])
         plt.barh(r, x[1], left=x[0], color=(1, .6, 0))  # some color between yellow and orange
         plt.barh(r, x[2], left=x[0], color='red')
-        plt.yticks(r, [f'{id_lookup[id]["Name"]} {id}' for id in sort_by_weight], fontsize='8')
+        plt.yticks(r, [f'{id_lookup[id]["name"].lower()} {id}' for id in sort_by_weight], fontsize='8')
         plt.legend(loc='upper right', labels=['Count', 'Double Weight', 'Triple Weight'])
         plt.subplots_adjust(left=0.3)
         buf = io.BytesIO()
@@ -393,7 +392,7 @@ def alch_list(context):
                 alch['data'][f'{x:02}'] = alch['data'].get(f'{x:02}', 0)
 
         for id in sorted(alch['data'], key=alch['data'].get, reverse=True):
-            output.append(f'<code>{id}</code> {titlecase(id_lookup[id]["Name"])} x {alch["data"][id]}')
+            output.append(f'<code>{id}</code> {id_lookup[id]["name"]} x {alch["data"][id]}')
 
         responses.append('\n'.join(output))
     else:
@@ -434,9 +433,9 @@ def warehouse_crafting(context):
                 things_missing = int(not bool(count_recipies)) + max(parts_needed - count_parts, 0)
                 num_craftable = min(count_recipies, complete_parts_sets)
                 ready = '✅' if num_craftable else '❌'
-                name = id_lookup["r"+id]['Name'].rpartition(" ")[0]
-                finished_part_id = name_lookup[name]['ItemID']
-                part_name = titlecase(id_lookup["k"+id]['Name'].rpartition(" ")[2])
+                name = id_lookup["r"+id]['name'].rpartition(" ")[0]
+                finished_part_id = name_lookup[name.lower()]['id']
+                part_name = id_lookup["k"+id]['name'].rpartition(" ")[2]
 
                 # Getting through this gauntlet without hitting a continue means you get displayed
                 if not num_craftable and not context.args:
@@ -454,14 +453,14 @@ def warehouse_crafting(context):
                     else:
                         try:
                             regex = re.compile(context.args[0].lower())
-                            matches = regex.findall(name)
+                            matches = regex.findall(name.lower())
                             if not matches:
                                 continue
                         except re.error:
                             continue
 
                 hold = []
-                hold.append(f'{ready} {id} {titlecase(name)} <code>{finished_part_id}</code>')
+                hold.append(f'{ready} {id} {name} <code>{finished_part_id}</code>')
                 if num_craftable:
                     hold.append(f'<code> {num_craftable}</code> Can be made')
                 hold.append(f'<code>{parts_needed} {part_name}s per recipe</code>')
