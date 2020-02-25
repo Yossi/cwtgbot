@@ -546,6 +546,9 @@ if __name__ == '__main__':
         '📃Royal Gauntlets recipe (1) /view_r41\n'
         'Royal Helmet fragment (1)',
 
+    'crafting2':
+        '📃Royal Gauntlets recipe (1) /view_r41\n',
+
     'missing':
         'Not enough materials. Missing:\n'
         ' 11 x Powder\n'
@@ -692,6 +695,46 @@ if __name__ == '__main__':
         'a34a Hunter Boots x 1\n'
         'a33b Hunter Helmet x 1\n'
         'a32b Hunter Armor x 1',
+
+    'inv':
+        '🎽Equipment +88⚔️+108🛡\n'
+        '⚡️+3 Imperial Axe +26⚔️ +25🛡 /off_u119\n'
+        'Lion Knife +13⚔️ /off_w46\n'
+        'Griffin Helmet +11⚔️ +18🛡 /off_a84\n'
+        'Ghost Gloves +8⚔️ +13🛡 /off_u121\n'
+        'Griffin Armor +16⚔️ +34🛡 /off_u122\n'
+        'Ghost Boots +10⚔️ +15🛡 /off_u120\n'
+        '🐉Silver Aries ring /off_s2s\n'
+        '🐉Gold Taurus amulet /off_s3g\n'
+        'Storm Cloak +4⚔️ +3🛡 /off_u118\n'
+        '\n'
+        '🎒Bag(2/15):\n'
+        'Crusader Shield  +3⚔️ +14🛡 /on_u114\n'
+        'Torch  /on_tch',
+
+    'inv2':
+        '🎽Equipment +102⚔️+126🛡\n'
+        '⚡️+4 Galadhrim Nightfall Bow +44⚔️ +16🛡 /off_u178\n'
+        'Compound arrow (88) /off_518\n'
+        '⚡️+1 Griffin Helmet +11⚔️ +20🛡 /off_u230\n'
+        '⚡️+4 Ghost Gloves +10⚔️ +21🛡 /off_u220\n'
+        '⚡️+4 Ghost Armor +17⚔️ +37🛡 /off_u212\n'
+        '⚡️+4 Ghost Boots +10⚔️ +21🛡 /off_u204\n'
+        '🐉Silver Aries ring /off_s2s\n'
+        '🐉Gold Taurus amulet /off_s3g\n'
+        '⚡️+4 Durable Cloak +10⚔️ +11🛡 /off_u242\n'
+        '\n'
+        '🎒Bag(10/15):\n'
+        'Ghost dagger  +13⚔️ +2🛡 /on_u190\n'
+        'Short sword  +3⚔️ /on_w02\n'
+        'Wooden sword  +1⚔️ /on_w01\n'
+        'Gloves  +1🛡 /on_a16\n'
+        'Kitchen knife  +1⚔️ /on_w13\n'
+        'Silver arrow (153)  /on_512\n'
+        'Hat  +1🛡 /on_a06\n'
+        'Doomblade Sword  +36⚔️ +1🛡 /on_u138\n'
+        'Cloth jacket  +2🛡 /on_a01\n'
+        'Wooden arrow (100)  /on_504',
     }
 
     class Mock:
@@ -700,38 +743,12 @@ if __name__ == '__main__':
     u = Mock()
     u.effective_message = Mock()
     c = Mock()
-    name = 'missing'
-    d = {name: d[name]}
-    for name, l in d.items():
+    e = {}
+    names = ['inv', 'inv2', 'equipment', 'misc', 'crafting', 'crafting2', 'stock', 'sg_stock']
+    for name in names:
+        e[name] = d[name]
+    for name, l in e.items():
         u.effective_message.text = l
         c.user_data = {'save': {'01': '', '02': '', '08': ''}}
-        print(name)
-        pprint(main(u, c))
-
-    #  'exchange': 'Here you can buy and sell some items.\n'
-    #              'To find a tradable item just type:\n'
-    #              '/t [item name]\n'
-    #              'Example:\n'
-    #              '/t coal\n'
-    #              '\n'
-    #              'Your deals (9/11):\n'
-    #              'Thread\n'
-    #              '1000 x 1000💰 [Selling] /rm_blatt6nqqm6jf52f7d40\n'
-    #              'Thread\n'
-    #              '1000 x 9💰 [Selling] /rm_blattknqqm6jf52f7ep0\n'
-    #              'String\n'
-    #              '2 x 2💰 [Selling] /rm_blr9ujvqqm6kjt662q30\n'
-    #              'Bone\n'
-    #              '45 x 9💰 [Selling] /rm_blrd4qfqqm6kjt667b40\n'
-    #              'Cloth\n'
-    #              '127 x 9💰 [Selling] /rm_blrd4sfqqm6kjt667beg\n'
-    #              'Leather\n'
-    #              '109 x 9💰 [Selling] /rm_blrd52vqqm6kjt667c0g\n'
-    #              'Pelt\n'
-    #              '226 x 9💰 [Selling] /rm_blrd55fqqm6kjt667c90\n'
-    #              'Powder\n'
-    #              '225 x 9💰 [Selling] /rm_blrd577qqm6kjt667ceg\n'
-    #              'Thread\n'
-    #              '448 x 9💰 [Selling] /rm_blrd58fqqm6kjt667chg\n'
-    #              '\n'
-    #              'Your last 10 comitted trades: /trades',
+        print(f',"{name}":')
+        main(u, c)
