@@ -184,7 +184,7 @@ def main(update, context, testing=False):
                 break
 
         if not guild_stock:
-            for suffix in command_suffixes:
+            for suffix in sorted(command_suffixes):
                 notice += f'\n/g_stock_{suffix}'
 
         command = ['<code>/g_withdraw']
@@ -291,14 +291,14 @@ def main(update, context, testing=False):
 
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
     more_match = '📦Your stock:' in text
-    generic_match = re.search(r'(.+)\((\d+)\)(?!  ?\/)', text)
+    generic_match = re.search(r'(.+)\((\d+)\)', text) # (?!  ?\/)
     withdraw_match = re.search(r'Not enough materials|Materials needed for|Not enough resources', text)
     refund_match = re.search(r'\/g_deposit [aestchwpmkr]{0,3}\d+ (\d+)?', text)
     consolidate_match = text.startswith('/g_withdraw')
     rerequest_match = '/g_receive' in text
     warehouse_match = 'Guild Warehouse:' in text
     guild_match = re.search(r'(?P<castle_sign>[(🐺🐉🌑🦌🥔🦅🦈)])\[(?P<guild>[A-Z\d]{2,3})\]', text)
-    equipment_match = re.search(r'(?P<equip_name>.+) \/.{2,3}_(?P<equip_id>.+)', text)
+    equipment_match = '🎽Equipment' in text
 
     matched_regexs = {
         'storage_match': bool(storage_match),
