@@ -23,7 +23,7 @@ with open('data.dict', 'rb') as fp:
         name_lookup[item['name'].lower()] = item
 
 
-def main(update, context):
+def main(update, context, testing=False):
     '''returns a list of strings that are then each sent as a separate message'''
     text = update.effective_message.text
     ret = []
@@ -300,19 +300,19 @@ def main(update, context):
     guild_match = re.search(r'(?P<castle_sign>[(🐺🐉🌑🦌🥔🦅🦈)])\[(?P<guild>[A-Z\d]{2,3})\]', text)
     equipment_match = re.search(r'(?P<equip_name>.+) \/.{2,3}_(?P<equip_id>.+)', text)
 
-    matches = [
-        storage_match,
-        more_match,
-        generic_match,
-        withdraw_match,
-        refund_match,
-        consolidate_match,
-        rerequest_match,
-        warehouse_match,
-        guild_match,
-        equipment_match,
-    ]
-    #print(matches)
+    matched_regexs = {
+        'storage_match': bool(storage_match),
+        'more_match': bool(more_match),
+        'generic_match': bool(generic_match),
+        'withdraw_match': bool(withdraw_match),
+        'refund_match': bool(refund_match),
+        'consolidate_match': bool(consolidate_match),
+        'rerequest_match': bool(rerequest_match),
+        'warehouse_match': bool(warehouse_match),
+        'guild_match': bool(guild_match),
+        'equipment_match': bool(equipment_match),
+    }
+    #print(matched_regexs)
 
     if storage_match:
         storage(storage_match)
@@ -337,7 +337,10 @@ def main(update, context):
     else:
         ret.append('Unclear what to do with this.')
 
+    if testing:
+        return ret, matched_regexs
     return ret
+
 
 def stock_list(context):
     warehouse = warehouse_load_saved(guild = context.user_data.get('guild', ''))
@@ -624,6 +627,23 @@ if __name__ == '__main__':
         '🏷Gloves (1) /bind_a16\n'
         '🏷Royal Guard Cape (1) /bind_a26',
 
+    'equipment2': # get the scroll
+        'Azure murky potion (9) /use_tw2\n'
+        'Bottle of Greed (13) /use_p09\n'
+        'Bottle of Rage (5) /use_p03\n'
+        'Crimson murky potion (9) /use_tw3\n'
+        'Potion of Greed (13) /use_p08\n'
+        'Potion of Nature (2) /use_p11\n'
+        'Potion of Rage (6) /use_p02\n'
+        'Pouch of gold (10) /use_100\n'
+        'Vial of Greed (13) /use_p07\n'
+        'Vial of Health (1) /use_p22\n'
+        'Vial of Rage (6) /use_p01\n'
+        'Vial of Twilight (14) /use_p16\n'
+        'Wrapping (10) \n'
+        '🍫Chocolate (5) /use_e9\n'
+        '📙Scroll of Rage (1) /use_s07',
+
     'consolidate':
         '/g_withdraw a09 13 02 10 11 1 05 37 08 4 17 2 01 6 06 21'
         '/g_withdraw 04 39 13 4 07 19 16 2 10 3 03 24 '
@@ -744,11 +764,11 @@ if __name__ == '__main__':
     u.effective_message = Mock()
     c = Mock()
     e = {}
-    names = ['inv', 'inv2', 'equipment', 'misc', 'crafting', 'crafting2', 'stock', 'sg_stock']
+    names = ['crafting2']
     for name in names:
         e[name] = d[name]
     for name, l in e.items():
         u.effective_message.text = l
         c.user_data = {'save': {'01': '', '02': '', '08': ''}}
         print(f',"{name}":')
-        main(u, c)
+        print(main(u, c, True))
