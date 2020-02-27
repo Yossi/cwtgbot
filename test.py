@@ -316,6 +316,130 @@ cases = [
                 'equipment_match': False
             },
     },
+    {   'name': 'reinforcement',
+        'input':
+            'Materials needed for reinforcement:\n'
+            '1 x Solvent\n'
+            '12 x Pelt\n'
+            '2 x Stick\n'
+            '6 x Charcoal\n'
+            '4 x Bone\n'
+            '1 x Thread\n'
+            '2 x Powder\n'
+            '5 x Coal\n'
+            '\n'
+            '💧Mana: 33\n'
+            '💰Gold: 1\n'
+            '/wsr_ResPh_u115_confirm to make an order',
+        'output':
+            [
+                'Materials needed for reinforcement:\n'
+                '1 x Solvent\n'
+                '12 x Pelt\n'
+                '2 x Stick\n'
+                '6 x Charcoal\n'
+                '4 x Bone\n'
+                '1 x Thread\n'
+                '2 x Powder\n'
+                '5 x Coal\n'
+                '\n'
+                '💧Mana: 33\n'
+                '💰Gold: 1\n'
+                '/wsr_ResPh_u115_confirm to make an order\n'
+                'Recipient shall send to guild leader/squire:\n'
+                '<code>/g_withdraw 16 1 03 12 02 2 06 6 04 4 01 1 07 2 05 5</code>\n'
+                '\n'
+                'Missing current guild stock state. Consider forwarding:\n'
+                '/g_stock_res'],
+        'matches':
+            {
+                'storage_match': False,
+                'more_match': False,
+                'generic_match': False,
+                'withdraw_match': True,
+                'refund_match': False,
+                'consolidate_match': False,
+                'rerequest_match': False,
+                'warehouse_match': False,
+                'guild_match': False,
+                'equipment_match': False
+            },
+    },
+    {   'name': 'repair',
+        'input':
+            'Materials needed for repair:\n'
+            '18 x Charcoal\n'
+            '22 x Powder\n'
+            '22 x Iron ore\n'
+            '12 x Bone\n'
+            '16 x Silver ore\n'
+            '19 x Coal\n'
+            '18 x Stick\n'
+            '80 x Pelt\n'
+            '19 x Cloth\n'
+            '\n'
+            '💧Mana: 226\n'
+            '💰Gold: 2\n'
+            '/wsr_mz1CQ_u115_confirm to make an order',
+        'output':
+            [
+                'Materials needed for repair:\n'
+                '18 x Charcoal\n'
+                '22 x Powder\n'
+                '22 x Iron ore\n'
+                '12 x Bone\n'
+                '16 x Silver ore\n'
+                '19 x Coal\n'
+                '18 x Stick\n'
+                '80 x Pelt\n'
+                '19 x Cloth\n'
+                '\n'
+                '💧Mana: 226\n'
+                '💰Gold: 2\n'
+                '/wsr_mz1CQ_u115_confirm to make an order\n'
+                'Recipient shall send to guild leader/squire:\n'
+                '<code>/g_withdraw 06 18 07 22 08 22 04 12 10 16 05 19 02 18 03 80</code>\n'
+                '<code>/g_withdraw 09 19</code>\n'
+                '\n'
+                'Missing current guild stock state. Consider forwarding:\n'
+                '/g_stock_res'],
+        'matches':
+            {
+                'storage_match': False,
+                'more_match': False,
+                'generic_match': False,
+                'withdraw_match': True,
+                'refund_match': False,
+                'consolidate_match': False,
+                'rerequest_match': False,
+                'warehouse_match': False,
+                'guild_match': False,
+                'equipment_match': False
+            },
+    },
+    {   'name': 'wrapped_equipment',
+        'input':
+            '🏷Gloves (1) /bind_a16\n'
+            '🏷Crusader Shield (1) /bind_u114\n'
+            '🏷Royal Guard Cape (1) /bind_a26',
+        'output':
+            ['<code>/g_deposit a49</code> Crusader Shield'],
+        'matches':
+            {
+                'storage_match': False,
+                'more_match': False,
+                'generic_match': True,
+                'withdraw_match': False,
+                'refund_match': False,
+                'consolidate_match': False,
+                'rerequest_match': False,
+                'warehouse_match': False,
+                'guild_match': False,
+                'equipment_match': False
+            },
+    },
+
+
 ]
 
 

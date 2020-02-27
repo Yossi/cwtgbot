@@ -56,7 +56,7 @@ def main(update, context, testing=False):
             if not match: continue
             name = match[1].strip()
             if 'murky' in name: continue
-            name = name.replace('📃', '')
+            name = name.replace('📃', '').replace('🏷', '')
             if name.startswith('/sg_'):
                 name = name.partition(' ')[2]
             id = name_lookup.get(name.lower(), {}).get('id')
@@ -241,7 +241,7 @@ def main(update, context, testing=False):
             ret.append('Must be a forward from @chtwrsbot. Try again.')
         else:
             now = update.message.forward_date
-            warehouse = warehouse_load_saved(True)
+            warehouse = warehouse_load_saved()
             data = {}
             for row in text.split('\n')[1:]:
                 s = row.split()
@@ -608,26 +608,12 @@ if __name__ == '__main__':
         '💰Gold: 2\n'
         '/wsr_mz1CQ_u115_confirm to make an order',
 
-    'misc':
-        'Azure murky potion (4) /use_tw2\n'
-        'Bottle of Peace (1) /use_p06\n'
-        'Bottle of Rage (5) /use_p03\n'
-        'Crimson murky potion (4) /use_tw3\n'
-        'Potion of Greed (4) /use_p08\n'
-        'Potion of Nature (2) /use_p11\n'
-        'Potion of Rage (6) /use_p02\n'
-        'Pouch of gold (10) /use_100\n'
-        'Vial of Rage (6) /use_p01\n'
-        'Vial of Twilight (4) /use_p16\n'
-        'Wrapping (10)\n'
-        '📙Scroll of Peace (2) /use_s08\n'
-        '📙Scroll of Rage (1) /use_s07',
-
     'equipment':
         '🏷Gloves (1) /bind_a16\n'
+        '🏷Crusader Shield (1) /bind_u114\n'
         '🏷Royal Guard Cape (1) /bind_a26',
 
-    'equipment2': # get the scroll
+    'misc': # get the scrolls too
         'Azure murky potion (9) /use_tw2\n'
         'Bottle of Greed (13) /use_p09\n'
         'Bottle of Rage (5) /use_p03\n'
@@ -642,6 +628,7 @@ if __name__ == '__main__':
         'Vial of Twilight (14) /use_p16\n'
         'Wrapping (10) \n'
         '🍫Chocolate (5) /use_e9\n'
+        '📙Scroll of Peace (2) /use_s08\n'
         '📙Scroll of Rage (1) /use_s07',
 
     'consolidate':
@@ -764,11 +751,11 @@ if __name__ == '__main__':
     u.effective_message = Mock()
     c = Mock()
     e = {}
-    names = ['crafting2']
+    names = ['equipment']
     for name in names:
         e[name] = d[name]
     for name, l in e.items():
         u.effective_message.text = l
         c.user_data = {'save': {'01': '', '02': '', '08': ''}}
-        print(f',"{name}":')
+        print(f'"{name}":')
         print(main(u, c, True))
