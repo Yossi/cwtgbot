@@ -237,10 +237,10 @@ def main(update, context, testing=False):
             'parts': '/w 1'
         }
         guild = context.user_data.get('guild', '')
-        if not hasattr(update.message.forward_from, 'id') or update.message.forward_from.id not in [408101137]:  # @chtwrsbot
+        if not hasattr(update.effective_message.forward_from, 'id') or update.effective_message.forward_from.id not in [408101137]:  # @chtwrsbot
             ret.append('Must be a forward from @chtwrsbot. Try again.')
         else:
-            now = update.message.forward_date
+            now = update.effective_message.forward_date
             warehouse = warehouse_load_saved()
             data = {}
             for row in text.split('\n')[1:]:
@@ -275,7 +275,7 @@ def main(update, context, testing=False):
             ret.append("Your guild affiliation is not on file with this bot. Consider forwarding something that indicates what guild you're in. Eg: /me or /report or /hero")
 
     def guild(match):
-        if not hasattr(update.message.forward_from, 'id') or update.message.forward_from.id not in [408101137]: # @chtwrsbot  (265204902 is cw3)
+        if not hasattr(update.effective_message.forward_from, 'id') or update.effective_message.forward_from.id not in [408101137]: # @chtwrsbot  (265204902 is cw3)
             ret.append('Must be a forward from @chtwrsbot. Try again.')
         else:
             context.user_data['guild'] = match.groupdict()['guild']

@@ -8,7 +8,7 @@ import random
 from datetime import datetime
 from threading import Thread
 from functools import wraps
-import pprint
+from pprint import pprint
 
 from telegram import ParseMode
 from telegram import ChatAction
@@ -234,7 +234,7 @@ def setting_saver(update, context, section):
 @log
 def location(update, context):
     tf = TimezoneFinder()
-    latitude, longitude = update.message.location.latitude, update.message.location.longitude
+    latitude, longitude = update.effective_message.location.latitude, update.effective_message.location.longitude
     context.user_data['location'] = round(latitude, 3), round(longitude, 3)
     context.user_data['timezone'] = tf.timezone_at(lat=latitude, lng=longitude)
     text = f'Saving your location as {context.user_data["location"]} making your timezone be {context.user_data["timezone"]}'
@@ -280,11 +280,11 @@ def restart(update, context):
         updater.stop()
         os.execl(sys.executable, sys.executable, *sys.argv)
 
-    update.message.reply_text('Bot is restarting...')
     logging.info('Bot is restarting...')
+    send('Bot is restarting...', update, context)
     Thread(target=stop_and_restart).start()
-    update.message.reply_text("...and we're back")
     logging.info("...and we're back")
+    send("...and we're back", update, context)
 
 @restricted
 @log
