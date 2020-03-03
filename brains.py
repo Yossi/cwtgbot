@@ -120,11 +120,11 @@ def main(update, context, testing=False):
 
     def rerequest():
         '''you asked for a withdrawal and then you wandered off to look at squirrels too long? i gotchu fam'''
-        matches = list(re.finditer(r'(?P<name>[^⚡️+\d\v]+) x (?P<number>\d+)', text))
+        matches = list(re.finditer(r'\n(?P<name>[^⚡️+\d\v]+) x (?P<number>\d+)', text))
         response = ['Timeout expired. Please resend:']
         for match in matches:
             response.append(match.string[match.start():match.end()])
-        response = "\n".join(response)
+        response = "".join(response)
         ret.append(f'{response}\n{withdraw_parts((match.groupdict() for match in matches))}')
 
     def consolidate():
