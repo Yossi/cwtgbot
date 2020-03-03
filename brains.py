@@ -1,15 +1,15 @@
-import re
-import os
-import io
-import pickle
 import datetime
-from pprint import pprint
-from pathlib import Path
+import io
+import os
+import pickle
+import re
 from collections import defaultdict
+from pathlib import Path
+from pprint import pprint
+
 import matplotlib.pyplot as plt
 
-from util import scrape_data, is_witching_hour, warehouse_load_saved
-
+from util import is_witching_hour, scrape_data, warehouse_load_saved
 
 if not Path('data.dict').is_file():
     with open('data.dict', 'wb') as fp:
