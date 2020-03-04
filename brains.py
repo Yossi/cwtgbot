@@ -4,24 +4,13 @@ import os
 import pickle
 import re
 from collections import defaultdict
-from pathlib import Path
 from pprint import pprint
 
 import matplotlib.pyplot as plt
 
-from util import is_witching_hour, scrape_data, warehouse_load_saved
+from util import is_witching_hour, create_lookup_dicts, warehouse_load_saved
 
-if not Path('data.dict').is_file():
-    with open('data.dict', 'wb') as fp:
-        scrape_data(fp)
-with open('data.dict', 'rb') as fp:
-    data = pickle.load(fp)
-    id_lookup = {}
-    name_lookup = {}
-    for item in data:
-        id_lookup[item['id']] = item
-        name_lookup[item['name'].lower()] = item
-
+id_lookup, name_lookup = get_lookup_dicts()
 
 def main(update, context, testing=False):
     '''returns a list of strings that are then each sent as a separate message'''

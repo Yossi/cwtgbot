@@ -1,11 +1,12 @@
+import csv
 import pickle
+from datetime import datetime, time, timezone
+from pathlib import Path
+from urllib.parse import quote
+
+import filetype
 import requests
 from telegram import ParseMode
-from datetime import datetime, time
-from datetime import datetime, time, timezone
-import csv
-from urllib.parse import quote
-import filetype
 
 def scrape_data(fp):
     '''get itemcode table and stuff it in a pickle'''
@@ -35,6 +36,19 @@ def warehouse_load_saved(ignore_exceptions=True, guild='full'):
             raise
         else:
             return {}  # Ignore if warehouse.dict doesn't exist or can't be opened.
+
+def get_lookup_dicts():
+    if not Path('data.dict').is_file():
+        with open('data.dict', 'wb') as fp:
+            scrape_data(fp)
+    with open('data.dict', 'rb') as fp:
+        data = pickle.load(fp)
+        id_lookup = {}
+        name_lookup = {}
+        for item in data:
+            id_lookup[item['id']] = item
+            name_lookup[item['name'].lower()] = item
+    return id_lookup, name_lookup
 
 def send(payload, update, context):
     chat_id = update.effective_message.chat_id
