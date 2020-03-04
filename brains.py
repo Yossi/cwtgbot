@@ -426,9 +426,9 @@ def warehouse_crafting(context):
                 ready = '✅' if num_craftable else '❌'
                 name = id_lookup["r"+id]['name'].rpartition(" ")[0]
                 finished_part_id = name_lookup[name.lower()]['id']
-                part_name = id_lookup["k"+id]['name'].rpartition(" ")[2]
+                part_name = id_lookup["k"+id]['name'].rpartition(" ")[2].title()
                 recipe_location = get_id_location(f'r{id}')
-                parts_location = get_id_location(f'k{id}')
+                part_location = get_id_location(f'k{id}')
 
                 # Getting through this gauntlet without hitting a continue means you get displayed
                 if not num_craftable and not context.args:
@@ -457,8 +457,8 @@ def warehouse_crafting(context):
                 if num_craftable:
                     hold.append(f'<code> {num_craftable}</code> Can be made')
                 hold.append(f'<code>{parts_needed} {part_name}s per recipe</code>')
-                hold.append(f'<code>  {count_recipes} Recipe{"s" if count_recipes != 1 else ""}</code>{recipe_location}')
-                hold.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code>{parts_location}')
+                hold.append(f'<code>  {count_recipes} Recipe{"s" if count_recipes != 1 else ""}</code> {recipe_location}')
+                hold.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code> {part_location}')
                 hold.append(' ')
                 hold = '\n'.join(hold)
 
