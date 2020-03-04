@@ -416,14 +416,14 @@ def warehouse_crafting(context):
                 parts_needed = 0
 
             id = f'{n:02}'
-            count_recipies = rec['data'].get(f'r{id}', 0)
+            count_recipes = rec['data'].get(f'r{id}', 0)
             count_parts = parts['data'].get(f'k{id}', 0)
-            if count_recipies or count_parts:
+            if count_recipes or count_parts:
                 complete_parts_sets = count_parts // parts_needed
                 parts_missing_for_next_set = count_parts % parts_needed
-                recipies_missing = complete_parts_sets - count_recipies
-                things_missing = int(not bool(count_recipies)) + max(parts_needed - count_parts, 0)
-                num_craftable = min(count_recipies, complete_parts_sets)
+                recipes_missing = complete_parts_sets - count_recipes
+                things_missing = int(not bool(count_recipes)) + max(parts_needed - count_parts, 0)
+                num_craftable = min(count_recipes, complete_parts_sets)
                 ready = '✅' if num_craftable else '❌'
                 name = id_lookup["r"+id]['name'].rpartition(" ")[0]
                 finished_part_id = name_lookup[name.lower()]['id']
@@ -442,7 +442,7 @@ def warehouse_crafting(context):
                             multiple = int(context.args[1])
                         except IndexError:
                             multiple = 2
-                        if count_parts/parts_needed <= multiple and count_recipies <= multiple:
+                        if count_parts/parts_needed <= multiple and count_recipes <= multiple:
                             continue
                     else:
                         try:
@@ -458,7 +458,7 @@ def warehouse_crafting(context):
                 if num_craftable:
                     hold.append(f'<code> {num_craftable}</code> Can be made')
                 hold.append(f'<code>{parts_needed} {part_name}s per recipe</code>')
-                hold.append(f'<code>  {count_recipies} Recipe{"s" if count_recipies != 1 else ""}</code>{recipie_location}')
+                hold.append(f'<code>  {count_recipes} Recipe{"s" if count_recipes != 1 else ""}</code>{recipie_location}')
                 hold.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code>{parts_location}')
                 hold.append(' ')
                 hold = '\n'.join(hold)
