@@ -8,6 +8,9 @@ import filetype
 import requests
 from telegram import ParseMode
 
+from tealeyes import CW_OFFSET, CW_PERIODS, SPEED
+
+
 def scrape_data(fp):
     '''get itemcode table and stuff it in a pickle'''
     url = 'https://raw.githubusercontent.com/AVee/cw_wiki_sync/master/data/resources.json'
@@ -23,6 +26,28 @@ def is_witching_hour():
     )
     now = datetime.utcnow().time()
     return any((start < now < end for start, end in closed_times))
+
+def game_phase():
+    adjustment = -37.0
+    utcdt = datetime.now(timezone.utc)
+    cwtdt = datetime.fromtimestamp(SPEED * (utcdt.timestamp() + CW_OFFSET), tz=timezone.utc)
+    cwadt = datetime.fromtimestamp(cwtdt.timestamp() + SPEED * adjustment, tz=timezone.utc)
+    return f'{CW_PERIODS[cwadt.hour//6]}'
+
+def get_id_location(id):
+    id_lookup, _ = get_lookup_dicts()
+    info = id_lookup.get(id, {})
+    locations = (
+        ('Forest', '🌲'),
+        ('Swamp', '🍄'),
+        ('Valley', '⛰')
+    )
+    phase = game_phase()
+    output = ''
+    for place, emoji in locations:
+        if info.get(f'drop{place}{phase}'):
+            output += emoji
+    return output
 
 def warehouse_load_saved(ignore_exceptions=True, guild='full'):
     try:
@@ -66,11 +91,4 @@ def send(payload, update, context):
 
 if __name__ == '__main__':
     from pprint import pprint
-    from pathlib import Path
-    if not Path("data.dict").is_file() or True:
-        with open('data.dict', 'wb') as fp:
-            scrape_data(fp)
-
-    with open('data.dict', 'rb') as fp:
-        data = pickle.load(fp)
-        pprint(data)
+    pprint(get_id_location('r85'))

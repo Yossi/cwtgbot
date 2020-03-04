@@ -8,7 +8,7 @@ from pprint import pprint
 
 import matplotlib.pyplot as plt
 
-from util import is_witching_hour, create_lookup_dicts, warehouse_load_saved
+from util import is_witching_hour, get_lookup_dicts, warehouse_load_saved, get_id_location
 
 id_lookup, name_lookup = get_lookup_dicts()
 
@@ -428,6 +428,8 @@ def warehouse_crafting(context):
                 name = id_lookup["r"+id]['name'].rpartition(" ")[0]
                 finished_part_id = name_lookup[name.lower()]['id']
                 part_name = id_lookup["k"+id]['name'].rpartition(" ")[2]
+                recipie_location = get_id_location(f'r{id}')
+                parts_location = get_id_location(f'k{id}')
 
                 # Getting through this gauntlet without hitting a continue means you get displayed
                 if not num_craftable and not context.args:
@@ -456,13 +458,13 @@ def warehouse_crafting(context):
                 if num_craftable:
                     hold.append(f'<code> {num_craftable}</code> Can be made')
                 hold.append(f'<code>{parts_needed} {part_name}s per recipe</code>')
-                hold.append(f'<code>  {count_recipies} Recipe{"s" if count_recipies != 1 else ""}</code>')
-                hold.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code>')
+                hold.append(f'<code>  {count_recipies} Recipe{"s" if count_recipies != 1 else ""}</code>{recipie_location}')
+                hold.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code>{parts_location}')
                 hold.append(' ')
                 hold = '\n'.join(hold)
 
                 page_counter += len(hold)
-                if page_counter >= 2900: # tg officially supports messages as long as 4096, but the formatting gives up around 3000
+                if page_counter >= 2850: # tg officially supports messages as long as 4096, but the formatting gives up around 3000
                     responses.append('\n'.join(output))
                     page_counter = 0
                     output = []
