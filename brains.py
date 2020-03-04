@@ -428,7 +428,7 @@ def warehouse_crafting(context):
                 name = id_lookup["r"+id]['name'].rpartition(" ")[0]
                 finished_part_id = name_lookup[name.lower()]['id']
                 part_name = id_lookup["k"+id]['name'].rpartition(" ")[2]
-                recipie_location = get_id_location(f'r{id}')
+                recipe_location = get_id_location(f'r{id}')
                 parts_location = get_id_location(f'k{id}')
 
                 # Getting through this gauntlet without hitting a continue means you get displayed
@@ -458,7 +458,7 @@ def warehouse_crafting(context):
                 if num_craftable:
                     hold.append(f'<code> {num_craftable}</code> Can be made')
                 hold.append(f'<code>{parts_needed} {part_name}s per recipe</code>')
-                hold.append(f'<code>  {count_recipes} Recipe{"s" if count_recipes != 1 else ""}</code>{recipie_location}')
+                hold.append(f'<code>  {count_recipes} Recipe{"s" if count_recipes != 1 else ""}</code>{recipe_location}')
                 hold.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code>{parts_location}')
                 hold.append(' ')
                 hold = '\n'.join(hold)
