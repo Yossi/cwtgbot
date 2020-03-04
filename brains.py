@@ -8,9 +8,8 @@ from pprint import pprint
 
 import matplotlib.pyplot as plt
 
-from util import is_witching_hour, get_lookup_dicts, warehouse_load_saved, get_id_location
-
-id_lookup, name_lookup = get_lookup_dicts()
+from util import is_witching_hour, warehouse_load_saved, get_id_location
+from util import id_lookup, name_lookup
 
 def main(update, context, testing=False):
     '''returns a list of strings that are then each sent as a separate message'''

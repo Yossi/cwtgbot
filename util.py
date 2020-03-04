@@ -10,7 +10,6 @@ from telegram import ParseMode
 
 from tealeyes import CW_OFFSET, CW_PERIODS, SPEED
 
-
 def scrape_data(fp):
     '''get itemcode table and stuff it in a pickle'''
     url = 'https://raw.githubusercontent.com/AVee/cw_wiki_sync/master/data/resources.json'
@@ -35,7 +34,6 @@ def game_phase():
     return f'{CW_PERIODS[cwadt.hour//6]}'
 
 def get_id_location(id):
-    id_lookup, _ = get_lookup_dicts()
     info = id_lookup.get(id, {})
     locations = (
         ('Forest', '🌲'),
@@ -89,6 +87,10 @@ def send(payload, update, context):
         else:
             context.bot.send_document(chat_id=chat_id, document=payload)
 
+
+id_lookup, name_lookup = get_lookup_dicts()
+
+
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(get_id_location('r85'))
+    pprint(id_lookup.get('r87'))
