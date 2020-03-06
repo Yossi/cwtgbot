@@ -107,6 +107,7 @@ def restricted(func):
 @log
 def incoming(update, context):
     '''main function that deals with incoming messages that are the meat and potatos of this bot'''
+    if not update.effective_message.text: return
     responses = main(update, context)
     for response in responses:
         logging.info(f'bot said:\n{response}')
