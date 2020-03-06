@@ -323,7 +323,7 @@ def main(update, context, testing=False):
     elif equipment_match:
         inspect()
     else:
-        ret.append('Unclear what to do with this.')
+        ret.append('')
 
     if testing:
         return ret, matched_regexs
