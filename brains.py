@@ -11,6 +11,96 @@ import matplotlib.pyplot as plt
 from util import is_witching_hour, warehouse_load_saved, get_id_location
 from util import id_lookup, name_lookup
 
+
+def withdraw_parts(matches, guild):
+    '''builds withdraw commands.
+        expects an iterator of dicts with one key named "number" and the other named "id" or "name"'''
+    warehouse = warehouse_load_saved(guild)
+    hours = 1.5
+    now = datetime.datetime.utcnow()
+    command_suffixes = set()
+
+    matches = list(matches)
+    for match in matches:
+        if match.get('name'):
+            match['id'] = name_lookup[match['name'].strip().lower()]['id']
+
+        if match['id'][0].isdigit():
+            if int(match['id']) <= 38:
+                command_suffixes.add('res')
+            else:
+                command_suffixes.add('alch')
+        elif match['id'][0] in 'sp':
+            command_suffixes.add('misc')
+        elif match['id'][0] == 'r':
+            command_suffixes.add('rec')
+        elif match['id'][0] == 'k':
+            command_suffixes.add('parts')
+        elif match['id'][0] in 'wuea':
+            command_suffixes.add('other')
+
+    notice = ''
+    guild_stock = {}
+    for suffix in command_suffixes:
+        suf = warehouse.get(suffix, {})
+        if suf:
+            age = now - suf['timestamp']
+            if age < datetime.timedelta(hours=hours):
+                guild_stock.update(suf['data'])
+            else:
+                guild_stock = {}
+                break
+        else:
+            guild_stock = {}
+            break
+
+    if not guild_stock:
+        for suffix in sorted(command_suffixes):
+            notice += f'\n/g_stock_{suffix}'
+
+    command = ['<code>/g_withdraw']
+    have = []
+    missing = []
+    for d in matches:
+        d["number"] = d["number"] if d["number"] else "1"
+
+        if guild_stock:
+            diff = int(d["number"]) - guild_stock.get(d['id'], 0)
+            if diff > 0:
+                if d['id'][0] not in 'rk':
+                    if id_lookup[d['id']]['exchange']:
+                        missing.append(f"<code>/wtb_{d['id']}_{diff}</code> {id_lookup[d['id']]['name']}")
+                    else:
+                        missing.append(f"<code>/craft_{d['id']} {diff}</code> {id_lookup[d['id']]['name']}")
+                else:
+                    missing.append(f"<code>{d['id']} {diff}</code> {id_lookup[d['id']]['name']}")
+                d['number'] = guild_stock.get(d['id'], 0)
+
+        if d['number']:
+            have.append(f' {d["id"]} {d["number"]}')
+
+    if have:
+        command = ['<code>/g_withdraw']
+        for n, id in enumerate(have):
+            if not (n + 1) % 9:
+                command.append('</code>\n<code>/g_withdraw')
+            command.append(id)
+        command.append('</code>\n\n')
+        command = ''.join(command)
+    else:
+        command = ''
+
+    if missing:
+        missing = '\n'.join([f"Based on data {age.seconds // 60} minutes old, need to get:"] + missing)
+    else:
+        missing = ''
+
+    if notice:
+        notice = 'Missing current guild stock state. Consider forwarding:' + notice
+
+    return command + missing + notice
+
+
 def main(update, context, testing=False):
     '''returns a list of strings that are then each sent as a separate message'''
     text = update.effective_message.text
@@ -98,13 +188,13 @@ def main(update, context, testing=False):
         '''process missing items messages'''
         matches = re.finditer(r'(?P<number>\d+) x (?P<name>.+)', text)
         if matches:
-            ret.append(f'{text}\nRecipient shall send to guild leader/squire:\n{withdraw_parts((match.groupdict() for match in matches))}')
+            ret.append(f'{text}\nRecipient shall send to guild leader/squire:\n{withdraw_parts((match.groupdict() for match in matches), context.user_data.get("guild", ""))}')
 
     def refund():
         '''process returned /g_deposit message from ourselves'''
         matches = re.finditer(r'\/g_deposit (?P<id>[aestchwpmkr]{0,3}\d+) (?P<number>\d+)?', text)
         if matches:
-            ret.append(withdraw_parts((match.groupdict() for match in matches)))
+            ret.append(withdraw_parts((match.groupdict() for match in matches), context.user_data.get('guild', '')))
 
     def rerequest():
         '''you asked for a withdrawal and then you wandered off to look at squirrels too long? i gotchu fam'''
@@ -113,7 +203,7 @@ def main(update, context, testing=False):
         for match in matches:
             response.append(match.string[match.start():match.end()])
         response = "".join(response)
-        ret.append(f'{response}\n{withdraw_parts((match.groupdict() for match in matches))}')
+        ret.append(f'{response}\n{withdraw_parts((match.groupdict() for match in matches), context.user_data.get("guild", ""))}')
 
     def consolidate():
         '''consolidate /g_withdraw commands'''
@@ -127,95 +217,7 @@ def main(update, context, testing=False):
         for id, number in count.items():
             response.append(f'{id_lookup[id]["name"]} x {number}\n')
             command.append({'id': id, 'number': number})
-        ret.append(f'{"".join(response)}\n{withdraw_parts(command)}')
-
-    def withdraw_parts(matches):
-        '''builds withdraw commands.
-           expects an iterator of dicts with one key named "number" and the other named "id" or "name"'''
-        warehouse = warehouse_load_saved(guild = context.user_data.get('guild', ''))
-        hours = 1.5
-        now = datetime.datetime.utcnow()
-        command_suffixes = set()
-
-        matches = list(matches)
-        for match in matches:
-            if match.get('name'):
-                match['id'] = name_lookup[match['name'].strip().lower()]['id']
-
-            if match['id'][0].isdigit():
-                if int(match['id']) <= 38:
-                    command_suffixes.add('res')
-                else:
-                    command_suffixes.add('alch')
-            elif match['id'][0] in 'sp':
-                command_suffixes.add('misc')
-            elif match['id'][0] == 'r':
-                command_suffixes.add('rec')
-            elif match['id'][0] == 'k':
-                command_suffixes.add('parts')
-            elif match['id'][0] in 'wuea':
-                command_suffixes.add('other')
-
-        notice = ''
-        guild_stock = {}
-        for suffix in command_suffixes:
-            suf = warehouse.get(suffix, {})
-            if suf:
-                age = now - suf['timestamp']
-                if age < datetime.timedelta(hours=hours):
-                    guild_stock.update(suf['data'])
-                else:
-                    guild_stock = {}
-                    break
-            else:
-                guild_stock = {}
-                break
-
-        if not guild_stock:
-            for suffix in sorted(command_suffixes):
-                notice += f'\n/g_stock_{suffix}'
-
-        command = ['<code>/g_withdraw']
-        have = []
-        missing = []
-        for d in matches:
-            d["number"] = d["number"] if d["number"] else "1"
-
-            if guild_stock:
-                diff = int(d["number"]) - guild_stock.get(d['id'], 0)
-                if diff > 0:
-                    if d['id'][0] not in 'rk':
-                        if id_lookup[d['id']]['exchange']:
-                            missing.append(f"<code>/wtb_{d['id']}_{diff}</code> {id_lookup[d['id']]['name']}")
-                        else:
-                            missing.append(f"<code>/craft_{d['id']} {diff}</code> {id_lookup[d['id']]['name']}")
-                    else:
-                        missing.append(f"<code>{d['id']} {diff}</code> {id_lookup[d['id']]['name']}")
-                    d['number'] = guild_stock.get(d['id'], 0)
-
-            if d['number']:
-                have.append(f' {d["id"]} {d["number"]}')
-
-        if have:
-            command = ['<code>/g_withdraw']
-            for n, id in enumerate(have):
-                if not (n + 1) % 9:
-                    command.append('</code>\n<code>/g_withdraw')
-                command.append(id)
-            command.append('</code>\n\n')
-            command = ''.join(command)
-        else:
-            command = ''
-
-        if missing:
-            missing = '\n'.join([f"Based on data {age.seconds // 60} minutes old, need to get:"] + missing)
-        else:
-            missing = ''
-
-        if notice:
-            notice = 'Missing current guild stock state. Consider forwarding:' + notice
-
-        return command + missing + notice
+        ret.append(f'{"".join(response)}\n{withdraw_parts(command, context.user_data.get("guild", ""))}')
 
     def warehouse_in():
         followup = {

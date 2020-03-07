@@ -62,7 +62,7 @@ def get_qualifications(id):
 
     return level + perception_level
 
-def warehouse_load_saved(ignore_exceptions=True, guild='full'):
+def warehouse_load_saved(guild='full'):
     try:
         with open('warehouse.dict', 'rb') as warehouseFile:
             if guild == 'full':
@@ -70,10 +70,7 @@ def warehouse_load_saved(ignore_exceptions=True, guild='full'):
             return pickle.load(warehouseFile).get(guild, {})
 
     except IOError:
-        if not ignore_exceptions:
-            raise
-        else:
-            return {}  # Ignore if warehouse.dict doesn't exist or can't be opened.
+        return {}  # Ignore if warehouse.dict doesn't exist or can't be opened.
 
 def get_lookup_dicts():
     if not Path('data.dict').is_file():
@@ -108,4 +105,4 @@ id_lookup, name_lookup = get_lookup_dicts()
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(id_lookup.get('r87'))
+    pprint(id_lookup.get('a89'))
