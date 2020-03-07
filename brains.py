@@ -479,3 +479,34 @@ def warehouse_crafting(context):
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_parts and /g_stock_rec and try again')
     return responses
+
+def withdraw_craft(context):
+    response = ['Can\'t craft this']
+    if context.args:
+        id = context.args[0]
+        info = id_lookup.get(id, {})
+
+        count = 1
+        if len(context.args) > 1:
+            count = int(context.args[1])
+
+        if info['craftable']:
+            response = [
+                f'Name: {info["name"]}\n'
+                #f'Crafting level: {info["craftLevel"]}\n' # some of these say 0. wiki needs fix
+                f'Mana requirement: {info["craftMana"]} x {count} = {info["craftMana"] * count} mana total'
+            ]
+
+            recipe = [{'name': name, 'number': int(amount) * count} for name, amount in info['recipe'].items()]
+            response.append(withdraw_parts(recipe, context.user_data.get('guild', '')))
+
+    return response
+
+if __name__ == '__main__':
+    class Mock:
+        pass
+    c = Mock()
+    c.user_data = {'save': {'01': '', '02': '', '08': '10'}, 'guild': 'USA'}
+    c.args = ['14', '2']
+
+    pprint(withdraw_craft(c))
