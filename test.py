@@ -8,7 +8,7 @@ cases = [
         'input':
             '',
         'output':
-            ['Unclear what to do with this.'],
+            [''],
         'matches':
             {
                 'storage_match': False,
