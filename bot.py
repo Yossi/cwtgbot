@@ -122,6 +122,10 @@ def warehouse(update, context):
         logging.info(f'bot said:\n{response}')
         send(response, update, context)
 
+def warehousecmd(update, context):
+    context.args = update.effective_message.text.split('_')[1:]
+    warehouse(update, context)
+
 @send_typing_action
 @log
 def craft(update, context):
@@ -130,6 +134,11 @@ def craft(update, context):
     for response in responses:
         logging.info(f'bot said:\n{response}')
         send(response, update, context)
+
+def craftcmd(update, context):
+    context.args = update.effective_message.text.split('_')[1:]
+    craft(update, context)
+
 @send_typing_action
 @log
 def stock(update, context):
@@ -370,8 +379,10 @@ dispatcher.add_handler(CommandHandler('g_withdraw', incoming))
 dispatcher.add_handler(CommandHandler('g_deposit', incoming))
 dispatcher.add_handler(CommandHandler('warehouse', warehouse))
 dispatcher.add_handler(CommandHandler('w', warehouse))
+dispatcher.add_handler(MessageHandler(Filters.regex(r'/w.*_'), warehousecmd))
 dispatcher.add_handler(CommandHandler('craft', craft))
 dispatcher.add_handler(CommandHandler('c', craft))
+dispatcher.add_handler(MessageHandler(Filters.regex(r'/c.*_'), craftcmd))
 dispatcher.add_handler(CommandHandler('stock', stock))
 dispatcher.add_handler(CommandHandler('alch', alch))
 dispatcher.add_handler(CommandHandler('r', restart))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))

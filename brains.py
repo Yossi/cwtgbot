@@ -224,7 +224,7 @@ def main(update, context, testing=False):
             'res': '/stock',
             'alch': '/alch',
             'rec': '/warehouse',
-            'parts': '/w 1'
+            'parts': '/w_1'
         }
         guild = context.user_data.get('guild', '')
         if not hasattr(update.effective_message.forward_from, 'id') or update.effective_message.forward_from.id not in [408101137]:  # @chtwrsbot
@@ -507,6 +507,6 @@ if __name__ == '__main__':
         pass
     c = Mock()
     c.user_data = {'save': {'01': '', '02': '', '08': '10'}, 'guild': 'USA'}
-    c.args = ['14', '2']
+    c.args = ['p11', '90']
 
     pprint(withdraw_craft(c))
