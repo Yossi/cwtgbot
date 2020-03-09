@@ -69,9 +69,14 @@ def withdraw_parts(matches, guild):
             if diff > 0:
                 if d['id'][0] not in 'rk':
                     if id_lookup[d['id']]['exchange']:
+                        exchange = True
                         missing.append(f"<code>/wtb_{d['id']}_{diff}</code> {id_lookup[d['id']]['name']}")
-                    else:
-                        missing.append(f"<code>/craft_{d['id']} {diff}</code> {id_lookup[d['id']]['name']}")
+                    if id_lookup[d['id']]['craftable']:
+                        craftcmd = f"/craft_{d['id']}_{diff} {id_lookup[d['id']]['name']}"
+                        if exchange:
+                            missing[-1] = missing[-1].split()[0] + f' or {craftcmd}'
+                        else:
+                            missing.append(craftcmd)
                 else:
                     missing.append(f"<code>{d['id']} {diff}</code> {id_lookup[d['id']]['name']}")
                 d['number'] = guild_stock.get(d['id'], 0)
@@ -491,14 +496,13 @@ def withdraw_craft(context):
             count = int(context.args[1])
 
         if info['craftable']:
+            recipe = [{'name': name, 'number': int(amount) * count} for name, amount in info['recipe'].items()]
             response = [
-                f'Name: {info["name"]}\n'
-                #f'Crafting level: {info["craftLevel"]}\n' # some of these say 0. wiki needs fix
-                f'Mana requirement: {info["craftMana"]} x {count} = {info["craftMana"] * count} mana total'
+                f'{info["name"]}\n'
+                f'Mana requirement: {info["craftMana"]} x {count} = {info["craftMana"] * count} mana total\n'
+                f"{withdraw_parts(recipe, context.user_data.get('guild', ''))}"
             ]
 
-            recipe = [{'name': name, 'number': int(amount) * count} for name, amount in info['recipe'].items()]
-            response.append(withdraw_parts(recipe, context.user_data.get('guild', '')))
 
     return response
 
