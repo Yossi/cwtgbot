@@ -110,7 +110,6 @@ def incoming(update, context):
     if not update.effective_message.text: return
     responses = main(update, context)
     for response in responses:
-        logging.info(f'bot said:\n{response}')
         send(response, update, context)
 
 @send_typing_action
@@ -119,7 +118,6 @@ def warehouse(update, context):
     '''show a summary of what parts are ready to craft'''
     responses = warehouse_crafting(context)
     for response in responses:
-        logging.info(f'bot said:\n{response}')
         send(response, update, context)
 
 def warehousecmd(update, context):
@@ -132,7 +130,6 @@ def craft(update, context):
     '''create withdraw command for the stuff needed to craft this'''
     responses = withdraw_craft(context)
     for response in responses:
-        logging.info(f'bot said:\n{response}')
         send(response, update, context)
 
 def craftcmd(update, context):
@@ -145,7 +142,6 @@ def stock(update, context):
     '''show a list of parts we have in order of quantity'''
     responses = stock_list(context)
     for response in responses:
-        logging.info(f'bot said:\n{response}')
         send(response, update, context)
 
 @send_typing_action
@@ -154,7 +150,6 @@ def alch(update, context):
     '''show a list of ingredients we have in order of quantity'''
     responses = alch_list(context)
     for response in responses:
-        logging.info(f'bot said:\n{response}')
         send(response, update, context)
 
 @send_typing_action
@@ -165,7 +160,6 @@ def start(update, context):
            '\n'\
            'See /help for more details.'
 
-    logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
 @send_typing_action
@@ -176,7 +170,6 @@ def mlm(update, context):
         'Join the Chat Wars! First MMORPG in Telegram. Use this invite link to receive 10💰 as a welcome gift:\nhttps://telegram.me/chtwrsbot?start=ad53406f0a3544689bed29057419ae15',
     )
     for message in messages:
-        logging.info(f'bot said:\n{message}')
         send(message, update, context)
 
 @send_typing_action
@@ -194,7 +187,6 @@ def help(update, context):
            '\n'\
            'Some /settings available too.\n'\
 
-    logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
 @send_typing_action
@@ -208,7 +200,6 @@ def settings(update, context):
            'Example:\n'\
            '<code>/save 01 02,150 03</code> 👈 Save all thread, all pelt and 150 sticks. Rest of the sticks get deposited.'
 
-    logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
 @send_typing_action
@@ -245,7 +236,6 @@ def setting_saver(update, context, section):
         res.append(f'<code>{" ".join(cmd)}</code>')
 
     text = '\n'.join(res)
-    logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
 @send_typing_action
@@ -256,7 +246,6 @@ def location(update, context):
     context.user_data['location'] = round(latitude, 3), round(longitude, 3)
     context.user_data['timezone'] = tf.timezone_at(lat=latitude, lng=longitude)
     text = f'Saving your location as {context.user_data["location"]} making your timezone be {context.user_data["timezone"]}'
-    logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
 @send_typing_action
@@ -264,14 +253,12 @@ def location(update, context):
 def ping(update, context):
     '''show signs of life'''
     text = "/pong"
-    logging.info(f'bot said:\n{text}')
     send(text, update, context)
 @send_typing_action
 @log
 def pong(update, context):
     '''ǝɟᴉl ɟo suƃᴉs ʍoɥs'''
     text = "/ping"
-    logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
 @send_typing_action
@@ -279,14 +266,12 @@ def pong(update, context):
 def now(update, context):
     '''what time is it'''
     text = datetime.utcnow().isoformat()
-    logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
 @send_typing_action
 @log
 def time(update, context):
     text = tealeyes(context.user_data)
-    logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
 @restricted
@@ -310,6 +295,7 @@ def say(update, context):
     '''say things as the bot'''
     if context.args:
         text = ' '.join(context.args[1:])
+        logging.info(f'bot said:\n{text}')
         context.bot.send_message(chat_id=context.args[0], text=text, parse_mode=ParseMode.HTML)
     else:
         with open('user.persist', 'rb') as fp:
@@ -322,7 +308,6 @@ def say(update, context):
                           ), reverse=True)[:max(len(d['user_data']), 5)]
         text = '\n'.join(speakers)
         send(text, update, context)
-    logging.info(f'bot said:\n{text}')
 
 #@restricted
 @log
@@ -331,7 +316,6 @@ def user_data(update, context):
     text = str(context.user_data)
     if context.args and context.args[0] == 'clear' and len(context.args) > 1:
         context.user_data.pop(' '.join(context.args[1:]), None)
-    logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
 @restricted
@@ -341,7 +325,6 @@ def chat_data(update, context):
     text = str(context.chat_data)
     if context.args and context.args[0] == 'clear' and len(context.args) > 1:
         context.chat_data.pop(' '.join(context.args[1:]), None)
-    logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
 @restricted
@@ -351,7 +334,6 @@ def warehouse_data(update, context):
     text = str(warehouse_load_saved())
     if context.args and context.args[0] == 'clear':
         os.remove('warehouse.dict')
-    logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
 @log
@@ -359,7 +341,6 @@ def destination(update, context):
     '''choose a location to quest next'''
     locations = '🌲🍄⛰'
     text = random.choice(locations)
-    logging.info(f'bot said:\n{text}')
     send(text, update, context)
 
 dispatcher.add_handler(CommandHandler('start', start))
