@@ -10,3 +10,4 @@ timezonefinder
 matplotlib
 filetype
 astral
+websocket-client
