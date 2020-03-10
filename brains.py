@@ -411,6 +411,9 @@ def warehouse_crafting(context):
     if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
     (age_rec := now - rec['timestamp']) < datetime.timedelta(hours=hours) and \
     (age_parts := now - parts['timestamp']) < datetime.timedelta(hours=hours):
+        with open('auctionprices.dict', 'rb') as fp:
+            prices = pickle.load(fp)
+
         older_command = '/g_stock_parts' if age_parts >= age_rec else '/g_stock_rec'
         output = [f'Based on {older_command} data {max(age_rec, age_parts).seconds // 60} minutes old:\n']
         page_counter = 0
@@ -442,6 +445,10 @@ def warehouse_crafting(context):
                 part_name = id_lookup["k"+id]['name'].rpartition(" ")[2].title()
                 recipe_location = get_id_location(f'r{id}')
                 part_location = get_id_location(f'k{id}')
+                recipe_price = str(prices.get(f'r{id}', ''))
+                part_price = str(prices.get(f'k{id}', ''))
+                if recipe_price: recipe_price = f'👝{recipe_price}'
+                if part_price: part_price = f'👝{part_price}'
 
                 # Getting through this gauntlet without hitting a continue means you get displayed
                 if not num_craftable and not context.args:
@@ -470,8 +477,8 @@ def warehouse_crafting(context):
                 if num_craftable:
                     hold.append(f'<code> {num_craftable}</code> Can be made')
                 hold.append(f'<code>{parts_needed} {part_name}s per recipe</code>')
-                hold.append(f'<code>  {count_recipes} Recipe{"s" if count_recipes != 1 else ""}</code> {recipe_location}')
-                hold.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code> {part_location}')
+                hold.append(f'<code>  {count_recipes} Recipe{"s" if count_recipes != 1 else ""}</code> {recipe_price} {recipe_location}')
+                hold.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code> {part_price} {part_location}')
                 hold.append(' ')
                 hold = '\n'.join(hold)
 
