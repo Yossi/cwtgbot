@@ -68,6 +68,7 @@ def withdraw_parts(matches, guild):
             diff = int(d["number"]) - guild_stock.get(d['id'], 0)
             if diff > 0:
                 if d['id'][0] not in 'rk':
+                    exchange = False
                     if id_lookup[d['id']]['exchange']:
                         exchange = True
                         missing.append(f"<code>/wtb_{d['id']}_{diff}</code> {id_lookup[d['id']]['name']}")
