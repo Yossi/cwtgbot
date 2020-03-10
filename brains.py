@@ -343,6 +343,9 @@ def stock_list(context):
     responses = []
     now = datetime.datetime.utcnow()
     if (res := warehouse.get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
+        with open('stockprices.dict', 'rb') as fp:
+            prices = pickle.load(fp)
+
         output = [f'Based on /g_stock_res data {age.seconds // 60} minutes old:\n⚖️']
         for x in range(1, 39):
             if f'{x:02}' in id_lookup:
@@ -350,7 +353,10 @@ def stock_list(context):
 
         for id in sorted(res['data'], key=res['data'].get, reverse=True):
             trade = '✅' if id_lookup[id]['exchange'] else '❌'
-            output.append(f'{trade}<code>{id}</code> {id_lookup[id]["name"]} x {res["data"][id]}')
+            price = prices.get(id, '')
+            if price: price = f'💰{price}'
+            output.append(f'{trade}<code>{id}</code> {id_lookup[id]["name"]} x {res["data"][id]} {price}')
+        output.append(f"\nPrices no fresher than {(now - prices['last_update']).seconds // 60} minutes.")
 
         sort_by_weight = {id: res['data'][id]*id_lookup[id]['weight'] for id in res['data']}
         sort_by_weight = sorted(sort_by_weight, key=sort_by_weight.get, reverse=True)
