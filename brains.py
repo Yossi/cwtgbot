@@ -509,7 +509,7 @@ def withdraw_craft(context):
         if len(context.args) > 1:
             count = int(context.args[1])
 
-        if info['craftable']:
+        if info.get('craftable', False):
             recipe = [{'name': name, 'number': int(amount) * count} for name, amount in info['recipe'].items()]
             response = [
                 f'{info["name"]}\n'
