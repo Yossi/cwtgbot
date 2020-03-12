@@ -483,8 +483,8 @@ def warehouse_crafting(context):
                 hold.append(' ')
                 hold = '\n'.join(hold)
 
-                page_counter += len(hold)
-                if page_counter >= 2850: # tg officially supports messages as long as 4096, but the formatting gives up around 3000
+                page_counter += len(hold.encode('utf-8'))
+                if page_counter >= 3000: # tg officially supports messages as long as 4096, but the formatting gives up around 3000
                     responses.append('\n'.join(output))
                     page_counter = 0
                     output = []
