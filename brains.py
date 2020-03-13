@@ -392,12 +392,17 @@ def alch_list(context):
     now = datetime.datetime.utcnow()
     if (alch := warehouse.get('alch', {})) and (age := now - alch['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_alch data {age.seconds // 60} minutes old:\n']
+        with open('stockprices.dict', 'rb') as fp:
+            prices = pickle.load(fp)
+
         for x in range(39, 70):
             if f'{x:02}' in id_lookup:
                 alch['data'][f'{x:02}'] = alch['data'].get(f'{x:02}', 0)
 
         for id in sorted(alch['data'], key=alch['data'].get, reverse=True):
-            output.append(f'<code>{id}</code> {id_lookup[id]["name"]} x {alch["data"][id]}')
+            price = prices.get(id, '')
+            if price: price = f'💰{price}'
+            output.append(f'<code>{id}</code> {id_lookup[id]["name"]} x {alch["data"][id]} {price}')
 
         responses.append('\n'.join(output))
     else:
