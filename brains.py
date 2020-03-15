@@ -434,66 +434,66 @@ def warehouse_crafting(context):
             elif 78 <= n <= 90 or 92 <= n <= 95 or n in (98, 99):
                 parts_needed = 6
             elif 62 <= n <= 77:
-                parts_needed = 0
+                continue
 
             id = f'{n:02}'
             count_recipes = rec['data'].get(f'r{id}', 0)
             count_parts = parts['data'].get(f'k{id}', 0)
-            if count_recipes or count_parts:
-                complete_parts_sets = count_parts // parts_needed
-                parts_missing_for_next_set = count_parts % parts_needed
-                recipes_missing = complete_parts_sets - count_recipes
-                things_missing = int(not bool(count_recipes)) + max(parts_needed - count_parts, 0)
-                num_craftable = min(count_recipes, complete_parts_sets)
-                ready = '✅' if num_craftable else '❌'
-                name = id_lookup["r"+id]['name'].rpartition(" ")[0]
-                finished_part_id = name_lookup[name.lower()]['id']
-                part_name = id_lookup["k"+id]['name'].rpartition(" ")[2].title()
-                recipe_location = get_id_location(f'r{id}')
-                part_location = get_id_location(f'k{id}')
-                recipe_price = str(prices.get(f'r{id}', ''))
-                part_price = str(prices.get(f'k{id}', ''))
-                if recipe_price: recipe_price = f'👝{recipe_price}'
-                if part_price: part_price = f'👝{part_price}'
+            #if count_recipes or count_parts or True:
+            complete_parts_sets = count_parts // parts_needed
+            parts_missing_for_next_set = count_parts % parts_needed
+            recipes_missing = complete_parts_sets - count_recipes
+            things_missing = int(not bool(count_recipes)) + max(parts_needed - count_parts, 0)
+            num_craftable = min(count_recipes, complete_parts_sets)
+            ready = '✅' if num_craftable else '❌'
+            name = id_lookup["r"+id]['name'].rpartition(" ")[0]
+            finished_part_id = name_lookup[name.lower()]['id']
+            part_name = id_lookup["k"+id]['name'].rpartition(" ")[2].title()
+            recipe_location = get_id_location(f'r{id}')
+            part_location = get_id_location(f'k{id}')
+            recipe_price = str(prices.get(f'r{id}', ''))
+            part_price = str(prices.get(f'k{id}', ''))
+            if recipe_price: recipe_price = f'👝{recipe_price}'
+            if part_price: part_price = f'👝{part_price}'
 
-                # Getting through this gauntlet without hitting a continue means you get displayed
-                if not num_craftable and not context.args:
-                    continue
-                if context.args and context.args[0].lower() != 'all':
-                    if context.args[0].isdigit() and 0 < things_missing <= int(context.args[0]):
-                        pass
-                    elif context.args[0].lower().startswith('overstock'):
-                        try:
-                            multiple = int(context.args[1])
-                        except IndexError:
-                            multiple = 2
-                        if count_parts/parts_needed <= multiple and count_recipes <= multiple:
+            # Getting through this gauntlet without hitting a continue means you get displayed
+            if not num_craftable and not context.args:
+                continue
+            if context.args and context.args[0].lower() != 'all': # if it's 'all' then jump to after the gauntlet
+                if context.args[0].isdigit() and 0 < things_missing <= int(context.args[0]):
+                    pass
+                elif context.args[0].lower().startswith('overstock'):
+                    try:
+                        multiple = int(context.args[1])
+                    except IndexError:
+                        multiple = 2
+                    if count_parts/parts_needed <= multiple and count_recipes <= multiple:
+                        continue
+                else:
+                    try:
+                        regex = re.compile(context.args[0].lower())
+                        matches = regex.findall(name.lower())
+                        if not matches:
                             continue
-                    else:
-                        try:
-                            regex = re.compile(context.args[0].lower())
-                            matches = regex.findall(name.lower())
-                            if not matches:
-                                continue
-                        except re.error:
-                            continue
+                    except re.error:
+                        continue
 
-                hold = []
-                hold.append(f'{ready} {id} {name} <code>{finished_part_id}</code>')
-                if num_craftable:
-                    hold.append(f'<code> {num_craftable}</code> Can be made')
-                hold.append(f'<code>{parts_needed} {part_name}s per recipe</code>')
-                hold.append(f'<code>  {count_recipes} Recipe{"s" if count_recipes != 1 else ""}</code> {recipe_price} {recipe_location}')
-                hold.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code> {part_price} {part_location}')
-                hold.append(' ')
-                hold = '\n'.join(hold)
+            hold = []
+            hold.append(f'{ready} {id} {name} <code>{finished_part_id}</code>')
+            if num_craftable:
+                hold.append(f'<code> {num_craftable}</code> Can be made')
+            hold.append(f'<code>{parts_needed} {part_name}s per recipe</code>')
+            hold.append(f'<code>  {count_recipes} Recipe{"s" if count_recipes != 1 else ""}</code> {recipe_price} {recipe_location}')
+            hold.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code> {part_price} {part_location}')
+            hold.append(' ')
+            hold = '\n'.join(hold)
 
-                page_counter += len(hold.encode('utf-8'))
-                if page_counter >= 3000: # tg officially supports messages as long as 4096, but the formatting gives up around 3000
-                    responses.append('\n'.join(output))
-                    page_counter = 0
-                    output = []
-                output.append(hold)
+            page_counter += len(hold.encode('utf-8'))
+            if page_counter >= 3000: # tg officially supports messages as long as 4096, but the formatting gives up around 3000
+                responses.append('\n'.join(output))
+                page_counter = 0
+                output = []
+            output.append(hold)
 
         result = '\n'.join(output)
         if result:
