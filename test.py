@@ -468,7 +468,7 @@ cases = [
                 '<code>/g_deposit p11 2</code> Potion of Nature\n'
                 '<code>/g_deposit p16 14</code> Vial of Twilight\n'
                 '<code>/g_deposit s06 2</code> 📘Scroll of Peace\n'
-                '<code>/g_deposit s07 1</code> 📙Scroll of Rage'
+                '<code>/g_deposit s07</code> 📙Scroll of Rage'
             ],
         'matches':
             {
