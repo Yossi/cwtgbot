@@ -127,3 +127,4 @@ dmypy.json
 secrets.py
 user.persist
 *.dict
+lastrev

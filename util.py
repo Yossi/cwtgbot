@@ -74,6 +74,16 @@ def warehouse_load_saved(guild='full'):
         return {}  # Ignore if warehouse.dict doesn't exist or can't be opened.
 
 def get_lookup_dicts():
+    with open('lastrev', 'r') as revfp:
+        localrev = revfp.readline()
+        lastrev = requests.get('https://raw.githubusercontent.com/AVee/cw_wiki_sync/master/data/lastrev').text
+        if lastrev != localrev:
+            with open('data.dict', 'wb') as fp:
+                scrape_data(fp)
+
+    with open('lastrev', 'w') as fp:
+        fp.write(lastrev)
+
     if not Path('data.dict').is_file():
         with open('data.dict', 'wb') as fp:
             scrape_data(fp)
