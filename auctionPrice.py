@@ -3,11 +3,14 @@ import json
 import pickle
 from pathlib import Path
 from pprint import pprint
+from time import sleep
 
 import websocket
 
 from util import name_lookup
 
+domain = 'mc.guppygalaxy.com:18518'
+feed = 'au_digest'
 picklename = 'auctionprices.dict'
 
 def on_message(ws, message):
@@ -41,8 +44,12 @@ if __name__ == "__main__":
             pickle.dump({}, fp)
 
     websocket.enableTrace(True)
-    ws = websocket.WebSocketApp("ws://mc.guppygalaxy.com:18518/au_digest",
-                                on_message = on_message,
-                                on_error = on_error,
-                                on_close = on_close)
-    ws.run_forever()
+    while True:
+        ws = websocket.WebSocketApp(f'ws://{domain}/{feed}',
+                                    on_message = on_message,
+                                    on_error = on_error,
+                                    on_close = on_close)
+        ws.run_forever()
+        print('waiting 2 seconds..')
+        sleep(2)
+        print("time's up. connecing again")
