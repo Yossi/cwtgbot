@@ -14,9 +14,9 @@ from util import id_lookup, name_lookup
 
 def withdraw_parts(matches, guild):
     '''builds withdraw commands.
-        expects an iterator of dicts with one key named "number" and the other named "id" or "name"'''
+       expects an iterator of dicts with one key named "number" and the other named "id" or "name"'''
     warehouse = warehouse_load_saved(guild)
-    hours = 1.5
+    hours = 2.5
     now = datetime.datetime.utcnow()
     command_suffixes = set()
 
@@ -505,7 +505,7 @@ def warehouse_crafting(context):
     return responses
 
 def withdraw_craft(context):
-    response = ['Can\'t craft this']
+    response = ["Can't craft this"]
     if context.args:
         id = context.args[0]
         info = id_lookup.get(id, {})
