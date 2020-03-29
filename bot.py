@@ -64,6 +64,7 @@ def error(update, context):
     text = f"Hey.\n The error <code>{html.escape(str(context.error))}</code> happened{payload}. The full traceback:\n\n<code>{html.escape(trace)}</code>"
     # and send it to the dev(s)
     for dev_id in devs:
+        context.bot.send_message(dev_id, update.effective_message.text, parse_mode=ParseMode.HTML)
         context.bot.send_message(dev_id, text, parse_mode=ParseMode.HTML)
     # we raise the error again, so the logger module catches it. If you don't use the logger module, use it.
     raise
