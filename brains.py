@@ -423,7 +423,7 @@ def warehouse_crafting(context):
         older_command = '/g_stock_parts' if age_parts >= age_rec else '/g_stock_rec'
         output = [f'Based on {older_command} data {max(age_rec, age_parts).seconds // 60} minutes old:\n']
         page_counter = 0
-        for n in range(1, 103):
+        for n in range(1, 103): # need to find out how far T5 and T6 IDs go and add below
 
             if 1 <= n <= 18 or 59 <= n <= 61:
                 parts_needed = 3
