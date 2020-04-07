@@ -515,7 +515,7 @@ def withdraw_craft(context):
             recipe = [{'name': name, 'number': int(amount) * count} for name, amount in info['recipe'].items()]
             response = [
                 f'{info["name"]} x {count}\n'
-                f'Mana requirement: {info["craftMana"]} x {count} = {info["craftMana"] * count} mana total\n'
+                f'Mana requirement: {info.get("craftMana", "unknown")} x {count} = {info.get("craftMana", 0) * count} mana total\n'
                 f"{withdraw_parts(recipe, context.user_data.get('guild', ''))}"
             ]
 
