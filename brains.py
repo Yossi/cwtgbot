@@ -411,7 +411,7 @@ def alch_list(context):
 
 def warehouse_crafting(context):
     warehouse = warehouse_load_saved(guild = context.user_data.get('guild', ''))
-    hours = 1.5
+    hours = 2.5
     responses = []
     now = datetime.datetime.utcnow()
     if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
@@ -423,36 +423,33 @@ def warehouse_crafting(context):
         older_command = '/g_stock_parts' if age_parts >= age_rec else '/g_stock_rec'
         output = [f'Based on {older_command} data {max(age_rec, age_parts).seconds // 60} minutes old:\n']
         page_counter = 0
-        for n in range(1, 103): # need to find out how far T5 and T6 IDs go and add below
-
-            if 1 <= n <= 18 or 59 <= n <= 61:
-                parts_needed = 3
-            elif 100 <= n <= 102:
-                parts_needed = 4
-            elif 19 <= n <= 58 or n in (91, 96, 97):
-                parts_needed = 5
-            elif 78 <= n <= 90 or 92 <= n <= 95 or n in (98, 99):
-                parts_needed = 6
-            elif 62 <= n <= 77:
+        for n in range(1, 125):
+            if 62 <= n <= 77:
                 continue
 
             id = f'{n:02}'
+            name = id_lookup["r"+id]['name'].rpartition(" ")[0]
+            recipe = name_lookup.get(name.lower(), {}).get('recipe', {})
+            parts_needed, part_name = '1000000', 'Part'
+            for k in recipe:
+                if k.startswith(name.split()[0]) and not k.endswith('Recipe'):
+                    parts_needed = int(recipe.get(k))
+                    part_name = k.rpartition(' ')[2]
+                    part_id = name_lookup.get(k.lower(), {}).get('id')
+
             count_recipes = rec['data'].get(f'r{id}', 0)
-            count_parts = parts['data'].get(f'k{id}', 0)
-            #if count_recipes or count_parts or True:
+            count_parts = parts['data'].get(part_id, 0)
             complete_parts_sets = count_parts // parts_needed
             parts_missing_for_next_set = count_parts % parts_needed
             recipes_missing = complete_parts_sets - count_recipes
             things_missing = int(not bool(count_recipes)) + max(parts_needed - count_parts, 0)
             num_craftable = min(count_recipes, complete_parts_sets)
             ready = '✅' if num_craftable else '❌'
-            name = id_lookup["r"+id]['name'].rpartition(" ")[0]
             finished_part_id = name_lookup[name.lower()]['id']
-            part_name = id_lookup["k"+id]['name'].rpartition(" ")[2].title()
             recipe_location = get_id_location(f'r{id}')
-            part_location = get_id_location(f'k{id}')
+            part_location = get_id_location(part_id)
             recipe_price = str(prices.get(f'r{id}', ''))
-            part_price = str(prices.get(f'k{id}', ''))
+            part_price = str(prices.get(part_id, ''))
             if recipe_price: recipe_price = f'👝{recipe_price}'
             if part_price: part_price = f'👝{part_price}'
 
@@ -570,6 +567,6 @@ if __name__ == '__main__':
         pass
     c = Mock()
     c.user_data = {'save': {'01': '', '02': '', '08': '10'}, 'guild': 'USA'}
-    c.args = ['p11', '90']
+    c.args = ['all']
 
-    pprint(withdraw_craft(c))
+    pprint(warehouse_crafting(c))
