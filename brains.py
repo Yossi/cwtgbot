@@ -427,8 +427,8 @@ def warehouse_crafting(context):
             if 62 <= n <= 77:
                 continue
 
-            id = f'{n:02}'
-            name = id_lookup["r"+id]['name'].rpartition(" ")[0]
+            rec_id = f'r{n:02}'
+            name = id_lookup[rec_id]['name'].rpartition(" ")[0]
             recipe = name_lookup.get(name.lower(), {}).get('recipe', {})
             parts_needed, part_name = '1000000', 'Part'
             for k in recipe:
@@ -437,7 +437,7 @@ def warehouse_crafting(context):
                     part_name = k.rpartition(' ')[2]
                     part_id = name_lookup.get(k.lower(), {}).get('id')
 
-            count_recipes = rec['data'].get(f'r{id}', 0)
+            count_recipes = rec['data'].get(rec_id, 0)
             count_parts = parts['data'].get(part_id, 0)
             complete_parts_sets = count_parts // parts_needed
             parts_missing_for_next_set = count_parts % parts_needed
@@ -446,9 +446,9 @@ def warehouse_crafting(context):
             num_craftable = min(count_recipes, complete_parts_sets)
             ready = '✅' if num_craftable else '❌'
             finished_part_id = name_lookup[name.lower()]['id']
-            recipe_location = get_id_location(f'r{id}')
+            recipe_location = get_id_location(rec_id)
             part_location = get_id_location(part_id)
-            recipe_price = str(prices.get(f'r{id}', ''))
+            recipe_price = str(prices.get(rec_id, ''))
             part_price = str(prices.get(part_id, ''))
             if recipe_price: recipe_price = f'👝{recipe_price}'
             if part_price: part_price = f'👝{part_price}'
@@ -476,17 +476,17 @@ def warehouse_crafting(context):
                         continue
 
             hold = []
-            hold.append(f'{ready} {id} {name} <code>{finished_part_id}</code>')
+            hold.append(f'{ready} <code>{finished_part_id}</code> {name}')
             if num_craftable:
-                hold.append(f'<code> {num_craftable}</code> Can be made')
-            hold.append(f'<code>{parts_needed} {part_name}s per recipe</code>')
-            hold.append(f'<code>  {count_recipes} Recipe{"s" if count_recipes != 1 else ""}</code> {recipe_price} {recipe_location}')
-            hold.append(f'<code>  {count_parts} {part_name}{"s" if count_parts != 1 else ""}</code> {part_price} {part_location}')
+                hold.append(f'Complete sets: <code>{num_craftable}</code>')
+            hold.append(f'{part_name}s per recipe: <code>{parts_needed}</code>')
+            hold.append(f'<code>{rec_id}</code> Recipe{"s" if count_recipes != 1 else ""}: <code>{count_recipes}</code> {recipe_price} {recipe_location}')
+            hold.append(f'<code>{part_id}</code> {part_name}{"s" if count_parts != 1 else ""}: <code>{count_parts}</code> {part_price} {part_location}')
             hold.append(' ')
             hold = '\n'.join(hold)
 
             page_counter += len(hold.encode('utf-8'))
-            if page_counter >= 3000: # tg officially supports messages as long as 4096, but the formatting gives up around 3000
+            if page_counter >= 2500: # tg officially supports messages as long as 4096, but the formatting gives up around 3000
                 responses.append('\n'.join(output))
                 page_counter = 0
                 output = []
