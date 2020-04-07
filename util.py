@@ -14,7 +14,9 @@ from tealeyes import CW_OFFSET, CW_PERIODS, SPEED
 def scrape_data(fp):
     '''get itemcode table and stuff it in a pickle'''
     url = 'https://raw.githubusercontent.com/AVee/cw_wiki_sync/master/data/resources.json'
-    data = requests.get(url).json()['items']
+    j = requests.get(url).json()
+    data = j['items']
+    data.extend(j['incomplete'])
     pickle.dump(data, fp)
 
 def get_lookup_dicts():
@@ -123,4 +125,5 @@ id_lookup, name_lookup = get_lookup_dicts()
 
 if __name__ == '__main__':
     from pprint import pprint
-    pprint(id_lookup.get('a89'))
+    with open('data.dict', 'wb') as fp:
+        scrape_data(fp)
