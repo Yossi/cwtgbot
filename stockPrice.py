@@ -9,7 +9,7 @@ import websocket
 
 from util import name_lookup
 
-domain = 'mc.guppygalaxy.com:18518'
+domain = 'doge-stock.com/EUCW'
 feed = 'sex_digest'
 picklename = 'stockprices.dict'
 
@@ -40,9 +40,9 @@ if __name__ == "__main__":
         with open(picklename, 'wb') as fp:
             pickle.dump({}, fp)
 
-    websocket.enableTrace(True)
+    #websocket.enableTrace(True)
     while True:
-        ws = websocket.WebSocketApp(f'ws://{domain}/{feed}',
+        ws = websocket.WebSocketApp(f'wss://{domain}/{feed}',
                                     on_message = on_message,
                                     on_error = on_error,
                                     on_close = on_close)
