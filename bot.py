@@ -367,10 +367,10 @@ dispatcher.add_handler(CommandHandler('g_withdraw', incoming))
 dispatcher.add_handler(CommandHandler('g_deposit', incoming))
 dispatcher.add_handler(CommandHandler('warehouse', warehouse))
 dispatcher.add_handler(CommandHandler('w', warehouse))
-dispatcher.add_handler(MessageHandler(Filters.regex(r'/w.*_'), warehousecmd))
+# regex below
 dispatcher.add_handler(CommandHandler('craft', craft))
 dispatcher.add_handler(CommandHandler('c', craft))
-dispatcher.add_handler(MessageHandler(Filters.regex(r'/c.*_'), craftcmd))
+# regex below
 dispatcher.add_handler(CommandHandler('stock', stock))
 dispatcher.add_handler(CommandHandler('alch', alch))
 dispatcher.add_handler(CommandHandler('deals', deals))
@@ -380,6 +380,10 @@ dispatcher.add_handler(CommandHandler('user_data', user_data))
 dispatcher.add_handler(CommandHandler('chat_data', chat_data))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('warehouse_data', warehouse_data))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('go', destination))
+
+dispatcher.add_handler(MessageHandler(Filters.regex(r'/w.*_'), warehousecmd))
+dispatcher.add_handler(MessageHandler(Filters.regex(r'/c.*_'), craftcmd))
+
 dispatcher.add_error_handler(error)
 
 logging.info('bot started')
