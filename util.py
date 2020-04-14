@@ -1,5 +1,6 @@
 import csv
 import pickle
+import json
 import logging
 from datetime import datetime, time, timezone
 from pathlib import Path
@@ -12,12 +13,10 @@ from telegram import ParseMode
 from tealeyes import CW_OFFSET, CW_PERIODS, SPEED
 
 def scrape_data(fp):
-    '''get itemcode table and stuff it in a pickle'''
+    '''get itemcode table and stuff it in a file'''
     url = 'https://raw.githubusercontent.com/AVee/cw_wiki_sync/master/data/resources.json'
-    j = requests.get(url).json()
-    data = j['items']
-    data.extend(j['incomplete'])
-    pickle.dump(data, fp)
+    data = requests.get(url).text
+    fp.write(data)
 
 def get_lookup_dicts():
     try:
@@ -26,7 +25,7 @@ def get_lookup_dicts():
         with open('lastrev', 'r') as revfp:
             localrev = revfp.readline()
             if lastrev != localrev:
-                with open('data.dict', 'wb') as fp:
+                with open('data.json', 'w') as fp:
                     scrape_data(fp)
 
         with open('lastrev', 'w') as fp:
@@ -34,11 +33,13 @@ def get_lookup_dicts():
     except:
         pass # if we end up here for whatever reason (almost certainly a network error) then just move on. If network is really down AND we don't have data.dict yet then we explode later
 
-    if not Path('data.dict').is_file():
-        with open('data.dict', 'wb') as fp:
+    if not Path('data.json').is_file():
+        with open('data.json', 'w') as fp:
             scrape_data(fp)
-    with open('data.dict', 'rb') as fp:
-        data = pickle.load(fp)
+    with open('data.json', 'r') as fp:
+        j = json.load(fp)
+        data = j['items']
+        data.extend(j['incomplete'])
         id_lookup = {}
         name_lookup = {}
         for item in data:
@@ -120,10 +121,9 @@ def send(payload, update, context):
             context.bot.send_document(chat_id=chat_id, document=payload)
 
 
-id_lookup, name_lookup = get_lookup_dicts()
-
-
 if __name__ == '__main__':
     from pprint import pprint
-    with open('data.dict', 'wb') as fp:
+    with open('data.json', 'w') as fp:
         scrape_data(fp)
+else:
+    id_lookup, name_lookup = get_lookup_dicts()
