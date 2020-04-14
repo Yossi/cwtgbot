@@ -20,7 +20,7 @@ from timezonefinder import TimezoneFinder
 
 from tealeyes import tealeyes
 from brains import main, warehouse_crafting, withdraw_craft, deals_report
-from brains import stock_list, alch_list
+from brains import stock_list, alch_list, other_list
 from brains import id_lookup
 from util import warehouse_load_saved, send
 from secrets import TOKEN, LIST_OF_ADMINS
@@ -150,6 +150,14 @@ def stock(update, context):
 def alch(update, context):
     '''show a list of ingredients we have in order of quantity'''
     responses = alch_list(context)
+    for response in responses:
+        send(response, update, context)
+
+@send_typing_action
+@log
+def other(update, context):
+    '''show a list of equipment we have and how much it can be instantly sold for'''
+    responses = other_list(context)
     for response in responses:
         send(response, update, context)
 
@@ -373,6 +381,7 @@ dispatcher.add_handler(CommandHandler('c', craft))
 # regex below
 dispatcher.add_handler(CommandHandler('stock', stock))
 dispatcher.add_handler(CommandHandler('alch', alch))
+dispatcher.add_handler(CommandHandler('other', other))
 dispatcher.add_handler(CommandHandler('deals', deals))
 dispatcher.add_handler(CommandHandler('r', restart))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))
 dispatcher.add_handler(CommandHandler('say', say))#, filters=Filters.user(user_id=LIST_OF_ADMINS)))

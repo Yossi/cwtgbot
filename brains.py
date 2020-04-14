@@ -230,7 +230,8 @@ def main(update, context, testing=False):
             'res': '/stock',
             'alch': '/alch',
             'rec': '/warehouse',
-            'parts': '/w_1'
+            'parts': '/w_1',
+            'other': '/other'
         }
         guild = context.user_data.get('guild', '')
         if not hasattr(update.effective_message.forward_from, 'id') or update.effective_message.forward_from.id not in [408101137]:  # @chtwrsbot
@@ -249,7 +250,7 @@ def main(update, context, testing=False):
                     key = 'res'
                 else:
                     key = 'alch'
-            elif id_sample[0] in 'sp':
+            elif id_sample[0] in 'spfc':
                 key = 'misc'
             elif id_sample[0] == 'r':
                 key = 'rec'
@@ -257,6 +258,17 @@ def main(update, context, testing=False):
                 key = 'parts'
             elif id_sample[0] in 'wuea':
                 key = 'other'
+                data = {}
+                for row in text.split('\n')[1:]:
+                    s = row.split()
+                    supplied_id = s[0]
+                    count = s[-1]
+                    modifier = ''
+                    if s[1].startswith('⚡'):
+                        modifier = s.pop(1)
+                    name = ' '.join(s[1:-2])
+                    base_id = name_lookup.get(name.lower(), {}).get('id', 'zzz')
+                    data.setdefault(base_id, []).append( (supplied_id, f'{modifier} {name}', int(count)) )
 
             if not warehouse.get(guild):
                 warehouse[guild] = {}
@@ -407,6 +419,38 @@ def alch_list(context):
         responses.append('\n'.join(output))
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_alch and try again')
+    return responses
+
+def other_list(context):
+    warehouse = warehouse_load_saved(guild = context.user_data.get('guild', ''))
+    hours = 3
+    responses = []
+    now = datetime.datetime.utcnow()
+    if (other := warehouse.get('other', {})) and (age := now - other['timestamp']) < datetime.timedelta(hours=hours):
+        output = [f'Based on /g_stock_other data {age.seconds // 60} minutes old:\n']
+        page_counter = 0
+        for id, items in sorted(other['data'].items()):
+            hold_output = []
+            sub_output = []
+            item_count = 0
+            for item in sorted(items): # TODO: do better sort here
+                item_count += item[2]
+                sub_output.append('<code>  {}</code> {} x {}'.format(*item))
+            hold_output.append(f"<code>{id}</code> {id_lookup.get(id, {}).get('name', 'Assorted')} ∑ {item_count} 💰{id_lookup.get(id, {}).get('shopSellPrice', '??')}")
+            hold_output.extend(sub_output)
+            hold_output.append(' ')
+            hold_output = '\n'.join(hold_output)
+
+            page_counter += len(hold_output.encode('utf-8'))
+            if page_counter >= 3000: # tg officially supports messages as long as 4096, but the formatting gives up around 3000
+                responses.append('\n'.join(output))
+                page_counter = 0
+                output = []
+            output.append(hold_output)
+
+        responses.append('\n'.join(output))
+    else:
+        responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_other and try again')
     return responses
 
 def warehouse_crafting(context):
