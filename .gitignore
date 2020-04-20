@@ -127,4 +127,5 @@ dmypy.json
 secrets.py
 user.persist
 *.dict
+data.json
 lastrev
