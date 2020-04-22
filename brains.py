@@ -133,22 +133,26 @@ def main(update, context, testing=False):
     def generic(items):
         '''does most of the work sorting a list of items into /wts and /g_deposit buckets.
            expects an iterator of strings in the form ['<Item Name> (<Item Count>)']'''
+        #items = list(items)
+        #pprint(items)
         sales = []
         deposits = []
         for item in items:
-            match = re.search(r'(.+)\((\d+)\)', item)
+            match = re.search(r'(.+)\((\d+)\)( \/.+_(.+))?', item)
             if not match: continue
             name = match[1].strip()
-            if 'murky' in name: continue
+            if 'murky' in name: continue # TODO: if murkies ever make it into the wiki, remove this
             name = name.replace('📃', '').replace('🏷', '')
-            if name.startswith('/sg_'):
+            if name[0] == '⚡':
                 name = name.partition(' ')[2]
             id = name_lookup.get(name.lower(), {}).get('id')
             if not id and '_' in name:
                 id = item.strip().rpartition('_')[2]
             if id not in id_lookup: continue
-            if not id_lookup[id]['depositable'] and id[0] not in 'kr': continue
+            if not id_lookup[id]['depositable'] and id[0] not in 'kr': continue # TODO: confirm that all parts/recipes are correctly marked depositable and remove this
             count_total = int(match[2])
+            if match[4]:
+                id = match[4]
             if id in context.user_data.get('save', {}):
                 max_weight = 1000 // id_lookup[id]['weight']
                 count_keep = context.user_data['save'][id]
