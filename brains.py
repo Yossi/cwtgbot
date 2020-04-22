@@ -149,7 +149,7 @@ def main(update, context, testing=False):
             if not id and '_' in name:
                 id = item.strip().rpartition('_')[2]
             if id not in id_lookup: continue
-            if not id_lookup[id]['depositable'] and id[0] not in 'kr': continue # TODO: confirm that all parts/recipes are correctly marked depositable and remove this
+            if not id_lookup[id]['depositable']: continue
             count_total = int(match[2])
             if match[4]:
                 id = match[4]
