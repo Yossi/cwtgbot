@@ -435,7 +435,7 @@ def other_list(context):
             item_count = 0
             for item in sorted(items): # TODO: do better sort here
                 item_count += item[2]
-                sub_output.append('<code>  {}</code> {} x {}'.format(*item))
+                sub_output.append('<code>  </code>/g_i_{} {} x {}'.format(*item))
             hold_output.append(f"<code>{id}</code> {id_lookup.get(id, {}).get('name', 'Assorted')} ∑ {item_count} 💰{id_lookup.get(id, {}).get('shopSellPrice', '??')}")
             hold_output.extend(sub_output)
             hold_output.append(' ')
