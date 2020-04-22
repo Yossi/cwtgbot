@@ -424,7 +424,7 @@ cases = [
             '🏷Crusader Shield (1) /bind_u114\n'
             '🏷Royal Guard Cape (1) /bind_a26',
         'output':
-            ['<code>/g_deposit a49</code> Crusader Shield'],
+            ['<code>/g_deposit u114</code> Crusader Shield'],
         'matches':
             {
                 'storage_match': False,
@@ -623,7 +623,7 @@ cases = [
             'a32b Hunter Armor x 1',
 
         'output':
-            ['other'],
+            ['/other'],
         'matches':
             {
                 'storage_match': False,
