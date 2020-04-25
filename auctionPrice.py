@@ -18,7 +18,7 @@ def on_message(ws, message):
         store = pickle.load(fp)
 
     data = json.loads(message)
-    for datum in data:
+    for datum in data.get('content'):
         if datum['status'] not in ['Finished']: continue
         name = datum['itemName'].lower()
         id = name_lookup.get(name, {}).get('id')
