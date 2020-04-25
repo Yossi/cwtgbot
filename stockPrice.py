@@ -18,7 +18,7 @@ def on_message(ws, message):
         store = pickle.load(fp)
 
     data = json.loads(message)
-    for datum in data:
+    for datum in data.get('content'):
         id = name_lookup[datum['name'].lower()]['id']
         price = datum['prices'][0]
         store[id] = price
