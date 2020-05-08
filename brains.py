@@ -97,7 +97,7 @@ def withdraw_parts(matches, guild):
         command = ''
 
     if missing:
-        missing = '\n'.join([f"Based on data {age.seconds // 60} minutes old, need to get:"] + missing)
+        missing = '\n'.join([f"Based on data {age.seconds // 60} minutes old, item{'' if len(missing) == 1 else 's'} missing:"] + missing)
     else:
         missing = ''
 
