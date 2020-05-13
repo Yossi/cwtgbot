@@ -41,21 +41,23 @@ def withdraw_parts(matches, guild):
 
     notice = ''
     guild_stock = {}
+    still_missing = set()
+    oldest = now - now
     for suffix in command_suffixes:
         suf = warehouse.get(suffix, {})
         if suf:
             age = now - suf['timestamp']
             if age < datetime.timedelta(hours=hours):
                 guild_stock.update(suf['data'])
+                oldest = max(oldest, age)
             else:
-                guild_stock = {}
-                break
+                still_missing.add(suffix)
         else:
             guild_stock = {}
             break
 
-    if not guild_stock:
-        for suffix in sorted(command_suffixes):
+    if still_missing:
+        for suffix in sorted(still_missing):
             notice += f'\n/g_stock_{suffix}'
 
     command = ['<code>/g_withdraw']
@@ -97,7 +99,7 @@ def withdraw_parts(matches, guild):
         command = ''
 
     if missing:
-        missing = '\n'.join([f"Based on data {age.seconds // 60} minutes old, item{'' if len(missing) == 1 else 's'} missing:"] + missing)
+        missing = '\n'.join([f"Based on data {oldest.seconds // 60} minutes old, item{'' if len(missing) == 1 else 's'} missing:"] + missing + [''])
     else:
         missing = ''
 
