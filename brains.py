@@ -232,6 +232,16 @@ def main(update, context, testing=False):
         ret.append(f'{"".join(response)}\n{withdraw_parts(command, context.user_data.get("guild", ""))}')
 
     def warehouse_in():
+        '''read in /g_stock_* forwards'''
+        def discover_id(testname):
+            print(testname)
+            '''slow base_id finder for use only with troublesome custom named pieces of equipment'''
+            lookup_names = [item for id, item in id_lookup.items() if id[0] in 'aw' and item.get('depositable') and item.get('enchantable')]
+            result = [item['id'] for item in lookup_names if item['name'] in testname]
+            if len(result) == 1:
+                return result[0]
+            return 'x' # someone is trying to be difficult
+
         followup = {
             'res': '/stock',
             'alch': '/alch',
@@ -273,7 +283,9 @@ def main(update, context, testing=False):
                     if s[1].startswith('⚡'):
                         modifier = s.pop(1)
                     name = ' '.join(s[1:-2])
-                    base_id = name_lookup.get(name.lower(), {}).get('id', 'zzz')
+                    base_id = name_lookup.get(name.lower(), {}).get('id')
+                    if not base_id:
+                        base_id = discover_id(name) # preserve case here
                     data.setdefault(base_id, []).append( (supplied_id, f'{modifier} {name}', int(count)) )
 
             if not warehouse.get(guild):
