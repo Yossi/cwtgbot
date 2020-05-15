@@ -362,8 +362,11 @@ def stock_list(context):
     responses = []
     now = datetime.datetime.utcnow()
     if (res := warehouse.get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
-        with open('stockprices.dict', 'rb') as fp:
-            prices = pickle.load(fp)
+        try:
+            with open('stockprices.dict', 'rb') as fp:
+                prices = pickle.load(fp)
+        except FileNotFoundError:
+            prices = {}
 
         output = [f'Based on /g_stock_res data {age.seconds // 60} minutes old:\n⚖️']
         for x in range(1, 39):
@@ -375,7 +378,8 @@ def stock_list(context):
             price = prices.get(id, '')
             if price: price = f'💰{price}'
             output.append(f'{trade}<code>{id}</code> {id_lookup[id]["name"]} x {res["data"][id]} {price}')
-        output.append(f"\nPrices no fresher than {(now - prices['last_update']).seconds // 60} minutes.")
+        if prices:
+            output.append(f"\nPrices no fresher than {(now - prices['last_update']).seconds // 60} minutes.")
 
         sort_by_weight = {id: res['data'][id]*id_lookup[id]['weight'] for id in res['data']}
         sort_by_weight = sorted(sort_by_weight, key=sort_by_weight.get, reverse=True)
@@ -410,8 +414,11 @@ def alch_list(context):
     now = datetime.datetime.utcnow()
     if (alch := warehouse.get('alch', {})) and (age := now - alch['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_alch data {age.seconds // 60} minutes old:\n']
-        with open('stockprices.dict', 'rb') as fp:
-            prices = pickle.load(fp)
+        try:
+            with open('stockprices.dict', 'rb') as fp:
+                prices = pickle.load(fp)
+        except FileNotFoundError:
+            prices = {}
 
         for x in range(39, 70):
             if f'{x:02}' in id_lookup:
@@ -421,6 +428,8 @@ def alch_list(context):
             price = prices.get(id, '')
             if price: price = f'💰{price}'
             output.append(f'<code>{id}</code> {id_lookup[id]["name"]} x {alch["data"][id]} {price}')
+        if prices:
+            output.append(f"\nPrices no fresher than {(now - prices['last_update']).seconds // 60} minutes.")
 
         responses.append('\n'.join(output))
     else:
@@ -467,8 +476,11 @@ def warehouse_crafting(context):
     if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
     (age_rec := now - rec['timestamp']) < datetime.timedelta(hours=hours) and \
     (age_parts := now - parts['timestamp']) < datetime.timedelta(hours=hours):
-        with open('auctionprices.dict', 'rb') as fp:
-            prices = pickle.load(fp)
+        try:
+            with open('auctionprices.dict', 'rb') as fp:
+                prices = pickle.load(fp)
+        except FileNotFoundError:
+            prices = {}
 
         older_command = '/g_stock_parts' if age_parts >= age_rec else '/g_stock_rec'
         output = [f'Based on {older_command} data {max(age_rec, age_parts).seconds // 60} minutes old:\n']
@@ -498,10 +510,13 @@ def warehouse_crafting(context):
             finished_part_id = name_lookup[name.lower()]['id']
             recipe_location = get_id_location(rec_id)
             part_location = get_id_location(part_id)
-            recipe_price = str(prices.get(rec_id, ''))
-            part_price = str(prices.get(part_id, ''))
-            if recipe_price: recipe_price = f'👝{recipe_price}'
-            if part_price: part_price = f'👝{part_price}'
+            recipe_price = ''
+            part_price = ''
+            if prices:
+                recipe_price = str(prices.get(rec_id, ''))
+                part_price = str(prices.get(part_id, ''))
+                if recipe_price: recipe_price = f'👝{recipe_price}'
+                if part_price: part_price = f'👝{part_price}'
 
             # Getting through this gauntlet without hitting a continue means you get displayed
             if not num_craftable and not context.args:
