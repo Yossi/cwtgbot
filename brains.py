@@ -5,6 +5,7 @@ import pickle
 import re
 from collections import defaultdict
 from pprint import pprint
+from rich import print
 
 import matplotlib.pyplot as plt
 
@@ -154,7 +155,7 @@ def main(update, context, testing=False):
             if not id_lookup[id]['depositable']: continue
             count_total = int(match[2])
             if match[4]:
-                id = match[4]
+                id = match[4].strip()
             if id in context.user_data.get('save', {}):
                 max_weight = 1000 // id_lookup[id]['weight']
                 count_keep = context.user_data['save'][id]
