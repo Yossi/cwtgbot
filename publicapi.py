@@ -157,6 +157,22 @@ def handle_yellow(message):
     print(''.join(yellow_list))
 
 
+def handle_message(message):
+    switcher = {
+        'cw2-deals': handle_deals,
+        'cw2-offers': handle_offers,
+        'cw2-sex_digest': handle_sex,
+        'cw2-yellow_pages': handle_yellow,
+        'cw2-au_digest': handle_au,
+        #'cw3-deals': handle_deals,
+        #'cw3-offers': handle_offers,
+        #'cw3-sex_digest': handle_sex,
+        #'cw3-yellow_pages': handle_yellow,
+        #'cw3-au_digest': handle_au,
+    }
+    func = switcher.get(message.topic, lambda x: f"No handler for topic {message.topic}")
+    return func(message)
+
 def main():
     for picklename in ['stockprices.dict', 'auctionprices.dict']:
         if not Path(picklename).is_file():
@@ -164,19 +180,7 @@ def main():
                 pickle.dump({}, fp)
 
     for message in consumer:
-        if 'deals' in message.topic:
-            handle_deals(message)
-        elif 'duels' in message.topic:
-            handle_duels(message)
-        elif 'offers' in message.topic:
-            handle_offers(message)
-        elif 'sex_digest' in message.topic:
-            handle_sex(message)
-        elif 'yellow_pages' in message.topic:
-            handle_yellow(message)
-        elif 'au_digest' in message.topic:
-            handle_au(message)
-
+        handle_message(message)
 
 if __name__ == '__main__':
     main()
