@@ -590,7 +590,7 @@ def withdraw_craft(context):
             count = int(context.args[1])
 
         if info.get('craftable', False):
-            recipe = [{'name': name, 'number': int(amount) * count} for name, amount in info['recipe'].items()]
+            recipe = [{'name': name, 'number': int(amount) * count} for name, amount in info['recipe'].items() if name != 'Gold']
             recipe_str = '\n'.join([f'   {name}: {amount}{(f" x {count} = {int(amount) * count}" if count > 1 else "")}' for name, amount in info['recipe'].items()])
             response = [
                 f'<b>{info["name"]}{(f" x {count}" if count > 1 else "")}</b>\n'
