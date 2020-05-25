@@ -168,7 +168,7 @@ def main(update, context, testing=False):
                     count_keep = count_keep - max_weight
                 sales.append(f'/wts_{id}_{count_keep}_1000 {name}')
                 if count_deposit:
-                    deposits.append(f'<code>/g_deposit {id}{" "+str(count_deposit) if count_deposit != 1 else ""}</code> {name}')
+                    deposits.append(f'/g_deposit_{id}{"_"+str(count_deposit) if count_deposit != 1 else ""} {name}')
             elif id in context.user_data.get('ignore', {}):
                 count_keep = context.user_data['ignore'][id]
                 if not count_keep:
@@ -176,9 +176,9 @@ def main(update, context, testing=False):
                 count_keep = min(int(count_keep), count_total)
                 count_deposit = count_total - count_keep
                 if count_deposit:
-                    deposits.append(f'<code>/g_deposit {id}{" "+str(count_deposit) if count_deposit != 1 else ""}</code> {name}')
+                    deposits.append(f'/g_deposit_{id}{"_"+str(count_deposit) if count_deposit != 1 else ""} {name}')
             else:
-                deposits.append(f'<code>/g_deposit {id}{" "+str(count_total) if count_total != 1 else ""}</code> {name}')
+                deposits.append(f'/g_deposit_{id}{"_"+str(count_total) if count_total != 1 else ""} {name}')
 
         if sales:
             if len(sales) == 1:
@@ -190,7 +190,7 @@ def main(update, context, testing=False):
                 fire_sale = ['Market is closed so you get deposit commands.\nForward this message back to the bot after battle to get the withdraw commands for a refund.\n']
                 for match in matches:
                     d = match.groupdict()
-                    fire_sale.append(f'<code>/g_deposit {d["id"]}{" "+d["number"] if d["number"] != "1" else ""}</code> {d["name"]}')
+                    fire_sale.append(f'/g_deposit_{d["id"]}{"_"+d["number"] if d["number"] != "1" else ""} {d["name"]}')
                 sales = '\n'.join(sorted(fire_sale))
             ret.append(sales)
 
@@ -205,7 +205,7 @@ def main(update, context, testing=False):
 
     def refund():
         '''process returned /g_deposit message from ourselves'''
-        matches = re.finditer(r'\/g_deposit (?P<id>[aestchwpmkr]{0,3}\d+) (?P<number>\d+)?', text)
+        matches = re.finditer(r'\/g_deposit_(?P<id>[aestchwpmkr]{0,3}\d+)_(?P<number>\d+)?', text)
         if matches:
             ret.append(withdraw_parts((match.groupdict() for match in matches), context.user_data.get('guild', '')))
 
@@ -320,7 +320,7 @@ def main(update, context, testing=False):
     more_match = '📦Your stock:' in text
     generic_match = re.search(r'(.+)(?<!arrow )\((\d+)\)', text)
     withdraw_match = re.search(r'Not enough materials|Materials needed for|Not enough resources', text)
-    refund_match = re.search(r'\/g_deposit [aestchwpmkr]{0,3}\d+ (\d+)?', text)
+    refund_match = re.search(r'\/g_deposit_[aestchwpmkr]{0,3}\d+_(\d+)?', text)
     consolidate_match = text.startswith('/g_withdraw')
     rerequest_match = '/g_receive' in text
     warehouse_match = 'Guild Warehouse:' in text
