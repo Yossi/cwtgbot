@@ -1,6 +1,7 @@
 import datetime
 import json
 import pickle
+from collections import defaultdict
 from pathlib import Path
 
 from kafka import KafkaConsumer
@@ -48,12 +49,19 @@ def handle_au(message):
 
     au = message.value
     for auction in au:
-
         if auction['status'] not in ['Finished']: continue
         name = auction['itemName'].lower()
         id = name_lookup.get(name, {}).get('id')
         if not id: continue
-        price = auction['price']
+        if not store['history'][id] or auction['lotId'] != store['history'][id][0]:
+            if store['history'][id]:
+                store['history'][id][0] = auction['lotId']
+            else:
+                store['history'][id] = [auction['lotId']]
+            store['history'][id].append(auction['price'])
+        while len(store['history'][id]) > 5:
+            store['history'][id].pop(1)
+        price = round(sum(store['history'][id][1:]) / len(store['history'][id][1:]), 1)
         store[id] = price
     store['last_update'] = datetime.datetime.utcnow()
 
@@ -177,7 +185,7 @@ def main():
     for picklename in ['stockprices.dict', 'auctionprices.dict']:
         if not Path(picklename).is_file():
             with open(picklename, 'wb') as fp:
-                pickle.dump({}, fp)
+                pickle.dump({'history': defaultdict(list)}, fp)
 
     for message in consumer:
         handle_message(message)
