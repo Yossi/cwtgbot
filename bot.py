@@ -239,7 +239,10 @@ def setting_saver(update, context, section):
         context.user_data[section][id] = count
 
     settings = sorted(context.user_data.get(section, {}))
-    res = [f'{"Saving" if section == "save" else "Ignoring"} {"these" if len(settings) > 1 else "this"}:']
+    if len(settings) > 0:
+        res = [f'{"Saving" if section == "save" else "Ignoring"} {"these" if len(settings) > 1 else "this"}:']
+    else:
+        res = [f'Not {"saving" if section == "save" else "ignoring"} anything!']
     cmd = [f'/{section}']
     for id in settings:
         name = id_lookup.get(id, {}).get('name', 'unknown')
