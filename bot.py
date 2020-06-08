@@ -236,7 +236,7 @@ def setting_saver(update, context, section):
         count = ''
         if ',' in id:
             id, count = id.split(',')
-        if id_lookup.get(id, {}).get('name', False): # Don't save if item doesn't exist
+        if id_lookup.get(id, {}).get('name', False):  # Don't save if item doesn't exist
             context.user_data[section][id] = count
 
     settings = sorted(context.user_data.get(section, {}))
