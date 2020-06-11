@@ -238,7 +238,7 @@ def ignore(update, context):
 
 def clear_ignore(update, context):
     """clear the list of item IDs you would like to ignore"""
-    setting_clear(update,context,'ignore')
+    setting_clear(update, context, 'ignore')
 
 
 def setting_saver(update, context, section):
@@ -388,7 +388,7 @@ dispatcher.add_handler(CommandHandler('settings', settings))
 dispatcher.add_handler(CommandHandler('save', save))
 dispatcher.add_handler(CommandHandler('clear_save', clear_save))
 dispatcher.add_handler(CommandHandler('ignore', ignore))
-dispatcher.add_handler(CommandHandler('clear_ignore', clear_save))
+dispatcher.add_handler(CommandHandler('clear_ignore', clear_ignore))
 dispatcher.add_handler(CommandHandler('ping', ping))
 dispatcher.add_handler(CommandHandler('pong', pong))
 dispatcher.add_handler(CommandHandler('now', now))
