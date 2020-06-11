@@ -223,11 +223,23 @@ def save(update, context):
     '''set/view the list of item ids you want to hide in the market rather than deposit'''
     setting_saver(update, context, 'save')
 
+
+def clear_save(update, context):
+    """clear the list of item IDs you would like to save"""
+    setting_clear(update, context, 'save')
+
+
 @send_typing_action
 @log
 def ignore(update, context):
     '''set/view the list of item ids you want to ignore'''
     setting_saver(update, context, 'ignore')
+
+
+def clear_ignore(update, context):
+    """clear the list of item IDs you would like to ignore"""
+    setting_clear(update, context, 'ignore')
+
 
 def setting_saver(update, context, section):
     if context.args:
@@ -236,10 +248,14 @@ def setting_saver(update, context, section):
         count = ''
         if ',' in id:
             id, count = id.split(',')
-        context.user_data[section][id] = count
+        if id_lookup.get(id, {}).get('name', False):  # Don't save if item doesn't exist
+            context.user_data[section][id] = count
 
     settings = sorted(context.user_data.get(section, {}))
-    res = [f'{"Saving" if section == "save" else "Ignoring"} {"these" if len(settings) > 1 else "this"}:']
+    if len(settings) > 0:
+        res = [f'{"Saving" if section == "save" else "Ignoring"} {"these" if len(settings) > 1 else "this"}:']
+    else:
+        res = [f'Not {"saving" if section == "save" else "ignoring"} anything!']
     cmd = [f'/{section}']
     for id in settings:
         name = id_lookup.get(id, {}).get('name', 'unknown')
@@ -252,6 +268,13 @@ def setting_saver(update, context, section):
 
     text = '\n'.join(res)
     send(text, update, context)
+
+
+def setting_clear(update, context, section):
+    # TODO: Share users last config before clearing
+    context.user_data[section] = {}
+    send(f'Ok, your {section} settings have been cleared', update, context)
+
 
 @send_typing_action
 @log
@@ -363,7 +386,9 @@ dispatcher.add_handler(CommandHandler('mlm', mlm))
 dispatcher.add_handler(CommandHandler('help', help))
 dispatcher.add_handler(CommandHandler('settings', settings))
 dispatcher.add_handler(CommandHandler('save', save))
+dispatcher.add_handler(CommandHandler('clear_save', clear_save))
 dispatcher.add_handler(CommandHandler('ignore', ignore))
+dispatcher.add_handler(CommandHandler('clear_ignore', clear_ignore))
 dispatcher.add_handler(CommandHandler('ping', ping))
 dispatcher.add_handler(CommandHandler('pong', pong))
 dispatcher.add_handler(CommandHandler('now', now))
