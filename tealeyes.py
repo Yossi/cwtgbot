@@ -193,7 +193,7 @@ def hebrew_numeral(val, gershayim=True):
     if not isinstance(val, int):
         return [hebrew_numeral(v, gershayim) for v in val]
     else:
-        k, val = divmod(val, 1000)  # typically you leave off the thousands when writing the year
+        val = val % 1000  # typically you leave off the thousands when writing the year
 
         if val in hsn['specials']:
             retval = hsn['specials'][val]

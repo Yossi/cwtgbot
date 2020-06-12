@@ -493,8 +493,8 @@ def warehouse_crafting(context):
     responses = []
     now = datetime.datetime.utcnow()
     if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
-    (age_rec := now - rec['timestamp']) < datetime.timedelta(hours=hours) and \
-    (age_parts := now - parts['timestamp']) < datetime.timedelta(hours=hours):
+       (age_rec := now - rec['timestamp']) < datetime.timedelta(hours=hours) and \
+       (age_parts := now - parts['timestamp']) < datetime.timedelta(hours=hours):
         try:
             with open('auctionprices.dict', 'rb') as fp:
                 prices = pickle.load(fp)
@@ -521,8 +521,8 @@ def warehouse_crafting(context):
             count_recipes = rec['data'].get(rec_id, 0)
             count_parts = parts['data'].get(part_id, 0)
             complete_parts_sets = count_parts // parts_needed
-            parts_missing_for_next_set = count_parts % parts_needed
-            recipes_missing = complete_parts_sets - count_recipes
+            # parts_missing_for_next_set = count_parts % parts_needed
+            # recipes_missing = complete_parts_sets - count_recipes
             things_missing = int(not bool(count_recipes)) + max(parts_needed - count_parts, 0)
             num_craftable = min(count_recipes, complete_parts_sets)
             ready = '✅' if num_craftable else '❌'
