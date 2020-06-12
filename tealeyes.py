@@ -25,9 +25,10 @@ HEB_MONTHS_VRT = ["אדר", "ניסן", "אייר", "סיוון", "תמוז", "�
 SEASON_EMOJI = "♈♉♊♋♌♍♎♏♐♑♒♓"
 CLOCK_EMOJI = "🕛🕧🕐🕜🕑🕝🕒🕞🕓🕟🕔🕠🕕🕡🕖🕢🕗🕣🕘🕤🕙🕥🕚🕦🕛"
 
-DEPRESSION = 8 + 3/5
+DEPRESSION = 8 + 3 / 5
 SUN_YAT_SEN_ERA = 2698
 WRITERS_ERA = 2637
+
 
 def tealeyes(user_data):
     output = []
@@ -35,23 +36,23 @@ def tealeyes(user_data):
     weekdayhmformat = ("%A %H:%M")
     ymdhmsformat = ("%F %H:%M:%S")
     fullformat = ("%A %F %H:%M:%S")
-    countdownformat= ("{H}﻿h {M}′ {S}″")
-    longcountdownformat= ("{D}﻿d {H}﻿h {M}′")
+    countdownformat = ("{H}﻿h {M}′ {S}″")
+    longcountdownformat = ("{D}﻿d {H}﻿h {M}′")
 
-    timeshown = ( #these should be chat-specific or possibly guild-specific settings
-        ( (37.791279, -122.399218), "San Francisco, San Diego" ), # Union Square
-        ( (42.356528, -71.055808), "Boston, Augusta, Havana" ), # Haymarket Square
-        ( (5.545631, -0.208266), "Accra" ), # Rawlings Park
-        ( (52.374366, 4.898069), "Amsterdam, Bern" ), # De Oude Kerk
-        ( (55.754118, 37.620386), "Moscow" ), # Red Square
-        ( (1.292379, 103.852276), "Singapore, Manila, Hong Kong" ), # St. Andrew's Cathedral
-        ( (-37.787329, 175.282472), "Kirikiriroa" ) # Garden Place
+    timeshown = (  # these should be chat-specific or possibly guild-specific settings
+        ((37.791279, -122.399218), "San Francisco, San Diego"),  # Union Square
+        ((42.356528, -71.055808), "Boston, Augusta, Havana"),  # Haymarket Square
+        ((5.545631, -0.208266), "Accra"),  # Rawlings Park
+        ((52.374366, 4.898069), "Amsterdam, Bern"),  # De Oude Kerk
+        ((55.754118, 37.620386), "Moscow"),  # Red Square
+        ((1.292379, 103.852276), "Singapore, Manila, Hong Kong"),  # St. Andrew's Cathedral
+        ((-37.787329, 175.282472), "Kirikiriroa")  # Garden Place
     )
 
-    adjustment = -37.0 #there should be admin settings for this, as we may find these need adjusting
+    adjustment = -37.0  # there should be admin settings for this, as we may find these need adjusting
     adjustment3 = -37.0
     utcdt = datetime.now(timezone.utc)
-    #utcdt = datetime(1912,1,1,10,0,0,0,timezone.utc) #for testing
+    # utcdt = datetime(1912,1,1,10,0,0,0,timezone.utc)  # for testing
     cwtdt = datetime.fromtimestamp(SPEED * (utcdt.timestamp() + CW_OFFSET), tz=timezone.utc)
     cw3tdt = datetime.fromtimestamp(SPEED * (utcdt.timestamp() + CW3_OFFSET), tz=timezone.utc)
     cwadt = datetime.fromtimestamp(cwtdt.timestamp() + SPEED * adjustment, tz=timezone.utc)
@@ -69,7 +70,7 @@ def tealeyes(user_data):
         lunation = moon_phase / 27.99
 
         PRECISION = 0.05
-        NEW =   0 / 4.0
+        NEW = 0 / 4.0
         FIRST = 1 / 4.0
         FULL = 2 / 4.0
         LAST = 3 / 4.0
@@ -113,7 +114,7 @@ def tealeyes(user_data):
     output.append(f"{SEASON_EMOJI[season_int]} {CW_SEASONS[season_int]} season: {CW_SEASONS[season_int + 1]} in ≈{strfdelta(countdownSeason, longcountdownformat)}")
     output.append(f'')
 
-    output.append(f"<b>Chat Wars 3 (RU)</b>: {CW3_WEEKDAYS[cw3adt.weekday()]} {cw3adt.strftime(hmsformat)}")# /time3
+    output.append(f"<b>Chat Wars 3 (RU)</b>: {CW3_WEEKDAYS[cw3adt.weekday()]} {cw3adt.strftime(hmsformat)}")  # /time3
     output.append(f'')
 
     usertz_str = user_data.get('timezone')
@@ -177,7 +178,10 @@ def tealeyes(user_data):
 
     return '\n'.join(output)
 
+
 hsn = yaml.load(open('data/hebrew-special-numbers/styles/default.yml', encoding="utf8"), Loader=yaml.SafeLoader)
+
+
 def hebrew_numeral(val, gershayim=True):
     '''get hebrew numerals for the number(s) in val'''
     def add_gershayim(s):
@@ -197,15 +201,17 @@ def hebrew_numeral(val, gershayim=True):
 
         parts = []
         rest = str(val)
-        l = len(rest) - 1
+        length = len(rest) - 1
         for n, d in enumerate(rest):
             digit = int(d)
-            if digit == 0: continue
-            power = 10 ** (l-n)
+            if digit == 0:
+                continue
+            power = 10 ** (length - n)
             parts.append(hsn['numerals'][power * digit])
         retval = ''.join(parts)
 
         return add_gershayim(retval) if gershayim else retval
+
 
 if __name__ == '__main__':
     user_data = {}

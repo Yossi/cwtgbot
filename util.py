@@ -12,11 +12,13 @@ from telegram import ParseMode
 
 from tealeyes import CW_OFFSET, CW_PERIODS, SPEED
 
+
 def scrape_data(fp):
     '''get itemcode table and stuff it in a file'''
     url = 'https://raw.githubusercontent.com/AVee/cw_wiki_sync/master/data/resources.json'
     data = requests.get(url).text
     fp.write(data)
+
 
 def get_lookup_dicts():
     try:
@@ -31,7 +33,7 @@ def get_lookup_dicts():
         with open('lastrev', 'w') as fp:
             fp.write(lastrev)
     except:
-        pass # if we end up here for whatever reason (almost certainly a network error) then just move on. If network is really down AND we don't have data.dict yet then we explode later
+        pass  # if we end up here for whatever reason (almost certainly a network error) then just move on. If network is really down AND we don't have data.dict yet then we explode later
 
     if not Path('data.json').is_file():
         with open('data.json', 'w') as fp:
@@ -47,15 +49,17 @@ def get_lookup_dicts():
             name_lookup[item['name'].lower()] = item
     return id_lookup, name_lookup
 
+
 def is_witching_hour():
     '''return True if market is closed'''
     closed_times = (
-        (time( 6, 52), time( 7, 00)),
+        (time(6, 52), time(7, 00)),
         (time(14, 52), time(15, 00)),
         (time(22, 52), time(23, 00))
     )
     now = datetime.utcnow().time()
     return any((start < now < end for start, end in closed_times))
+
 
 def game_phase():
     adjustment = -37.0
@@ -63,6 +67,7 @@ def game_phase():
     cwtdt = datetime.fromtimestamp(SPEED * (utcdt.timestamp() + CW_OFFSET), tz=timezone.utc)
     cwadt = datetime.fromtimestamp(cwtdt.timestamp() + SPEED * adjustment, tz=timezone.utc)
     return f'{CW_PERIODS[cwadt.hour//6]}'
+
 
 def get_id_location(id):
     info = id_lookup.get(id, {})
@@ -76,22 +81,26 @@ def get_id_location(id):
     for place, emoji in locations:
         if info.get(f'drop{place}{phase}'):
             output += emoji
-    if output: output += ' ' + get_qualifications(id)
+    if output:
+        output += ' ' + get_qualifications(id)
     return output
+
 
 def get_qualifications(id):
     levels = {
         22: '22≤🏅≤39',
         32: '32≤🏅≤39',
         40: '40≤🏅≤45',
-        46: '46≤🏅' # further research will inform this dict
+        46: '46≤🏅'  # further research will inform this dict
     }
     level = levels.get(id_lookup.get(id, {}).get('questMinLevel'), '')
     roman = ['', '<code>I/II</code>', '<code>II</code>', '<code>III</code>', '<code>IV</code>', '<code>≥V</code>', '<code>VI</code>']
     perception_level = roman[id_lookup.get(id, {}).get('questPerceptionLevel', 0)]
-    if perception_level: perception_level = '👀' + perception_level
+    if perception_level:
+        perception_level = '👀' + perception_level
 
     return level + perception_level
+
 
 def warehouse_load_saved(guild='full'):
     try:
@@ -102,6 +111,7 @@ def warehouse_load_saved(guild='full'):
 
     except IOError:
         return {}  # Ignore if warehouse.dict doesn't exist or can't be opened.
+
 
 def send(payload, update, context):
     chat_id = update.effective_message.chat_id

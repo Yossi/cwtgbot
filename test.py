@@ -4,7 +4,8 @@ from brains import main
 
 
 cases = [
-    {   'name': '',
+    {
+        'name': '',
         'input':
             '',
         'output':
@@ -746,13 +747,14 @@ cases = [
 
 ]
 
-#print(cases[4]['input'])
+# print(cases[4]['input'])
 
 
 class TestBrainsMain(unittest.TestCase):
 
     def setUp(self):
         self.maxDiff = None
+
         class Mock:
             pass
 
@@ -765,20 +767,19 @@ class TestBrainsMain(unittest.TestCase):
         self.c = Mock()
         self.c.user_data = {'save': {'01': '', '02': '', '08': '10'}, 'guild': 'TEST'}
 
-
     def test_main(self):
         for case in cases[0:]:
             with self.subTest(name=case['name']):
                 self.u.effective_message.text = case['input']
                 output, matches = main(self.u, self.c, True)
-                #print(case['name'])
-                #print(output)
-                #print(matches, '\n')
-                self.assertEqual( matches, case['matches'] )
-                self.assertEqual( output , case['output'] )
+                # print(case['name'])
+                # print(output)
+                # print(matches, '\n')
+                self.assertEqual(matches, case['matches'])
+                self.assertEqual(output, case['output'])
 
 
 if __name__ == '__main__':
     unittest.main()
 
-    #python test.py -b
+    # python test.py -b

@@ -10,11 +10,11 @@ from rich import print
 from util import name_lookup
 
 consumer = KafkaConsumer(
-    #'cw2-offers',
-    #'cw2-deals',
-    #'cw2-duels',
+    # 'cw2-offers',
+    # 'cw2-deals',
+    # 'cw2-duels',
     'cw2-sex_digest',
-    #'cw2-yellow_pages',
+    # 'cw2-yellow_pages',
     'cw2-au_digest',
 
     bootstrap_servers=['digest-api.chtwrs.com:9092'],
@@ -49,10 +49,12 @@ def handle_au(message):
 
     au = message.value
     for auction in au:
-        if auction['status'] not in ['Finished']: continue
+        if auction['status'] not in ['Finished']:
+            continue
         name = auction['itemName'].lower()
         id = name_lookup.get(name, {}).get('id')
-        if not id: continue
+        if not id:
+            continue
         if not store['history'][id] or auction['lotId'] != store['history'][id][0]:
             if store['history'][id]:
                 store['history'][id][0] = auction['lotId']
@@ -172,14 +174,15 @@ def handle_message(message):
         'cw2-sex_digest': handle_sex,
         'cw2-yellow_pages': handle_yellow,
         'cw2-au_digest': handle_au,
-        #'cw3-deals': handle_deals,
-        #'cw3-offers': handle_offers,
-        #'cw3-sex_digest': handle_sex,
-        #'cw3-yellow_pages': handle_yellow,
-        #'cw3-au_digest': handle_au,
+        # 'cw3-deals': handle_deals,
+        # 'cw3-offers': handle_offers,
+        # 'cw3-sex_digest': handle_sex,
+        # 'cw3-yellow_pages': handle_yellow,
+        # 'cw3-au_digest': handle_au,
     }
     func = switcher.get(message.topic, lambda x: f"No handler for topic {message.topic}")
     return func(message)
+
 
 def main():
     for picklename in ['stockprices.dict', 'auctionprices.dict']:
@@ -189,6 +192,7 @@ def main():
 
     for message in consumer:
         handle_message(message)
+
 
 if __name__ == '__main__':
     main()
