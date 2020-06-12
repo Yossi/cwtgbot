@@ -1,10 +1,8 @@
-import csv
 import pickle
 import json
 import logging
 from datetime import datetime, time, timezone
 from pathlib import Path
-from urllib.parse import quote
 
 import filetype
 import requests

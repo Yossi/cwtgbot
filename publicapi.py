@@ -30,7 +30,6 @@ def handle_sex(message):
         store = pickle.load(fp)
 
     sex = message.value
-    sex_list = ['New Cheapest Items:\n']
     for item in sex:
         id = name_lookup[item['name'].lower()]['id']
         price = item['prices'][0]
