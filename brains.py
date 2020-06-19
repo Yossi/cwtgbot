@@ -406,6 +406,7 @@ def stock_list(context):
         ]
         r = range(len(sort_by_weight))
         plt.clf()  # clear plot, because it doesn't get cleared from last run
+        plt.figure(figsize=(6.4, 1.5+(len(sort_by_weight)*0.15)))
         plt.barh(r, x[0])
         plt.barh(r, x[1], left=x[0], color=(1, .6, 0))  # some color between yellow and orange
         plt.barh(r, x[2], left=x[0], color='red')
@@ -453,6 +454,7 @@ def alch_list(context):
         y = [f'{id_lookup[id]["name"].lower()} {id}' for id in sort_by_count]
         r = range(len(x))
         plt.clf()  # clear plot, because it doesn't get cleared from last run
+        plt.figure(figsize=(6.4, 1.5+(len(sort_by_count)*0.15)))
         plt.barh(r, x)
         plt.yticks(r, y, fontsize='8')
         plt.legend(loc='upper right', labels=['Alch Count'])
@@ -495,7 +497,24 @@ def other_list(context):
                 output = []
             output.append(hold_output)
 
+        count_and_weight = {id: sum(list(zip(*other['data'][id]))[2]) * id_lookup.get(id, {}).get('weight', 0) for id in other['data']}
+        sort_by_weight = sorted(count_and_weight, key=count_and_weight.get, reverse=True)
+        x = [count_and_weight[id] for id in sort_by_weight]
+        y = [f"{id_lookup.get(id, {'name': 'assorted'})['name'].lower()} {id}" for id in sort_by_weight]
+        r = range(len(x))
+        plt.clf()  # clear plot, because it doesn't get cleared from last run
+        plt.figure(figsize=(6.4, 1.5+(len(sort_by_weight)*0.15)))
+        plt.barh(r, x)
+        plt.yticks(r, y, fontsize='8')
+        plt.legend(loc='upper right', labels=['Other by Weight'])
+        plt.subplots_adjust(left=0.3)
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+
         responses.append('\n'.join(output))
+
+        responses.append(buf)
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_other and try again')
     return responses
