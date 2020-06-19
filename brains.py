@@ -616,6 +616,30 @@ def warehouse_crafting(context):
             responses.append(result)
         if result.rstrip().endswith(':'):
             responses.append('No matches in stock')
+
+        if context.args and context.args[0].lower() in ('all', 'chart'):
+            parts_rec = {**parts['data'], **rec['data']}
+            count_and_weight = {id: parts_rec[id] * id_lookup[id]['weight'] for id in parts_rec}
+            sort_by_weight = sorted(count_and_weight, key=count_and_weight.get, reverse=True)
+            x = [
+                [count_and_weight[id] if id[0] == 'k' else 0 for id in sort_by_weight],
+                [count_and_weight[id] if id[0] == 'r' else 0 for id in sort_by_weight]
+            ]
+            y = [f"{id_lookup[id]['name'].lower()} {id}" for id in sort_by_weight]
+            r = range(len(sort_by_weight))
+            plt.clf()  # clear plot, because it doesn't get cleared from last run
+            plt.figure(figsize=(6.4, 1.5+(len(sort_by_weight)*0.15)))
+            plt.barh(r, x[0])
+            plt.barh(r, x[1], color='red')
+            plt.yticks(r, y, fontsize='8')
+            plt.legend(loc='upper right', labels=['Parts', 'Recipes'])
+            plt.subplots_adjust(left=0.3)
+            buf = io.BytesIO()
+            buf.name = 'weights.pdf'
+            plt.savefig(buf, format='pdf')
+            buf.seek(0)
+            responses.append(buf)
+
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_parts and /g_stock_rec and try again')
     return responses
