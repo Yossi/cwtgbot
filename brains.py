@@ -197,6 +197,8 @@ def main(update, context, testing=False):
             ret.append(sales)
 
         if deposits:
+            if len(deposits) == 1:
+                deposits = [deposits[0].split()[0]]
             ret.append('\n'.join(sorted(deposits)))
 
     def withdraw():
