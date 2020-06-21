@@ -260,6 +260,8 @@ def main(update, context, testing=False):
             warehouse = warehouse_load_saved()
             data = {}
             for row in text.split('\n')[1:]:
+                if row[0] == 'u':
+                    row += ' x 1'
                 s = row.split()
                 data[s[0]] = int(s[-1])
 
@@ -279,6 +281,8 @@ def main(update, context, testing=False):
                 key = 'other'
                 data = {}
                 for row in text.split('\n')[1:]:
+                    if row[0] == 'u':
+                        row += ' x 1'
                     s = row.split()
                     supplied_id = s[0]
                     count = s[-1]
@@ -478,13 +482,17 @@ def other_list(context):
     if (other := warehouse.get('other', {})) and (age := now - other['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_other data {age.seconds // 60} minutes old:\n']
         page_counter = 0
-        for id, items in sorted(other['data'].items()):
+        for id, items in sorted(other['data'].items()):  # TODO: do better sort here
             hold_output = []
             sub_output = []
             item_count = 0
-            for item in sorted(items):  # TODO: do better sort here
-                item_count += item[2]
-                sub_output.append('<code>  </code>/g_i_{} {} x {}'.format(*item))
+            for item in sorted(items):
+                item_id, name, count = item
+                if item_id.startswith('u') and (match := re.search(r'[ˢᵃᵇᶜᵈᵉ]+', item_id)):
+                    split = match.span()[0]
+                    item_id = item_id[:split] + '​' + item_id[split:]  # zero width space
+                item_count += count
+                sub_output.append(f'<code>  </code>/g_i_{item_id} {name} x {count}')
             hold_output.append(f"<code>{id}</code> {id_lookup.get(id, {}).get('name', 'Assorted')} ∑ {item_count} 💰{id_lookup.get(id, {}).get('shopSellPrice', '??')}")
             hold_output.extend(sub_output)
             hold_output.append(' ')
