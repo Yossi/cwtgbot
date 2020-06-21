@@ -484,7 +484,9 @@ def other_list(context):
     if (other := warehouse.get('other', {})) and (age := now - other['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_other data {age.seconds // 60} minutes old:\n']
         page_counter = 0
-        for id, items in sorted(other['data'].items()):  # TODO: do better sort here
+        value_to_weight = {id: id_lookup.get(id, {}).get('shopSellPrice', 0)/id_lookup.get(id, {}).get('weight', 1) for id in other['data']}
+        for id in sorted(value_to_weight, key=value_to_weight.get, reverse=True):
+            items = other['data'][id]
             hold_output = []
             sub_output = []
             item_count = 0
@@ -496,6 +498,7 @@ def other_list(context):
                 item_count += count
                 sub_output.append(f'<code>  </code>/g_i_{item_id} {name} x {count}')
             hold_output.append(f"<code>{id}</code> {id_lookup.get(id, {}).get('name', 'Assorted')} ∑ {item_count} 💰{id_lookup.get(id, {}).get('shopSellPrice', '??')}")
+            hold_output.append(f"💰/⚖️ {value_to_weight[id]:.2f}")
             hold_output.extend(sub_output)
             hold_output.append(' ')
             hold_output = '\n'.join(hold_output)
