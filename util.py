@@ -1,7 +1,7 @@
 import pickle
 import json
 import logging
-from datetime import datetime, time, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 
 import filetype
@@ -48,15 +48,7 @@ def get_lookup_dicts():
     return id_lookup, name_lookup
 
 
-def is_witching_hour():
-    '''return True if market is closed'''
-    closed_times = (
-        (time(6, 52), time(7, 00)),
-        (time(14, 52), time(15, 00)),
-        (time(22, 52), time(23, 00))
-    )
-    now = datetime.utcnow().time()
-    return any((start < now < end for start, end in closed_times))
+
 
 
 def game_phase():
