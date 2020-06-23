@@ -1,6 +1,6 @@
+from brains import list
 from commands.decorators import send_typing_action, log
 from utils import send
-from brains import list
 
 
 @send_typing_action
