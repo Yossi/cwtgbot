@@ -21,21 +21,6 @@ from tealeyes import CW_OFFSET, CW_PERIODS, SPEED
 
 
 
-def get_id_location(id):
-    info = id_lookup.get(id, {})
-    locations = (
-        ('Forest', '🌲'),
-        ('Swamp', '🍄'),
-        ('Valley', '⛰')
-    )
-    phase = game_phase()
-    output = ''
-    for place, emoji in locations:
-        if info.get(f'drop{place}{phase}'):
-            output += emoji
-    if output:
-        output += ' ' + get_qualifications(id)
-    return output
 
 
 def get_qualifications(id):

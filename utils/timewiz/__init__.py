@@ -16,3 +16,6 @@ CLOCK_EMOJI = "🕛🕧🕐🕜🕑🕝🕒🕞🕓🕟🕔🕠🕕🕡🕖🕢�
 DEPRESSION = 8 + 3 / 5
 SUN_YAT_SEN_ERA = 2698
 WRITERS_ERA = 2637
+
+from .game_phase import game_phase
+from .timewiz import timewiz
