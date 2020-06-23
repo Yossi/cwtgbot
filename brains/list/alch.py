@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pickle
 
 
-def alch_list(context):
+def alch(context):
     warehouse = load_saved(guild=context.user_data.get('guild', ''))
     hours = 1.5
     responses = []
