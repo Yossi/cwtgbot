@@ -1,28 +1,24 @@
-import os
-import sys
 import logging
-import traceback
+import os
 import pickle
-import html
 import random
+import sys
 from datetime import datetime
-from threading import Thread
 from functools import wraps
-from pprint import pprint
+from threading import Thread
 
-from telegram import ParseMode
 from telegram import ChatAction
-from telegram.utils.helpers import mention_html
-from telegram.ext import Updater, PicklePersistence
+from telegram import ParseMode
 from telegram.ext import CommandHandler, MessageHandler
 from telegram.ext import Filters
+from telegram.ext import Updater, PicklePersistence
 from timezonefinder import TimezoneFinder
 
-from utils.timewiz import timewiz
-from brains import main, warehouse_crafting, withdraw, deals_report, list
-from utils.wiki import id_lookup
-from utils import warehouse, send
+import commands
+from brains import main, warehouse_crafting, deals_report
 from secrets import TOKEN, LIST_OF_ADMINS
+from utils import warehouse, send
+from utils.wiki import id_lookup
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s\n%(message)s', level=logging.INFO)
 
@@ -31,7 +27,7 @@ updater = Updater(token=TOKEN, persistence=persistence, use_context=True)
 dispatcher = updater.dispatcher
 
 
-import commands
+
 
 def send_typing_action(func):
     '''decorator that sends typing action while processing func command.'''
@@ -427,7 +423,7 @@ dispatcher.add_handler(CommandHandler('go', destination))
 dispatcher.add_handler(MessageHandler(Filters.regex(r'/w.*_'), warehousecmd))
 dispatcher.add_handler(MessageHandler(Filters.regex(r'/c.*_'), craftcmd))
 
-dispatcher.add_error_handler(error)
+dispatcher.add_error_handler(commands.error)
 
 logging.info('bot started')
 updater.start_polling()
