@@ -1,4 +1,5 @@
-from . import id_lookup, get_qualifications
+from .wiki import id_lookup
+from .get_qualifications import get_qualifications
 from .timewiz import game_phase
 
 
