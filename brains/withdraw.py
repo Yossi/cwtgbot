@@ -3,7 +3,7 @@ from utils.warehouse import load_saved
 from utils.wiki import id_lookup, name_lookup
 
 
-def withdraw_parts(matches, guild):
+def parts(matches, guild):
     """builds withdraw commands.
        expects an iterator of dicts with one key named 'number' and the other named 'id' or 'name'"""
     warehouse = load_saved(guild)

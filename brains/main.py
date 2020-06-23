@@ -2,7 +2,7 @@ import pickle
 import re
 from collections import defaultdict
 import datetime
-from brains.withdraw_parts import withdraw_parts
+from brains.withdraw import withdraw_parts
 from utils.timewiz import is_witching_hour
 from utils.wiki import id_lookup, name_lookup
 from utils.warehouse import load_saved
