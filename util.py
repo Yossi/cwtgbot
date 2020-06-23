@@ -57,24 +57,3 @@ def get_qualifications(id):
         perception_level = '👀' + perception_level
 
     return level + perception_level
-
-
-def warehouse_load_saved(guild='full'):
-    try:
-        with open('warehouse.dict', 'rb') as warehouseFile:
-            if guild == 'full':
-                return pickle.load(warehouseFile)
-            return pickle.load(warehouseFile).get(guild, {})
-
-    except IOError:
-        return {}  # Ignore if warehouse.dict doesn't exist or can't be opened.
-
-
-
-
-if __name__ == '__main__':
-    from pprint import pprint
-    with open('data.json', 'w') as fp:
-        scrape_data(fp)
-else:
-    id_lookup, name_lookup = get_lookup_dicts()
