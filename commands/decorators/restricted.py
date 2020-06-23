@@ -5,7 +5,7 @@ from secrets import LIST_OF_ADMINS
 
 
 def restricted(func):
-    '''decorator that restricts use to only the admins listed in secrets.py'''
+    """decorator that restricts use to only the admins listed in secrets.py"""
     @wraps(func)
     def wrapped(update, context, *args, **kwargs):
         user_id = update.effective_user.id
