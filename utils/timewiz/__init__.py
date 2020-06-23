@@ -1,3 +1,6 @@
+from .game_phase import game_phase
+from .timewiz import timewiz
+
 CW_OFFSET = -11_093_806_800
 CW3_OFFSET = -11_093_803_200
 SPEED = 3
@@ -16,6 +19,3 @@ CLOCK_EMOJI = "🕛🕧🕐🕜🕑🕝🕒🕞🕓🕟🕔🕠🕕🕡🕖🕢�
 DEPRESSION = 8 + 3 / 5
 SUN_YAT_SEN_ERA = 2698
 WRITERS_ERA = 2637
-
-from .game_phase import game_phase
-from .timewiz import timewiz
