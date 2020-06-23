@@ -8,7 +8,7 @@ from utils.warehouse import load_saved
 from utils.wiki import id_lookup
 
 
-def misc_list(context):
+def misc(context):
     warehouse = load_saved(guild=context.user_data.get('guild', ''))
     hours = 5
     responses = []
