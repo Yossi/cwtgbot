@@ -38,13 +38,6 @@ dispatcher = updater.dispatcher
 
 
 
-@send_typing_action
-@log
-def warehouse(update, context):
-    '''show a summary of what parts are ready to craft'''
-    responses = warehouse_crafting(context)
-    for response in responses:
-        send(response, update, context)
 
 
 def warehousecmd(update, context):
