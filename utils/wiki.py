@@ -38,3 +38,6 @@ def get_lookup_dicts():
             id_lookup[item['id']] = item
             name_lookup[item['name'].lower()] = item
     return id_lookup, name_lookup
+
+
+id_lookup, name_lookup = get_lookup_dicts()
