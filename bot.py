@@ -31,7 +31,7 @@ updater = Updater(token=TOKEN, persistence=persistence, use_context=True)
 dispatcher = updater.dispatcher
 
 
-
+import commands
 
 def send_typing_action(func):
     '''decorator that sends typing action while processing func command.'''
