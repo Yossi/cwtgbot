@@ -117,7 +117,7 @@ def main(update, context, testing=False):
 
     def storage(m):
         '''handles /stock output'''
-        percent_full = 100*int(m[1])/int(m[2])
+        percent_full = 100 * int(m[1]) / int(m[2])
         ret.append(f'{percent_full}% full')
         items = text.split('\n')[1:]
         if items[0].startswith('Use /sg_{code} to trade some amount of resource for '):
@@ -136,23 +136,25 @@ def main(update, context, testing=False):
     def generic(items):
         '''does most of the work sorting a list of items into /wts and /g_deposit buckets.
            expects an iterator of strings in the form ['<Item Name> (<Item Count>)']'''
-        #items = list(items)
-        #pprint(items)
         sales = []
         deposits = []
         for item in items:
             match = re.search(r'(.+)\((\d+)\)( \/.+_(.+))?', item)
-            if not match: continue
+            if not match:
+                continue
             name = match[1].strip()
-            if 'murky' in name: continue # TODO: if murkies ever make it into the wiki, remove this
+            if 'murky' in name:
+                continue  # TODO: if murkies ever make it into the wiki, remove this condition
             name = name.replace('📃', '').replace('🏷', '')
             if name[0] == '⚡':
                 name = name.partition(' ')[2]
             id = name_lookup.get(name.lower(), {}).get('id')
             if not id and '_' in name:
                 id = item.strip().rpartition('_')[2]
-            if id not in id_lookup: continue
-            if not id_lookup[id]['depositable']: continue
+            if id not in id_lookup:
+                continue
+            if not id_lookup[id]['depositable']:
+                continue
             count_total = int(match[2])
             if match[4]:
                 id = match[4].strip()
@@ -195,6 +197,8 @@ def main(update, context, testing=False):
             ret.append(sales)
 
         if deposits:
+            if len(deposits) == 1:
+                deposits = [deposits[0].split()[0]]
             ret.append('\n'.join(sorted(deposits)))
 
     def withdraw():
@@ -241,14 +245,15 @@ def main(update, context, testing=False):
             result = [item['id'] for item in lookup_names if item['name'] in testname]
             if len(result) == 1:
                 return result[0]
-            return 'x' # someone is trying to be difficult
+            return 'x'  # someone is trying to be difficult
 
         followup = {
             'res': '/stock',
             'alch': '/alch',
             'rec': '/warehouse',
             'parts': '/w_1',
-            'other': '/other'
+            'other': '/other',
+            'misc': '/misc'
         }
         guild = context.user_data.get('guild', '')
         if not hasattr(update.effective_message.forward_from, 'id') or update.effective_message.forward_from.id not in [408101137]:  # @chtwrsbot
@@ -258,6 +263,8 @@ def main(update, context, testing=False):
             warehouse = warehouse_load_saved()
             data = {}
             for row in text.split('\n')[1:]:
+                if row[0] == 'u':
+                    row += ' x 1'
                 s = row.split()
                 data[s[0]] = int(s[-1])
 
@@ -277,6 +284,8 @@ def main(update, context, testing=False):
                 key = 'other'
                 data = {}
                 for row in text.split('\n')[1:]:
+                    if row[0] == 'u':
+                        row += ' x 1'
                     s = row.split()
                     supplied_id = s[0]
                     count = s[-1]
@@ -286,8 +295,8 @@ def main(update, context, testing=False):
                     name = ' '.join(s[1:-2])
                     base_id = name_lookup.get(name.lower(), {}).get('id')
                     if not base_id:
-                        base_id = discover_id(name) # preserve case here
-                    data.setdefault(base_id, []).append( (supplied_id, f'{modifier} {name}', int(count)) )
+                        base_id = discover_id(name)  # preserve case here
+                    data.setdefault(base_id, []).append((supplied_id, f'{modifier} {name}', int(count)))
 
             if not warehouse.get(guild):
                 warehouse[guild] = {}
@@ -302,7 +311,7 @@ def main(update, context, testing=False):
             ret.append("Your guild affiliation is not on file with this bot. Consider forwarding something that indicates what guild you're in. Eg: /me or /report or /hero")
 
     def guild(match):
-        if not hasattr(update.effective_message.forward_from, 'id') or update.effective_message.forward_from.id not in [408101137]: # @chtwrsbot  (265204902 is cw3)
+        if not hasattr(update.effective_message.forward_from, 'id') or update.effective_message.forward_from.id not in [408101137]:  # @chtwrsbot  (265204902 is cw3)
             ret.append('Must be a forward from @chtwrsbot. Try again.')
         else:
             context.user_data['guild'] = match.groupdict()['guild']
@@ -339,7 +348,7 @@ def main(update, context, testing=False):
         'guild_match': bool(guild_match),
         'equipment_match': bool(equipment_match),
     }
-    #print(matched_regexs)
+    # print(matched_regexs)
 
     if storage_match:
         storage(storage_match)
@@ -370,7 +379,7 @@ def main(update, context, testing=False):
 
 
 def stock_list(context):
-    warehouse = warehouse_load_saved(guild = context.user_data.get('guild', ''))
+    warehouse = warehouse_load_saved(guild=context.user_data.get('guild', ''))
     hours = 1.5
     responses = []
     now = datetime.datetime.utcnow()
@@ -389,106 +398,197 @@ def stock_list(context):
         for id in sorted(res['data'], key=res['data'].get, reverse=True):
             trade = '✅' if id_lookup[id]['exchange'] else '❌'
             price = prices.get(id, '')
-            if price: price = f'💰{price}'
+            if price:
+                price = f'💰{price}'
             output.append(f'{trade}<code>{id}</code> {id_lookup[id]["name"]} x {res["data"][id]} {price}')
         if prices:
             output.append(f"\nPrices no fresher than {(now - prices['last_update']).seconds // 60} minutes.")
 
-        sort_by_weight = {id: res['data'][id]*id_lookup[id]['weight'] for id in res['data']}
+        sort_by_weight = {id: res['data'][id] * id_lookup[id]['weight'] for id in res['data']}
         sort_by_weight = sorted(sort_by_weight, key=sort_by_weight.get, reverse=True)
         x = [
             [res['data'][id] for id in sort_by_weight],
-            [res['data'][id]*(id_lookup[id]['weight']-1) if id_lookup[id]['weight'] == 2 else 0 for id in sort_by_weight],
-            [res['data'][id]*(id_lookup[id]['weight']-1) if id_lookup[id]['weight'] >= 3 else 0 for id in sort_by_weight]
+            [res['data'][id] * (id_lookup[id]['weight'] - 1) if id_lookup[id]['weight'] == 2 else 0 for id in sort_by_weight],
+            [res['data'][id] * (id_lookup[id]['weight'] - 1) if id_lookup[id]['weight'] >= 3 else 0 for id in sort_by_weight]
         ]
         r = range(len(sort_by_weight))
         plt.clf()  # clear plot, because it doesn't get cleared from last run
+        plt.figure(figsize=(6.4, 1.5+(len(sort_by_weight)*0.15)))
         plt.barh(r, x[0])
         plt.barh(r, x[1], left=x[0], color=(1, .6, 0))  # some color between yellow and orange
         plt.barh(r, x[2], left=x[0], color='red')
         plt.yticks(r, [f'{id_lookup[id]["name"].lower()} {id}' for id in sort_by_weight], fontsize='8')
-        plt.legend(loc='upper right', labels=['Count', 'Double Weight', 'Triple Weight'])
+        plt.legend(loc='upper right', labels=['Stock Count', 'Double Weight', 'Triple Weight'])
         plt.subplots_adjust(left=0.3)
         buf = io.BytesIO()
-        #buf.name = 'weight.png'
         plt.savefig(buf, format='png')
         buf.seek(0)
-
         responses.append(buf)
+
         responses.append('\n'.join(output))
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_res and try again')
     return responses
 
+
 def alch_list(context):
-    warehouse = warehouse_load_saved(guild = context.user_data.get('guild', ''))
+    warehouse = warehouse_load_saved(guild=context.user_data.get('guild', ''))
     hours = 1.5
     responses = []
     now = datetime.datetime.utcnow()
     if (alch := warehouse.get('alch', {})) and (age := now - alch['timestamp']) < datetime.timedelta(hours=hours):
-        output = [f'Based on /g_stock_alch data {age.seconds // 60} minutes old:\n']
         try:
             with open('stockprices.dict', 'rb') as fp:
                 prices = pickle.load(fp)
         except FileNotFoundError:
             prices = {}
 
+        output = [f'Based on /g_stock_alch data {age.seconds // 60} minutes old:\n']
         for x in range(39, 70):
             if f'{x:02}' in id_lookup:
                 alch['data'][f'{x:02}'] = alch['data'].get(f'{x:02}', 0)
 
         for id in sorted(alch['data'], key=alch['data'].get, reverse=True):
             price = prices.get(id, '')
-            if price: price = f'💰{price}'
+            if price:
+                price = f'💰{price}'
             output.append(f'<code>{id}</code> {id_lookup[id]["name"]} x {alch["data"][id]} {price}')
         if prices:
             output.append(f"\nPrices no fresher than {(now - prices['last_update']).seconds // 60} minutes.")
+
+        sort_by_count = sorted(alch['data'], key=alch['data'].get, reverse=True)
+        x = [alch['data'][id] for id in sort_by_count]
+        y = [f'{id_lookup[id]["name"].lower()} {id}' for id in sort_by_count]
+        r = range(len(x))
+        plt.clf()  # clear plot, because it doesn't get cleared from last run
+        plt.figure(figsize=(6.4, 1.5+(len(sort_by_count)*0.15)))
+        plt.barh(r, x)
+        plt.yticks(r, y, fontsize='8')
+        plt.legend(loc='upper right', labels=['Alch Count'])
+        plt.subplots_adjust(left=0.3)
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        responses.append(buf)
 
         responses.append('\n'.join(output))
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_alch and try again')
     return responses
 
+
 def other_list(context):
-    warehouse = warehouse_load_saved(guild = context.user_data.get('guild', ''))
+    warehouse = warehouse_load_saved(guild=context.user_data.get('guild', ''))
     hours = 3
     responses = []
     now = datetime.datetime.utcnow()
     if (other := warehouse.get('other', {})) and (age := now - other['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_other data {age.seconds // 60} minutes old:\n']
         page_counter = 0
-        for id, items in sorted(other['data'].items()):
+        value_to_weight = {id: id_lookup.get(id, {}).get('shopSellPrice', 0)/id_lookup.get(id, {}).get('weight', 1) for id in other['data']}
+        for id in sorted(value_to_weight, key=value_to_weight.get, reverse=True):
+            items = other['data'][id]
             hold_output = []
             sub_output = []
             item_count = 0
-            for item in sorted(items): # TODO: do better sort here
-                item_count += item[2]
-                sub_output.append('<code>  </code>/g_i_{} {} x {}'.format(*item))
+            for item in sorted(items):
+                item_id, name, count = item
+                if item_id.startswith('u') and (match := re.search(r'[ˢᵃᵇᶜᵈᵉ]+', item_id)):
+                    split = match.span()[0]
+                    item_id = item_id[:split] + '​' + item_id[split:]  # zero width space
+                item_count += count
+                sub_output.append(f'<code>  </code>/g_i_{item_id} {name} x {count}')
             hold_output.append(f"<code>{id}</code> {id_lookup.get(id, {}).get('name', 'Assorted')} ∑ {item_count} 💰{id_lookup.get(id, {}).get('shopSellPrice', '??')}")
+            hold_output.append(f"💰/⚖️ {value_to_weight[id]:.2f}")
             hold_output.extend(sub_output)
             hold_output.append(' ')
             hold_output = '\n'.join(hold_output)
 
             page_counter += len(hold_output.encode('utf-8'))
-            if page_counter >= 3000: # tg officially supports messages as long as 4096, but the formatting gives up around 3000
+            if page_counter >= 3000:  # tg officially supports messages as long as 4096, but the formatting gives up around 3000
                 responses.append('\n'.join(output))
                 page_counter = 0
                 output = []
             output.append(hold_output)
 
+        count_and_weight = {id: sum(list(zip(*other['data'][id]))[2]) * id_lookup.get(id, {}).get('weight', 0) for id in other['data']}
+        sort_by_weight = sorted(count_and_weight, key=count_and_weight.get, reverse=True)
+        x = [count_and_weight[id] for id in sort_by_weight]
+        y = [f"{id_lookup.get(id, {'name': 'assorted'})['name'].lower()} {id}" for id in sort_by_weight]
+        r = range(len(x))
+        plt.clf()  # clear plot, because it doesn't get cleared from last run
+        plt.figure(figsize=(6.4, 1.5+(len(sort_by_weight)*0.15)))
+        plt.barh(r, x)
+        plt.yticks(r, y, fontsize='8')
+        plt.legend(loc='upper right', labels=['Other by Weight'])
+        plt.subplots_adjust(left=0.3)
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+
         responses.append('\n'.join(output))
+
+        responses.append(buf)
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_other and try again')
     return responses
 
+
+def misc_list(context):
+    warehouse = warehouse_load_saved(guild=context.user_data.get('guild', ''))
+    hours = 5
+    responses = []
+    now = datetime.datetime.utcnow()
+    if (misc := warehouse.get('misc', {})) and (age := now - misc['timestamp']) < datetime.timedelta(hours=hours):
+        try:
+            with open('auctionprices.dict', 'rb') as ap, open('stockprices.dict', 'rb') as sp:
+                auction_prices = pickle.load(ap)
+                stock_prices = pickle.load(sp)
+                price_age = min(auction_prices['last_update'], stock_prices['last_update'])
+                prices = {**auction_prices, **stock_prices}
+                prices['last_update'] = price_age
+        except FileNotFoundError:
+            prices = {}
+
+        output = [f'Based on /g_stock_misc data {age.seconds // 60} minutes old:\n']
+        for id in sorted(misc['data'], key=misc['data'].get, reverse=True):
+            price = prices.get(id, '')
+            if price:
+                currency = '💰' if isinstance(price, int) else '👝'
+                price = f'{currency}{price}'
+
+            output.append(f'<code>{id}</code> {id_lookup.get(id, {}).get("name", "Name Missing")} x {misc["data"][id]} {price}')
+
+        sort_by_weight = {id: misc['data'][id] * id_lookup.get(id, {}).get('weight', 1) for id in misc['data']}
+        sort_by_weight = sorted(sort_by_weight, key=sort_by_weight.get, reverse=True)
+        x = [misc['data'][id] * id_lookup.get(id, {}).get('weight', 1) for id in sort_by_weight]
+        y = [f'{id_lookup.get(id, {}).get("name", "??").lower()} {id}' for id in sort_by_weight]
+        r = range(len(sort_by_weight))
+        plt.clf()  # clear plot, because it doesn't get cleared from last run
+        plt.figure(figsize=(6.4, 1.5+(len(sort_by_weight)*0.15)))
+        plt.barh(r, x)
+        plt.yticks(r, y, fontsize='8')
+        plt.legend(loc='upper right', labels=['Weight'])
+        plt.subplots_adjust(left=0.3)
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        buf.seek(0)
+        responses.append(buf)
+
+        responses.append('\n'.join(output))
+    else:
+        responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_misc and try again')
+    return responses
+
+
 def warehouse_crafting(context):
-    warehouse = warehouse_load_saved(guild = context.user_data.get('guild', ''))
+    warehouse = warehouse_load_saved(guild=context.user_data.get('guild', ''))
     hours = 2.5
     responses = []
     now = datetime.datetime.utcnow()
     if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
-    (age_rec := now - rec['timestamp']) < datetime.timedelta(hours=hours) and \
-    (age_parts := now - parts['timestamp']) < datetime.timedelta(hours=hours):
+       (age_rec := now - rec['timestamp']) < datetime.timedelta(hours=hours) and \
+       (age_parts := now - parts['timestamp']) < datetime.timedelta(hours=hours):
         try:
             with open('auctionprices.dict', 'rb') as fp:
                 prices = pickle.load(fp)
@@ -515,8 +615,8 @@ def warehouse_crafting(context):
             count_recipes = rec['data'].get(rec_id, 0)
             count_parts = parts['data'].get(part_id, 0)
             complete_parts_sets = count_parts // parts_needed
-            parts_missing_for_next_set = count_parts % parts_needed
-            recipes_missing = complete_parts_sets - count_recipes
+            # parts_missing_for_next_set = count_parts % parts_needed
+            # recipes_missing = complete_parts_sets - count_recipes
             things_missing = int(not bool(count_recipes)) + max(parts_needed - count_parts, 0)
             num_craftable = min(count_recipes, complete_parts_sets)
             ready = '✅' if num_craftable else '❌'
@@ -528,13 +628,15 @@ def warehouse_crafting(context):
             if prices:
                 recipe_price = str(prices.get(rec_id, ''))
                 part_price = str(prices.get(part_id, ''))
-                if recipe_price: recipe_price = f'👝{recipe_price}'
-                if part_price: part_price = f'👝{part_price}'
+                if recipe_price:
+                    recipe_price = f'👝{recipe_price}'
+                if part_price:
+                    part_price = f'👝{part_price}'
 
             # Getting through this gauntlet without hitting a continue means you get displayed
             if not num_craftable and not context.args:
                 continue
-            if context.args and context.args[0].lower() != 'all': # if it's 'all' then jump to after the gauntlet
+            if context.args and context.args[0].lower() != 'all':  # if it's 'all' then jump to after the gauntlet
                 if context.args[0].isdigit() and 0 < things_missing <= int(context.args[0]):
                     pass
                 elif context.args[0].lower().startswith('overstock'):
@@ -542,7 +644,7 @@ def warehouse_crafting(context):
                         multiple = int(context.args[1])
                     except IndexError:
                         multiple = 2
-                    if count_parts/parts_needed <= multiple and count_recipes <= multiple:
+                    if count_parts / parts_needed <= multiple and count_recipes <= multiple:
                         continue
                 else:
                     try:
@@ -564,7 +666,7 @@ def warehouse_crafting(context):
             hold = '\n'.join(hold)
 
             page_counter += len(hold.encode('utf-8'))
-            if page_counter >= 2500: # tg officially supports messages as long as 4096, but the formatting gives up around 3000
+            if page_counter >= 2500:  # tg officially supports messages as long as 4096, but the formatting gives up around 3000
                 responses.append('\n'.join(output))
                 page_counter = 0
                 output = []
@@ -575,9 +677,34 @@ def warehouse_crafting(context):
             responses.append(result)
         if result.rstrip().endswith(':'):
             responses.append('No matches in stock')
+
+        if context.args and context.args[0].lower() in ('all', 'chart'):
+            parts_rec = {**parts['data'], **rec['data']}
+            count_and_weight = {id: parts_rec[id] * id_lookup[id]['weight'] for id in parts_rec}
+            sort_by_weight = sorted(count_and_weight, key=count_and_weight.get, reverse=True)
+            x = [
+                [count_and_weight[id] if id[0] == 'k' else 0 for id in sort_by_weight],
+                [count_and_weight[id] if id[0] == 'r' else 0 for id in sort_by_weight]
+            ]
+            y = [f"{id_lookup[id]['name'].lower()} {id}" for id in sort_by_weight]
+            r = range(len(sort_by_weight))
+            plt.clf()  # clear plot, because it doesn't get cleared from last run
+            plt.figure(figsize=(6.4, 1.5+(len(sort_by_weight)*0.15)))
+            plt.barh(r, x[0])
+            plt.barh(r, x[1], color='red')
+            plt.yticks(r, y, fontsize='8')
+            plt.legend(loc='upper right', labels=['Parts', 'Recipes'])
+            plt.subplots_adjust(left=0.3)
+            buf = io.BytesIO()
+            buf.name = 'weights.pdf'
+            plt.savefig(buf, format='pdf')
+            buf.seek(0)
+            responses.append(buf)
+
     else:
         responses.append(f'Missing recent guild stock state (&lt; {hours} hours old). Please forward the output from /g_stock_parts and /g_stock_rec and try again')
     return responses
+
 
 def withdraw_craft(context):
     response = ["Can't craft this"]
@@ -600,6 +727,7 @@ def withdraw_craft(context):
             ]
 
     return response
+
 
 def deals_report(context):
     output = []
@@ -636,7 +764,7 @@ def deals_report(context):
             make_price = recipe_price(data['recipe'])
 
             out_str = f"<code>{id}</code> {data['name']} /craft_{id}\n {'✅' if buy_price > make_price else '❌'}Make: {make_price}💰, {'❌' if buy_price > make_price else '✅'}Buy: {buy_price}💰"
-            output.append(out_str) # \"{data['recipe']}\"
+            output.append(out_str)  # \"{data['recipe']}\"
     output.sort()
     output.append(f"\nPrices no fresher than {(now - prices['last_update']).seconds // 60} minutes.")
     return '\n'.join(output)
