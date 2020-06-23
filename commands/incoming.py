@@ -1,7 +1,7 @@
-from .decorators import send_typing_action
-from .decorators import log
 from brains import main
 from utils import send
+from .decorators import log
+from .decorators import send_typing_action
 
 
 @send_typing_action
