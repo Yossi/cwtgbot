@@ -18,11 +18,10 @@ from telegram.ext import CommandHandler, MessageHandler
 from telegram.ext import Filters
 from timezonefinder import TimezoneFinder
 
-from tealeyes import tealeyes
-from brains import main, warehouse_crafting, withdraw_craft, deals_report
-from brains import stock_list, alch_list, other_list, misc_list
-from brains import id_lookup
-from util import warehouse_load_saved, send
+from utils.timewiz import timewiz
+from brains import main, warehouse_crafting, withdraw, deals_report, list
+from utils.wiki import id_lookup
+from utils import warehouse, send
 from secrets import TOKEN, LIST_OF_ADMINS
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s\n%(message)s', level=logging.INFO)
@@ -32,43 +31,6 @@ updater = Updater(token=TOKEN, persistence=persistence, use_context=True)
 dispatcher = updater.dispatcher
 
 
-def error(update, context):
-    # add all the dev user_ids in this list. You can also add ids of channels or groups.
-    devs = LIST_OF_ADMINS
-    # we want to notify the user of this problem. This will always work, but not notify users if the update is an
-    # callback or inline query, or a poll update. In case you want this, keep in mind that sending the message
-    # could fail
-    if not update:
-        return
-    if update.effective_message:
-        text = "Hey. I'm sorry to inform you that an error happened while I tried to handle your update. My developer has been notified."
-        update.effective_message.reply_text(text)
-    # This traceback is created with accessing the traceback object from the sys.exc_info, which is returned as the
-    # third value of the returned tuple. Then we use the traceback.format_tb to get the traceback as a string, which
-    # for a weird reason separates the line breaks in a list, but keeps the linebreaks itself. So just joining an
-    # empty string works fine.
-    trace = "".join(traceback.format_tb(sys.exc_info()[2]))
-    # lets try to get as much information from the telegram update as possible
-    payload = ""
-    # normally, we always have an user. If not, its either a channel or a poll update.
-    if update.effective_user:
-        payload += f' with the user {mention_html(update.effective_user.id, update.effective_user.first_name)}'
-    # there are more situations when you don't get a chat
-    if update.effective_chat:
-        payload += f' within the chat <i>{html.escape(str(update.effective_chat.title))}</i>'
-        if update.effective_chat.username:
-            payload += f' (@{update.effective_chat.username})'
-    # but only one where you have an empty payload by now: A poll (buuuh)
-    if update.poll:
-        payload += f' with the poll id {update.poll.id}.'
-    # lets put this in a "well" formatted text
-    text = f"Hey.\n The error <code>{html.escape(str(context.error))}</code> happened{payload}. The full traceback:\n\n<code>{html.escape(trace)}</code>"
-    # and send it to the dev(s)
-    for dev_id in devs:
-        context.bot.send_message(dev_id, update.effective_message.text, parse_mode=ParseMode.HTML)
-        context.bot.send_message(dev_id, text, parse_mode=ParseMode.HTML)
-    # we raise the error again, so the logger module catches it. If you don't use the logger module, use it.
-    raise
 
 
 def send_typing_action(func):
