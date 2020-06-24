@@ -10,13 +10,14 @@ from .error import error
 from .error import error
 from .help import help
 from .ignore import ignore
+from .incoming import incoming
+from .location import location
 from .misc import misc
 from .mlm import mlm
 from .now import now
 from .other import other
 from .ping import ping
 from .pong import pong
-from .restart import restart
 from .save import save
 from .say import say
 from .settings import settings

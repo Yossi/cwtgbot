@@ -16,7 +16,7 @@ dispatcher = updater.dispatcher
 cmds = {
     'start': commands.start,
     'mlm': commands.mlm,
-    'help': help,
+    'help': commands.help,
     'settings': commands.settings,
     'save': commands.save,
     'clear_save': commands.clear_save,
@@ -37,7 +37,6 @@ cmds = {
     'other': commands.other,
     'misc': commands.misc,
     'deals': commands.deals,
-    'r': commands.restart,  # : filters=Filters.user(user_id=LIST_OF_ADMINS,)
     'say': commands.say,  # : filters=Filters.user(user_id=LIST_OF_ADMINS,)
     'user_data': commands.user_data,
     'chat_data': commands.chat_data,  # : filters=Filters.user(user_id=LIST_OF_ADMINS,)
@@ -45,7 +44,7 @@ cmds = {
     'go': commands.destination
 }
 for c in cmds:
-    dispatcher.add_handler(CommandHandler(c, commands._commands[c]))
+    dispatcher.add_handler(CommandHandler(c, cmds[c]))
 
 dispatcher.add_handler(MessageHandler(Filters.location, commands.location))
 dispatcher.add_handler(MessageHandler(Filters.forwarded, commands.incoming))
@@ -56,6 +55,28 @@ dispatcher.add_handler(MessageHandler(Filters.regex(r'/w.*_'), commands.warehous
 dispatcher.add_handler(MessageHandler(Filters.regex(r'/c.*_'), commands.craftcmd))
 
 dispatcher.add_error_handler(commands.error)
+
+from commands.decorators import restricted, log
+import os
+import sys
+from utils import send
+from threading import Thread
+
+@restricted
+@log
+def restart(update, context):
+    def stop_and_restart():
+        """Gracefully stop the Updater and replace the current process with a new one"""
+        persistence.flush()
+        updater.stop()
+        os.execl(sys.executable, sys.executable, *sys.argv)
+
+    logging.info('Bot is restarting...')
+    send('Bot is restarting...', update, context)
+    Thread(target=stop_and_restart).start()
+    logging.info("...and we're back")
+    send("...and we're back", update, context)
+
 
 logging.info('bot started')
 updater.start_polling()

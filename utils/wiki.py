@@ -17,7 +17,7 @@ def get_lookup_dicts():
         with open('lastrev', 'r') as revfp:
             localrev = revfp.readline()
             if lastrev != localrev:
-                with open('data.json', 'w') as fp:
+                with open('data.json', 'w', encoding='utf-8') as fp:
                     scrape_data(fp)
 
         with open('lastrev', 'w') as fp:
@@ -26,9 +26,9 @@ def get_lookup_dicts():
         pass  # if we end up here for whatever reason (almost certainly a network error) then just move on. If network is really down AND we don't have data.dict yet then we explode later
 
     if not Path('data.json').is_file():
-        with open('data.json', 'w') as fp:
+        with open('data.json', 'w', encoding='utf-8') as fp:
             scrape_data(fp)
-    with open('data.json', 'r') as fp:
+    with open('data.json', 'r', encoding='utf-8') as fp:
         j = json.load(fp)
         data = j['items']
         data.extend(j['incomplete'])

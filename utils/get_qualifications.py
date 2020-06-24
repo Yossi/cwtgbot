@@ -1,4 +1,4 @@
-from . import id_lookup
+from .wiki import id_lookup
 
 
 def get_qualifications(id):

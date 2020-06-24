@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from . import CW_OFFSET, CW_PERIODS, SPEED
+from .timewiz import CW_OFFSET, CW_PERIODS, SPEED
 
 
 def game_phase():
