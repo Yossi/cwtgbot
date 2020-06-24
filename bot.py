@@ -77,6 +77,7 @@ def restart(update, context):
     logging.info("...and we're back")
     send("...and we're back", update, context)
 
+dispatcher.add_handler(CommandHandler('r', restart))
 
 logging.info('bot started')
 updater.start_polling()
