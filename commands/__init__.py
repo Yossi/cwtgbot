@@ -3,7 +3,7 @@ from .chat_data import chat_data
 from .clear_ignore import clear_ignore
 from .clear_save import clear_save
 from .craft import craft
-from .craftcmd import craftcmd
+from .craft import craftcmd
 from .deals import deals
 from .destination import destination
 from .error import error
@@ -27,4 +27,4 @@ from .time import time
 from .user_data import user_data
 from .warehouse import warehouse
 from .warehouse_data import warehouse_data
-from .warehousecmd import warehousecmd
+from .warehouse import warehousecmd

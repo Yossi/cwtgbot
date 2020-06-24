@@ -10,3 +10,8 @@ def craft(update, context):
     responses = withdraw.craft(context)
     for response in responses:
         send(response, update, context)
+
+
+def craftcmd(update, context):
+    context.args = update.effective_message.text.split('_')[1:]
+    craft(update, context)
