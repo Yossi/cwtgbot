@@ -9,7 +9,6 @@ import astral
 from timezonefinder import TimezoneFinder
 
 import sesDate
-
 CW_OFFSET = -11_093_806_800
 CW3_OFFSET = -11_093_803_200
 SPEED = 3
@@ -30,7 +29,7 @@ SUN_YAT_SEN_ERA = 2698
 WRITERS_ERA = 2637
 
 
-def tealeyes(user_data):
+def timewiz(user_data):
     output = []
     hmsformat = ("%H:%M:%S")
     weekdayhmformat = ("%A %H:%M")
@@ -218,4 +217,4 @@ except:
 
 if __name__ == '__main__':
     user_data = {}
-    print(tealeyes(user_data))
+    print(timewiz(user_data))

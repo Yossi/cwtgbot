@@ -7,7 +7,7 @@ from pathlib import Path
 from kafka import KafkaConsumer
 from rich import print
 
-from util import name_lookup
+from utils import name_lookup
 
 consumer = KafkaConsumer(
     # 'cw2-offers',
