@@ -42,8 +42,8 @@ cases = [
                 '/wts_01_1_1000 Thread\n'
                 '/wts_02_2_1000 Stick',
 
-                '<code>/g_deposit 03 2</code> Pelt\n'
-                '<code>/g_deposit 05</code> Coal'
+                '/g_deposit_03_2 Pelt\n'
+                '/g_deposit_05 Coal'
             ],
         'matches':
             {
@@ -87,23 +87,23 @@ cases = [
                 '/wts_01_447_1000 Thread\n'
                 '/wts_08_10_1000 Iron ore',
 
-                '<code>/g_deposit 03 226</code> Pelt\n'
-                '<code>/g_deposit 04 42</code> Bone\n'
-                '<code>/g_deposit 05 4</code> Coal\n'
-                '<code>/g_deposit 06 19</code> Charcoal\n'
-                '<code>/g_deposit 07 223</code> Powder\n'
-                '<code>/g_deposit 08 747</code> Iron ore\n'
-                '<code>/g_deposit 09 127</code> Cloth\n'
-                '<code>/g_deposit 10 13</code> Silver ore\n'
-                '<code>/g_deposit 11 4</code> Bauxite\n'
-                '<code>/g_deposit 13 2</code> Magic stone\n'
-                '<code>/g_deposit 16 5</code> Solvent\n'
-                '<code>/g_deposit 17</code> Ruby\n'
-                '<code>/g_deposit 20 109</code> Leather\n'
-                '<code>/g_deposit 21 9</code> Bone powder\n'
-                '<code>/g_deposit 23 10</code> Coke\n'
-                '<code>/g_deposit 33 2</code> Metal plate\n'
-                '<code>/g_deposit 35</code> Crafted leather'
+                '/g_deposit_03_226 Pelt\n'
+                '/g_deposit_04_42 Bone\n'
+                '/g_deposit_05_4 Coal\n'
+                '/g_deposit_06_19 Charcoal\n'
+                '/g_deposit_07_223 Powder\n'
+                '/g_deposit_08_747 Iron ore\n'
+                '/g_deposit_09_127 Cloth\n'
+                '/g_deposit_10_13 Silver ore\n'
+                '/g_deposit_11_4 Bauxite\n'
+                '/g_deposit_13_2 Magic stone\n'
+                '/g_deposit_16_5 Solvent\n'
+                '/g_deposit_17 Ruby\n'
+                '/g_deposit_20_109 Leather\n'
+                '/g_deposit_21_9 Bone powder\n'
+                '/g_deposit_23_10 Coke\n'
+                '/g_deposit_33_2 Metal plate\n'
+                '/g_deposit_35 Crafted leather'
             ],
         'matches':
             {
@@ -147,22 +147,22 @@ cases = [
                 '/wts_02_1_1000 Stick\n'
                 '/wts_08_2_1000 Iron ore',
 
-                '<code>/g_deposit 03 7</code> Pelt\n'
-                '<code>/g_deposit 04 9</code> Bone\n'
-                '<code>/g_deposit 05 7</code> Coal\n'
-                '<code>/g_deposit 06 3</code> Charcoal\n'
-                '<code>/g_deposit 07 21</code> Powder\n'
-                '<code>/g_deposit 09 4</code> Cloth\n'
-                '<code>/g_deposit 10 11</code> Silver ore\n'
-                '<code>/g_deposit 11 3</code> Bauxite\n'
-                '<code>/g_deposit 13</code> Magic stone\n'
-                '<code>/g_deposit 16 2</code> Solvent\n'
-                '<code>/g_deposit 20 7</code> Leather\n'
-                '<code>/g_deposit 21 2</code> Bone powder\n'
-                '<code>/g_deposit 23 3</code> Coke\n'
-                '<code>/g_deposit 31 2</code> Rope\n'
-                '<code>/g_deposit 33 3</code> Metal plate\n'
-                '<code>/g_deposit 34</code> Metallic fiber'
+                '/g_deposit_03_7 Pelt\n'
+                '/g_deposit_04_9 Bone\n'
+                '/g_deposit_05_7 Coal\n'
+                '/g_deposit_06_3 Charcoal\n'
+                '/g_deposit_07_21 Powder\n'
+                '/g_deposit_09_4 Cloth\n'
+                '/g_deposit_10_11 Silver ore\n'
+                '/g_deposit_11_3 Bauxite\n'
+                '/g_deposit_13 Magic stone\n'
+                '/g_deposit_16_2 Solvent\n'
+                '/g_deposit_20_7 Leather\n'
+                '/g_deposit_21_2 Bone powder\n'
+                '/g_deposit_23_3 Coke\n'
+                '/g_deposit_31_2 Rope\n'
+                '/g_deposit_33_3 Metal plate\n'
+                '/g_deposit_34 Metallic fiber'
             ],
         'matches':
             {
@@ -186,10 +186,10 @@ cases = [
             'Royal Helmet fragment (1)',
         'output':
             [
-                '<code>/g_deposit k39</code> Royal Helmet fragment\n'
-                '<code>/g_deposit k40</code> Royal Boots part\n'
-                '<code>/g_deposit k41</code> Royal Gauntlets part\n'
-                '<code>/g_deposit r41</code> Royal Gauntlets recipe'
+                '/g_deposit_k39 Royal Helmet fragment\n'
+                '/g_deposit_k40 Royal Boots part\n'
+                '/g_deposit_k41 Royal Gauntlets part\n'
+                '/g_deposit_r41 Royal Gauntlets recipe'
             ],
         'matches':
             {
@@ -210,7 +210,7 @@ cases = [
             '📃Royal Gauntlets recipe (1) /view_r41',
         'output':
             [
-                '<code>/g_deposit r41</code> Royal Gauntlets recipe'
+                '/g_deposit_r41'
             ],
         'matches':
             {
@@ -242,7 +242,8 @@ cases = [
         'output':
             [
                 'Not enough materials. Missing:\n'
-                ' 11 x Powder\n 9 x Charcoal\n'
+                ' 11 x Powder\n'
+                ' 9 x Charcoal\n'
                 ' 9 x Stick\n'
                 ' 7 x Iron ore\n'
                 ' 64 x Pelt\n'
@@ -252,11 +253,11 @@ cases = [
                 ' 15 x Thread\n'
                 ' 1 x Solvent\n'
                 'Recipient shall send to guild leader/squire:\n'
-                '<code>/g_withdraw 07 11 06 9 02 9 08 7 03 64 10 1 05 22 11 2</code>\n'
-                '<code>/g_withdraw 01 15 16 1</code>\n'
+                '<code>/g_withdraw 07 11 06 9 02 9 08 7 03 64 10 1 05 22 11 2 01 15</code>\n'
+                '<code>/g_withdraw 16 1</code>\n'
                 '\n'
-                'Missing current guild stock state. Consider forwarding:\n'
-                '/g_stock_res'
+                # 'Missing current guild stock state. Consider forwarding:\n'
+                # '/g_stock_res'
             ],
         'matches':
             {
@@ -299,10 +300,10 @@ cases = [
                 'Recipient shall send to guild leader/squire:\n'
                 '<code>/g_withdraw 20 15 23 9 31 12 16 7 15 5 r15 1 k15 3 28 3</code>\n'
                 '\n'
-                'Missing current guild stock state. Consider forwarding:\n'
-                '/g_stock_parts\n'
-                '/g_stock_rec\n'
-                '/g_stock_res'
+                # 'Missing current guild stock state. Consider forwarding:\n'
+                # '/g_stock_parts\n'
+                # '/g_stock_rec\n'
+                # '/g_stock_res'
             ],
         'matches':
             {
@@ -351,8 +352,9 @@ cases = [
                 'Recipient shall send to guild leader/squire:\n'
                 '<code>/g_withdraw 16 1 03 12 02 2 06 6 04 4 01 1 07 2 05 5</code>\n'
                 '\n'
-                'Missing current guild stock state. Consider forwarding:\n'
-                '/g_stock_res'],
+                # 'Missing current guild stock state. Consider forwarding:\n'
+                # '/g_stock_res'
+            ],
         'matches':
             {
                 'storage_match': False,
@@ -400,11 +402,11 @@ cases = [
                 '💰Gold: 2\n'
                 '/wsr_mz1CQ_u115_confirm to make an order\n'
                 'Recipient shall send to guild leader/squire:\n'
-                '<code>/g_withdraw 06 18 07 22 08 22 04 12 10 16 05 19 02 18 03 80</code>\n'
-                '<code>/g_withdraw 09 19</code>\n'
+                '<code>/g_withdraw 06 18 07 22 08 22 04 12 10 16 05 19 02 18 03 80 09 19</code>\n'
                 '\n'
-                'Missing current guild stock state. Consider forwarding:\n'
-                '/g_stock_res'],
+                # 'Missing current guild stock state. Consider forwarding:\n'
+                # '/g_stock_res'
+            ],
         'matches':
             {
                 'storage_match': False,
@@ -425,7 +427,7 @@ cases = [
             '🏷Crusader Shield (1) /bind_u114\n'
             '🏷Royal Guard Cape (1) /bind_a26',
         'output':
-            ['<code>/g_deposit u114</code> Crusader Shield'],
+            ['/g_deposit_u114'],
         'matches':
             {
                 'storage_match': False,
@@ -460,16 +462,16 @@ cases = [
             '📙Scroll of Rage (1) /use_s07',
         'output':
             [
-                '<code>/g_deposit p01 6</code> Vial of Rage\n'
-                '<code>/g_deposit p02 6</code> Potion of Rage\n'
-                '<code>/g_deposit p03 5</code> Bottle of Rage\n'
-                '<code>/g_deposit p07 13</code> Vial of Greed\n'
-                '<code>/g_deposit p08 13</code> Potion of Greed\n'
-                '<code>/g_deposit p09 13</code> Bottle of Greed\n'
-                '<code>/g_deposit p11 2</code> Potion of Nature\n'
-                '<code>/g_deposit p16 14</code> Vial of Twilight\n'
-                '<code>/g_deposit s06 2</code> 📘Scroll of Peace\n'
-                '<code>/g_deposit s07</code> 📙Scroll of Rage'
+                '/g_deposit_p01_6 Vial of Rage\n'
+                '/g_deposit_p02_6 Potion of Rage\n'
+                '/g_deposit_p03_5 Bottle of Rage\n'
+                '/g_deposit_p07_13 Vial of Greed\n'
+                '/g_deposit_p08_13 Potion of Greed\n'
+                '/g_deposit_p09_13 Bottle of Greed\n'
+                '/g_deposit_p11_2 Potion of Nature\n'
+                '/g_deposit_p16_14 Vial of Twilight\n'
+                '/g_deposit_s06_2 📘Scroll of Peace\n'
+                '/g_deposit_s07 📙Scroll of Rage'
             ],
         'matches':
             {
@@ -511,12 +513,12 @@ cases = [
                 'Sapphire x 1\n'
                 'Cloth x 4\n'
                 '\n'
-                '<code>/g_withdraw a09 13 02 50 11 3 05 75 08 18 17 2 01 11 06 43</code>\n'
-                '<code>/g_withdraw 04 84 13 14 07 48 16 3 10 7 03 47 15 1 09 4</code>\n'
+                '<code>/g_withdraw a09 13 02 50 11 3 05 75 08 18 17 2 01 11 06 43 04 84</code>\n'
+                '<code>/g_withdraw 13 14 07 48 16 3 10 7 03 47 15 1 09 4</code>\n'
                 '\n'
                 'Missing current guild stock state. Consider forwarding:\n'
-                '/g_stock_other\n'
-                '/g_stock_res'
+                '/g_stock_other'
+                # '/g_stock_res'
             ],
         'matches':
             {
@@ -548,8 +550,8 @@ cases = [
                 'Stick x 60\n'
                 '<code>/g_withdraw 08 60 07 60 02 60</code>\n'
                 '\n'
-                'Missing current guild stock state. Consider forwarding:\n'
-                '/g_stock_res'
+                # 'Missing current guild stock state. Consider forwarding:\n'
+                # '/g_stock_res'
             ],
         'matches':
             {
