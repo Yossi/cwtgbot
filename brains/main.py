@@ -137,7 +137,6 @@ def main(update, context, testing=False):
     def warehouse_in():
         """read in /g_stock_* forwards"""
         def discover_id(testname):
-            print(testname)
             '''slow base_id finder for use only with troublesome custom named pieces of equipment'''
             lookup_names = [item for id, item in id_lookup.items() if id[0] in 'aw' and item.get('depositable') and item.get('enchantable')]
             result = [item['id'] for item in lookup_names if item['name'] in testname]
