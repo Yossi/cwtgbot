@@ -8,7 +8,7 @@ from lunarcalendar import Converter, Solar
 import astral
 from timezonefinder import TimezoneFinder
 
-import sesDate
+from .sesDate import sesDate
 CW_OFFSET = -11_093_806_800
 CW3_OFFSET = -11_093_803_200
 SPEED = 3
