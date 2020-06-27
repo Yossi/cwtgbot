@@ -1,6 +1,6 @@
 from .wiki import id_lookup
 from .get_qualifications import get_qualifications
-from .timewiz import game_phase
+from . import game_phase
 
 
 def get_id_location(id):
