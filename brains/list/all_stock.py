@@ -44,6 +44,9 @@ def all_stock(context):
                 for id in warehouse[category]['data']:
                     items_by_weight[id] = sum(list(zip(*warehouse[category]['data'][id]))[2]) * id_lookup.get(id, {}).get('weight', 0)
 
+        total_guild_weight = sum(items_by_weight.values())
+        output.append(f'Total guild weight: {total_guild_weight}')
+
         sorted_by_weight = sorted(items_by_weight, key=items_by_weight.get, reverse=True)
 
         x = [items_by_weight[id] for id in sorted_by_weight]
