@@ -123,7 +123,7 @@ def timewiz(user_data):
         heb = dates.HebrewDate.from_pydate(workdt)
         heb_tom = None
         yin = Converter.Solar2Lunar(Solar(workdt.year, workdt.month, workdt.day))
-        ses = sesDate.sesDate(utcdt.timestamp(), workdt.utcoffset().total_seconds())
+        ses = sesDate(utcdt.timestamp(), workdt.utcoffset().total_seconds())
 
         latlon = user_data.get('location')
         if latlon:
