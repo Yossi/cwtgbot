@@ -82,15 +82,16 @@ def main(update, context, testing=False):
 
         if sales:
             if len(sales) == 1:
-                sales = sales[0].split()[0]
+                sales = sales[0].split()[0] # trims the name off the end
             else:
                 sales = '\n'.join(sorted(sales))
+
             if is_witching_hour():
-                matches = re.finditer(r'\/wts_(?P<id>\d+)_(?P<number>\d+)_1000 (?P<name>.+)', sales)
+                matches = re.finditer(r'\/wts_(?P<id>\d+)_(?P<number>\d+)_1000(?P<name>.+)?', sales)
                 fire_sale = ['Market is closed so you get deposit commands.\nForward this message back to the bot after battle to get the withdraw commands for a refund.\n']
                 for match in matches:
                     d = match.groupdict()
-                    fire_sale.append(f'/g_deposit_{d["id"]}{"_"+d["number"] if d["number"] != "1" else ""} {d["name"]}')
+                    fire_sale.append(f'/g_deposit_{d["id"]}{"_"+d["number"] if d["number"] != "1" else ""}{d["name"] if d["name"] else ""}')
                 sales = '\n'.join(sorted(fire_sale))
             ret.append(sales)
 
