@@ -12,7 +12,9 @@ def scrape_data(fp):
 
 def get_lookup_dicts():
     try:
-        lastrev = requests.get('https://raw.githubusercontent.com/AVee/cw_wiki_sync/master/data/lastrev').text
+        response = requests.get('https://raw.githubusercontent.com/AVee/cw_wiki_sync/master/data/lastrev')
+        response.raise_for_status()
+        lastrev = response.text
 
         with open('lastrev', 'r') as revfp:
             localrev = revfp.readline()
