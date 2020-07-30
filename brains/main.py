@@ -108,7 +108,7 @@ def main(update, context, testing=False):
 
     def refund():
         """process returned /g_deposit message from ourselves"""
-        matches = re.finditer(r'\/g_deposit_(?P<id>[aestchwpmkr]{0,3}\d+)_(?P<number>\d+)?', text)
+        matches = re.finditer(r'\/g_deposit_(?P<id>[aestchwpmkr]{0,3}\d+)(_(?P<number>\d+))?', text)
         if matches:
             ret.append(withdraw_parts((match.groupdict() for match in matches), context.user_data.get('guild', '')))
 
