@@ -32,6 +32,7 @@ cmds = {
     'w': commands.warehouse,
     'craft': commands.craft,
     'c': commands.craft,
+    'brew': commands.craft,
     'stock': commands.stock,
     'alch': commands.alch,
     'other': commands.other,
