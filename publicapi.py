@@ -32,7 +32,10 @@ def handle_sex(message):
     sex = message.value
     for item in sex:
         id = name_lookup[item['name'].lower()]['id']
-        price = item['prices'][0]
+        if item['prices']:
+            price = item['prices'][0]
+        else:
+            price = '??'
         store[id] = price
     store['last_update'] = datetime.datetime.utcnow()
 
