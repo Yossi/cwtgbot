@@ -64,9 +64,9 @@ def main(update, context, testing=False):
                 count_keep = min(int(count_keep), count_total)
                 count_deposit = count_total - count_keep
                 while count_keep > max_weight:
-                    sales.append(f'/wts_{id}_{max_weight}_1000')
+                    sales.append(f'/wts_{id}_{max_weight}_2500')
                     count_keep = count_keep - max_weight
-                sales.append(f'/wts_{id}_{count_keep}_1000 {name}')
+                sales.append(f'/wts_{id}_{count_keep}_2500 {name}')
                 if count_deposit:
                     deposits.append(f'/g_deposit_{id}{"_"+str(count_deposit) if count_deposit != 1 else ""} {name}')
             elif id in context.user_data.get('ignore', {}):
@@ -87,7 +87,7 @@ def main(update, context, testing=False):
                 sales = '\n'.join(sorted(sales))
 
             if is_witching_hour():
-                matches = re.finditer(r'\/wts_(?P<id>\d+)_(?P<number>\d+)_1000(?P<name>.+)?', sales)
+                matches = re.finditer(r'\/wts_(?P<id>\d+)_(?P<number>\d+)_2500(?P<name>.+)?', sales)
                 fire_sale = ['Market is closed so you get deposit commands.\nForward this message back to the bot after battle to get the withdraw commands for a refund.\n']
                 for match in matches:
                     d = match.groupdict()
