@@ -31,7 +31,10 @@ def handle_sex(message):
 
     sex = message.value
     for item in sex:
-        id = name_lookup[item['name'].lower()]['id']
+        try:
+            id = name_lookup[item['name'].lower()]['id']
+        except KeyError:
+            id = item['name'].split()[-1]
         if item['prices']:
             price = item['prices'][0]
         else:
