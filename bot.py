@@ -38,6 +38,8 @@ cmds = {
     'other': commands.other,
     'misc': commands.misc,
     'all_stock': commands.all_stock,
+    'price': commands.prices,
+    'prices': commands.prices,
     'deals': commands.deals,
     'say': commands.say,  # : filters=Filters.user(user_id=LIST_OF_ADMINS,)
     'user_data': commands.user_data,

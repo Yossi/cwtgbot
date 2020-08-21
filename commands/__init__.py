@@ -5,6 +5,7 @@ from .clear_ignore import clear_ignore
 from .clear_save import clear_save
 from .craft import craft
 from .craft import craftcmd
+from .prices import prices
 from .deals import deals
 from .destination import destination
 from .error import error
