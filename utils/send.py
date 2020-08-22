@@ -1,5 +1,6 @@
 import logging
 import re
+
 import filetype
 from telegram import ParseMode
 
@@ -23,7 +24,7 @@ def send(payload, update, context):
                 text = text[:consumed_chars]
                 open_tags -= 1
             if open_tags > 2 * n: # too many tag pairs
-                consumed_chars = [m.start() for m in re.finditer('<', text)][2 * n]
+                consumed_chars = [m.start() for m in re.finditer(r'<', text)][2 * n]
                 text = text[:consumed_chars]
             i = i + consumed_chars
 
