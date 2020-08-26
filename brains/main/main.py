@@ -208,11 +208,13 @@ def main(update, context, testing=False):
         if not guild:
             ret.append("Your guild affiliation is not on file with this bot. Consider forwarding something that indicates what guild you're in. Eg: /me or /report or /hero")
 
-    def guild(match):
+    def guild(matches):
         if not hasattr(update.effective_message.forward_from, 'id') or update.effective_message.forward_from.id not in [408101137]:  # @chtwrsbot  (265204902 is cw3)
             ret.append('Must be a forward from @chtwrsbot. Try again.')
+        elif len(matches) != 1:
+            ret.append(f'Unclear what guild you mean.\nFound: {[match.groupdict()["guild"] for match in matches]}')
         else:
-            context.user_data['guild'] = match.groupdict()['guild']
+            context.user_data['guild'] = matches[0].groupdict()['guild']
             ret.append(f'Recording you as a member of [{context.user_data["guild"]}] Guild')
 
     def inspect():
@@ -231,10 +233,10 @@ def main(update, context, testing=False):
     consolidate_match = text.startswith('/g_withdraw')
     rerequest_match = '/g_receive' in text
     warehouse_match = 'Guild Warehouse:' in text
-    guild_match = re.search(r'(?P<castle_sign>[(🐺🐉🌑🦌🥔🦅🦈)])\[(?P<guild>[A-Z\d]{2,3})\]', text)
+    guild_matches = list(re.finditer(r'(?P<castle_sign>[(🐺🐉🌑🦌🥔🦅🦈)])\[(?P<guild>[A-Z\d]{2,3})\]', text))
     equipment_match = '🎽Equipment' in text
 
-    matched_regexs = {
+    matched_regexs = { # for debugging
         'storage_match': bool(storage_match),
         'more_match': bool(more_match),
         'generic_match': bool(generic_match),
@@ -243,7 +245,7 @@ def main(update, context, testing=False):
         'consolidate_match': bool(consolidate_match),
         'rerequest_match': bool(rerequest_match),
         'warehouse_match': bool(warehouse_match),
-        'guild_match': bool(guild_match),
+        'guild_matches': bool(guild_matches),
         'equipment_match': bool(equipment_match),
     }
     # print(matched_regexs)
@@ -264,8 +266,8 @@ def main(update, context, testing=False):
         rerequest()
     elif warehouse_match:
         warehouse_in()
-    elif guild_match:
-        guild(guild_match)
+    elif guild_matches:
+        guild(guild_matches)
     elif equipment_match:
         inspect()
     else:
