@@ -2,6 +2,7 @@ import pickle
 import re
 from collections import defaultdict
 import datetime
+import pytz
 from brains.withdraw import parts as withdraw_parts
 from utils.timewiz import is_witching_hour
 from utils.wiki import id_lookup, name_lookup
@@ -225,6 +226,23 @@ def main(update, context, testing=False):
             output.sort()
         ret.append('\n'.join(output))
 
+    def countdown_to_datetime(matches):
+        output = []
+        a = 0
+        usertz_str = context.user_data.get('timezone')
+        if usertz_str:
+            nowdt = datetime.datetime.now(pytz.timezone(usertz_str))
+        else:
+            nowdt = datetime.datetime.now(datetime.timezone.utc)
+
+        for match in matches:
+            b, c = match.span()
+            output.append(text[a:b] + '⏰')
+            a = c
+            delta = datetime.timedelta(**{k:int(v) for k,v in match.groupdict().items() if v})
+            output.append((nowdt+delta).strftime('%H:%M'))
+        return ''.join(output)
+
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
     more_match = '📦Your stock:' in text
     generic_match = re.search(r'(.+)(?<!arrow )\((\d+)\)', text)
@@ -235,6 +253,7 @@ def main(update, context, testing=False):
     warehouse_match = 'Guild Warehouse:' in text
     guild_matches = list(re.finditer(r'(?P<castle_sign>[(🐺🐉🌑🦌🥔🦅🦈)])\[(?P<guild>[A-Z\d]{2,3})\]', text))
     equipment_match = '🎽Equipment' in text
+    countdown_match = list(re.finditer(r'⏰((?P<hours>[\.\d]+?)h)?((?P<minutes>[\.\d]+?)m)?', text))
 
     matched_regexs = { # for debugging
         'storage_match': bool(storage_match),
@@ -247,6 +266,7 @@ def main(update, context, testing=False):
         'warehouse_match': bool(warehouse_match),
         'guild_matches': bool(guild_matches),
         'equipment_match': bool(equipment_match),
+        'countdown_match': bool(countdown_match),
     }
     # print(matched_regexs)
 
@@ -272,6 +292,9 @@ def main(update, context, testing=False):
         inspect()
     else:
         ret.append('')
+
+    if countdown_match:
+        ret.append(countdown_to_datetime(countdown_match))
 
     if testing:
         return ret, matched_regexs
