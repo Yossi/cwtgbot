@@ -99,7 +99,7 @@ def timewiz(user_data):
     countdownMonth = (nextCwMonth - cwadt) / SPEED
 
     season_int = ((12 * utcdt.year + utcdt.month) // 3 + 11) % 12
-    nextCwSeason = (utcdt.replace(year=utcdt.year + (utcdt.month == 12), month=((((utcdt.month) // 3) + 1) * 3) % 12, day=1, hour=0, minute=0, second=0, microsecond=0))
+    nextCwSeason = (utcdt.replace(year=utcdt.year + (utcdt.month == 12), month=(((utcdt.month % 12) // 3) + 1) * 3, day=1, hour=0, minute=0, second=0, microsecond=0))
     countdownSeason = (nextCwSeason - utcdt)
 
     output.append(f"<b>Chat Wars (EU)</b>:")
