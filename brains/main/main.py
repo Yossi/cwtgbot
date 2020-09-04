@@ -227,14 +227,14 @@ def main(update, context, testing=False):
         ret.append('\n'.join(output))
 
     def countdown_to_datetime(matches):
-        output = []
-        a = 0
         usertz_str = context.user_data.get('timezone')
         if usertz_str:
             nowdt = datetime.datetime.now(pytz.timezone(usertz_str))
         else:
             return 'To get clock times from countdown timers, please set a timezone by sending a pin located in your timezone.\nThis bot stores 3 decimal places of precision.\nSee https://xkcd.com/2170/'
 
+        output = []
+        a = 0
         for match in matches:
             b, c = match.span()
             output.append(text[a:b] + '⏰')
