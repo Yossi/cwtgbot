@@ -233,14 +233,18 @@ def main(update, context, testing=False):
         if usertz_str:
             nowdt = datetime.datetime.now(pytz.timezone(usertz_str))
         else:
-            nowdt = datetime.datetime.now(datetime.timezone.utc)
+            return 'To get clock times from countdown timers, please set a timezone by sending a pin located in your timezone.\nThis bot stores 3 decimal places of precision.\nSee https://xkcd.com/2170/'
 
         for match in matches:
             b, c = match.span()
             output.append(text[a:b] + '⏰')
             a = c
             delta = datetime.timedelta(**{k:int(v) for k,v in match.groupdict().items() if v})
-            output.append((nowdt+delta).strftime('%H:%M'))
+            template = '%H:%M'
+            if nowdt.date() != (nowdt+delta).date():
+                template = '%H:%M %a, %b %d'
+            output.append((nowdt+delta).strftime(template))
+        output.append(text[a:])
         return ''.join(output)
 
     storage_match = re.search(r'📦Storage \((\d+)/(\d+)\):', text)
@@ -253,7 +257,7 @@ def main(update, context, testing=False):
     warehouse_match = 'Guild Warehouse:' in text
     guild_matches = list(re.finditer(r'(?P<castle_sign>[(🐺🐉🌑🦌🥔🦅🦈)])\[(?P<guild>[A-Z\d]{2,3})\]', text))
     equipment_match = '🎽Equipment' in text
-    countdown_match = list(re.finditer(r'⏰((?P<hours>[\.\d]+?)h)?((?P<minutes>[\.\d]+?)m)?', text))
+    countdown_match = list(re.finditer(r'⏰(((?P<days>[\.\d]+?)d)?(?P<hours>[\.\d]+?)h)?((?P<minutes>[\.\d]+?)m(in)?)?$', text, flags=re.M))
 
     matched_regexs = { # for debugging
         'storage_match': bool(storage_match),
