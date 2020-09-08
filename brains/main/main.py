@@ -257,7 +257,7 @@ def main(update, context, testing=False):
     warehouse_match = 'Guild Warehouse:' in text
     guild_matches = list(re.finditer(r'(?P<castle_sign>[(🐺🐉🌑🦌🥔🦅🦈)])\[(?P<guild>[A-Z\d]{2,3})\]', text))
     equipment_match = '🎽Equipment' in text
-    countdown_match = list(re.finditer(r'⏰(((?P<days>[\.\d]+?)d)?(?P<hours>[\.\d]+?)h)?((?P<minutes>[\.\d]+?)m(in)?)?$', text, flags=re.M))
+    countdown_match = list(re.finditer(r'⏰((?P<days>[\d]+?)d)?((?P<hours>[\d]+?)h)?((?P<minutes>[\d]+?)m(in)?)?$', text, flags=re.M))
 
     matched_regexs = { # for debugging
         'storage_match': bool(storage_match),
