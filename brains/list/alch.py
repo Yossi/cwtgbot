@@ -19,7 +19,7 @@ def alch(context):
             prices = {}
 
         output = [f'Based on /g_stock_alch data {age.seconds // 60} minutes old:\n']
-        for x in range(39, 70):
+        for x in range(39, 82):
             if f'{x:02}' in id_lookup:
                 alch['data'][f'{x:02}'] = alch['data'].get(f'{x:02}', 0)
 
