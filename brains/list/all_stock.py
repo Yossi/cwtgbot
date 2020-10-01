@@ -68,14 +68,18 @@ def all_stock(context):
         colors = [color_lookup[items_by_category[item.rpartition(' ')[2]]] for item in y]
 
         plt.clf()  # clear plot, because it doesn't get cleared from last run
+        fig, ax = plt.subplots()
+        ax.xaxis.tick_top()
         plt.figure(figsize=(6.4, (len(x) * 0.15)))
+
         plt.barh(r, x, color=colors)
         plt.yticks(r, y, fontsize='8', fontname='symbola')
-        # plt.set_ticks_position('top')
+
         plt.title('Weight in Guild Stock')
         patches = [mpatches.Patch(color=color, label=category) for category, color in color_lookup.items()]
         plt.legend(handles=patches, ncol=3, title='/g_stock_…')
         plt.subplots_adjust(left=0.3)
+
         buf = io.BytesIO()
         buf.name = 'weights.pdf'
         plt.savefig(buf, format='pdf')
