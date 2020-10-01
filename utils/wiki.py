@@ -43,3 +43,6 @@ def get_lookup_dicts():
 
 
 id_lookup, name_lookup = get_lookup_dicts()
+
+if __name__ == '__main__':
+    print(id_lookup['70'])
