@@ -62,10 +62,10 @@ def parts(matches, guild):
             if diff > 0:
                 if d['id'][0] not in 'rk':
                     exchange = False
-                    if id_lookup[d['id']]['exchange']:
+                    if id_lookup[d['id']].get('exchange', False):
                         exchange = True
                         missing.append(f"<code>/wtb_{d['id']}_{diff}</code> {id_lookup[d['id']]['name']}")
-                    if id_lookup[d['id']]['craftable']:
+                    if id_lookup[d['id']].get('craftable', False):
                         craftcmd = f"/craft_{d['id']}_{diff} {id_lookup[d['id']]['name']}"
                         if exchange:
                             missing[-1] = missing[-1].split()[0] + f' or {craftcmd}'
