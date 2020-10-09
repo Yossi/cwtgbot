@@ -226,6 +226,18 @@ def main(update, context, testing=False):
             output.sort()
         ret.append('\n'.join(output))
 
+    def advisor():
+        filters = {
+            'Ja': 700,
+            'St': 700,
+            'Sc': 0
+        }
+        for match in re.finditer(r'/adv_(?P<code>.{4}) (?P<name>.+), the lvl.(?P<level>\d) (?P<class>.+) 💰(?P<price>\d+)', text):
+            match = match.groupdict()
+            if filters[match['class'][:2]] >= int(match['price']):
+                # ret.append('L<b>{level} {class}</b> {price}💰\n{name}'.format(**match))
+                ret.append(f'/g_hire {match["code"]}')
+
     def countdown_to_datetime(matches):
         usertz_str = context.user_data.get('timezone')
         if usertz_str:
@@ -257,6 +269,7 @@ def main(update, context, testing=False):
     warehouse_match = 'Guild Warehouse:' in text
     guild_matches = list(re.finditer(r'(?P<castle_sign>[(🐺🐉🌑🦌🥔🦅🦈)])(.?)\[(?P<guild>[A-Z\d]{2,3})\]', text))
     equipment_match = '🎽Equipment' in text
+    advisor_match = 'Advisers available for hire today is:' in text
     countdown_match = list(re.finditer(r'⏰((?P<days>[\d]+?)d)?((?P<hours>[\d]+?)h)?((?P<minutes>[\d]+?)m(in)?)?$', text, flags=re.M))
 
     matched_regexs = { # for debugging
@@ -270,6 +283,7 @@ def main(update, context, testing=False):
         'warehouse_match': bool(warehouse_match),
         'guild_matches': bool(guild_matches),
         'equipment_match': bool(equipment_match),
+        'advisor_match': bool(advisor_match),
         'countdown_match': bool(countdown_match),
     }
     # print(matched_regexs)
@@ -294,6 +308,8 @@ def main(update, context, testing=False):
         guild(guild_matches)
     elif equipment_match:
         inspect()
+    elif advisor_match:
+        advisor()
     else:
         ret.append('')
 
