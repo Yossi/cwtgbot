@@ -85,7 +85,7 @@ def warehouse_crafting(context):
                         continue
 
             hold = []
-            hold.append(f'{ready} <code>{finished_part_id}</code> {name}')
+            hold.append(f'{ready} {name} /c_{finished_part_id}')
             if num_craftable:
                 hold.append(f'Complete sets: <code>{num_craftable}</code>')
             hold.append(f'{part_name}s per recipe: <code>{parts_needed}</code>')

@@ -114,7 +114,7 @@ def craft(context):
             recipe = [{'name': name, 'number': int(amount) * count} for name, amount in info['recipe'].items() if name != 'Gold']
             recipe_str = '\n'.join([f'   {name}: {amount}{(f" x {count} = {int(amount) * count}" if count > 1 else "")}' for name, amount in info['recipe'].items()])
             response = [
-                f'<b>{info["name"]}{(f" x {count}" if count > 1 else "")}</b>\n'
+                f'<b>{info["name"]}{f" x {count}" if count > 1 else ""}</b>  /c_{id}{f"_{count}" if count > 1 else ""}\n'
                 f'''   Mana requirement: {info.get("craftMana", "unknown")}💧{(f" x {count} = {info.get('craftMana', 0) * count}💧" if count > 1 else "")}\n'''
                 f'{recipe_str}\n\n'
                 f'{parts(recipe, context.user_data.get("guild", ""))}'
