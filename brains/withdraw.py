@@ -51,7 +51,6 @@ def parts(matches, guild):
         for suffix in sorted(still_missing):
             notice += f'\n/g_stock_{suffix}'
 
-    command = ['<code>/g_withdraw']
     have = []
     missing = []
     for d in matches:
@@ -80,7 +79,7 @@ def parts(matches, guild):
 
     if have:
         command = ['<code>/g_withdraw']
-        for n, id in enumerate(have):
+        for n, id in enumerate(sorted(have)):
             if not (n + 1) % 10:
                 command.append('</code>\n<code>/g_withdraw')
             command.append(id)
