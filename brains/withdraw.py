@@ -75,7 +75,7 @@ def parts(matches, guild):
                 d['number'] = guild_stock.get(d['id'], 0)
 
         if d['number']:
-            have.append(f' {d["id"]} {d["number"]}')
+            have.append(f' {d["id"]} {d["number"]} ')
 
     if have:
         command = ['<code>/g_withdraw']
