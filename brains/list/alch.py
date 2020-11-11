@@ -7,6 +7,10 @@ import pickle
 
 
 def alch(context):
+    args = ['']
+    if context.args:
+        args = context.args
+
     warehouse = load_saved(guild=context.user_data.get('guild', ''))
     hours = 1.5
     responses = []
@@ -23,7 +27,12 @@ def alch(context):
             if f'{x:02}' in id_lookup:
                 alch['data'][f'{x:02}'] = alch['data'].get(f'{x:02}', 0)
 
-        for id in sorted(alch['data'], key=alch['data'].get, reverse=True):
+        if args[0] == 'nosort':
+            ordered_items = sorted(alch['data'], reverse=True)
+        else:
+            ordered_items = sorted(alch['data'], key=alch['data'].get, reverse=True)
+
+        for id in ordered_items:
             price = prices.get(id, '')
             if price:
                 price = f'💰{price}'

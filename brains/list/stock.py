@@ -7,6 +7,10 @@ import matplotlib.pyplot as plt
 
 
 def stock(context):
+    args = ['']
+    if context.args:
+        args = context.args
+
     warehouse = load_saved(guild=context.user_data.get('guild', ''))
     hours = 1.5
     responses = []
@@ -23,7 +27,12 @@ def stock(context):
             if f'{x:02}' in id_lookup:
                 res['data'][f'{x:02}'] = res['data'].get(f'{x:02}', 0)
 
-        for id in sorted(res['data'], key=res['data'].get, reverse=True):
+        if args[0] == 'nosort':
+            ordered_items = sorted(res['data'], reverse=True)
+        else:
+            ordered_items = sorted(res['data'], key=res['data'].get, reverse=True)
+
+        for id in ordered_items:
             trade = '✅' if id_lookup[id]['exchange'] else '❌'
             price = prices.get(id, '')
             if price:
