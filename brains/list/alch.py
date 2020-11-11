@@ -1,7 +1,7 @@
 import io
 import datetime
 from utils.warehouse import load_saved
-from utils.wiki import id_lookup
+from utils.wiki import id_lookup, name_lookup
 import matplotlib.pyplot as plt
 import pickle
 
@@ -35,8 +35,17 @@ def alch(context):
         for id in ordered_items:
             price = prices.get(id, '')
             if price:
-                price = f'💰{price}'
-            output.append(f'<code>{id}</code> {id_lookup[id]["name"]} x {alch["data"][id]} {price}')
+                price = f' 💰{price}'
+
+            brewable = ''
+            if id_lookup[id].get('craftable'):
+                recipe = id_lookup[id]['recipe']
+                fullsets = 1000000
+                for name, count in recipe.items():
+                    fullsets = min(alch['data'].get(name_lookup[name.lower()]['id'], 0) // int(count), fullsets)
+                brewable = f' ⚗️ /c_{id} {fullsets}'
+
+            output.append(f'<code>{id}</code> {id_lookup[id]["name"]} x {alch["data"][id]}{price}{brewable}')
         if prices:
             output.append(f"\nPrices no fresher than {(now - prices['last_update']).seconds // 60} minutes.")
 
