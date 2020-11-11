@@ -2,7 +2,7 @@ import io
 import datetime
 import pickle
 from utils.warehouse import load_saved
-from utils.wiki import id_lookup
+from utils.wiki import id_lookup, name_lookup
 import matplotlib.pyplot as plt
 
 
@@ -36,8 +36,17 @@ def stock(context):
             trade = '✅' if id_lookup[id]['exchange'] else '❌'
             price = prices.get(id, '')
             if price:
-                price = f'💰{price}'
-            output.append(f'{trade}<code>{id}</code> {id_lookup[id]["name"]} x {res["data"][id]} {price}')
+                price = f' 💰{price}'
+
+            craftable = ''
+            if id_lookup[id]['craftable']:
+                recipe = id_lookup[id]['recipe']
+                fullsets = 1000000
+                for name, count in recipe.items():
+                    fullsets = min(res['data'].get(name_lookup[name.lower()]['id'], 0) // int(count), fullsets)
+                craftable = f' ⚒ /c_{id} {fullsets}'
+
+            output.append(f'{trade}<code>{id}</code> {id_lookup[id]["name"]} x {res["data"][id]}{price}{craftable}')
         if prices:
             output.append(f"\nPrices no fresher than {(now - prices['last_update']).seconds // 60} minutes.")
 
