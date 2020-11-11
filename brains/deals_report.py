@@ -38,7 +38,7 @@ def deals_report(context):
             buy_price = prices.get(id, '')
             make_price = recipe_price(data['recipe'])
 
-            out_str = f"<code>{id}</code> {data['name']} /craft_{id}\n {'✅' if buy_price > make_price else '❌'}Make: {make_price}💰, {'❌' if buy_price > make_price else '✅'}Buy: {buy_price}💰"
+            out_str = f"/c_{id} {data['name']}\n {'✅' if buy_price > make_price else '❌'}Make: {make_price}💰, {'❌' if buy_price > make_price else '✅'}Buy: {buy_price}💰"
             output.append(out_str)  # \"{data['recipe']}\"
     output.sort()
     output.append(f"\nPrices no fresher than {(now - prices['last_update']).seconds // 60} minutes.")
