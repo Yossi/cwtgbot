@@ -8,7 +8,7 @@ def parts(matches, guild):
        expects an iterator of dicts with one key named 'number' and the other named 'id' or 'name'"""
     warehouse = load_saved(guild)
     hours = 2.5
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
     command_suffixes = set()
 
     matches = list(matches)

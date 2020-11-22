@@ -14,7 +14,7 @@ def stock(context):
     warehouse = load_saved(guild=context.user_data.get('guild', ''))
     hours = 1.5
     responses = []
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
     if (res := warehouse.get('res', {})) and (age := now - res['timestamp']) < datetime.timedelta(hours=hours):
         try:
             with open('stockprices.dict', 'rb') as fp:

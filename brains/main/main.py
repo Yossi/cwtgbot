@@ -44,7 +44,7 @@ def main(update, context, testing=False):
             name = match[1].strip()
             if 'murky' in name:
                 continue  # TODO: if murkies ever make it into the wiki, remove this condition
-            name = name.replace('📃', '').replace('🏷', '')
+            name = name.replace('📃', '').replace('🏷', '').replace('🧩','')
             if name[0] == '⚡':
                 name = name.partition(' ')[2]
             id = name_lookup.get(name.lower(), {}).get('id')
@@ -162,6 +162,8 @@ def main(update, context, testing=False):
             warehouse = load_saved()
             data = {}
             for row in text.split('\n')[1:]:
+                if any(book in row for book in ['📕','📗','📘','📙','📒']):
+                    continue
                 if row[0] == 'u':
                     row += ' x 1'
                 s = row.split()

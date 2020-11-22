@@ -50,13 +50,13 @@ cmds = {
 for c in cmds:
     dispatcher.add_handler(CommandHandler(c, cmds[c]))
 
+dispatcher.add_handler(MessageHandler(Filters.regex(r'/w.*_'), commands.warehousecmd))
+dispatcher.add_handler(MessageHandler(Filters.regex(r'/c.*_'), commands.craftcmd))
+
 dispatcher.add_handler(MessageHandler(Filters.location, commands.location))
 dispatcher.add_handler(MessageHandler(Filters.forwarded, commands.incoming))
 dispatcher.add_handler(MessageHandler(Filters.text, commands.incoming))
 
-
-dispatcher.add_handler(MessageHandler(Filters.regex(r'/w.*_'), commands.warehousecmd))
-dispatcher.add_handler(MessageHandler(Filters.regex(r'/c.*_'), commands.craftcmd))
 
 dispatcher.add_error_handler(commands.error)
 
