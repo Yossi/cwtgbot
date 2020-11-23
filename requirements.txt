@@ -1,7 +1,6 @@
-python-telegram-bot==12.8
+python-telegram-bot==13.0
 requests==2.24.0
 python-dateutil==2.8.1
-wheel
 lunarcalendar==0.0.9
 pyluach==1.2.1
 pytz==2019.3
