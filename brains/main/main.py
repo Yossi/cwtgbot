@@ -162,7 +162,7 @@ def main(update, context, testing=False):
             warehouse = load_saved()
             data = {}
             for row in text.split('\n')[1:]:
-                if any(book in row for book in ['📕','📗','📘','📙','📒']):
+                if row in '📕📗📘📙📒':
                     continue
                 if row[0] == 'u':
                     row += ' x 1'
@@ -181,10 +181,12 @@ def main(update, context, testing=False):
                 key = 'rec'
             elif id_sample[0] == 'k':
                 key = 'parts'
-            elif id_sample[0] in 'wuea':
+            elif id_sample[0] in 'wueat':
                 key = 'other'
                 data = {}
                 for row in text.split('\n')[1:]:
+                    if not row or row in '📕📗📘📙📒':
+                        continue
                     if row[0] == 'u':
                         row += ' x 1'
                     s = row.split()
