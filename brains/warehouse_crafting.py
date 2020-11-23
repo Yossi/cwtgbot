@@ -14,7 +14,7 @@ def warehouse_crafting(context):
     warehouse = load_saved(guild=context.user_data.get('guild', ''))
     hours = 2.5
     responses = []
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
     if (rec := warehouse.get('rec', {})) and (parts := warehouse.get('parts', {})) and \
             (age_rec := now - rec['timestamp']) < datetime.timedelta(hours=hours) and \
             (age_parts := now - parts['timestamp']) < datetime.timedelta(hours=hours):
