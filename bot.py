@@ -55,7 +55,7 @@ dispatcher.add_handler(MessageHandler(Filters.regex(r'/c.*_'), commands.craftcmd
 
 dispatcher.add_handler(MessageHandler(Filters.location, commands.location))
 dispatcher.add_handler(MessageHandler(Filters.forwarded, commands.incoming))
-dispatcher.add_handler(MessageHandler(Filters.text, commands.incoming))
+dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, commands.incoming))
 
 
 dispatcher.add_error_handler(commands.error)
