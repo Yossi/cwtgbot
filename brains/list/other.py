@@ -12,7 +12,7 @@ def other(context):
     warehouse = load_saved(guild=context.user_data.get('guild', ''))
     hours = 3
     responses = []
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
     if (other := warehouse.get('other', {})) and (age := now - other['timestamp']) < datetime.timedelta(hours=hours):
         output = [f'Based on /g_stock_other data {age.seconds // 60} minutes old:\n']
         page_counter = 0

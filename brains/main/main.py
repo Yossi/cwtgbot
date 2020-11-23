@@ -201,7 +201,7 @@ def main(update, context, testing=False):
 
             if not warehouse.get(guild):
                 warehouse[guild] = {}
-            if not warehouse[guild].get(key) or now > warehouse[guild][key].get('timestamp', datetime.datetime.min):
+            if not warehouse[guild].get(key) or now > warehouse[guild][key].get('timestamp', datetime.datetime.min).replace(tzinfo=datetime.timezone.utc):
                 warehouse[guild][key] = {'timestamp': now, 'data': data}
                 with open('warehouse.dict', 'wb') as warehouseFile:
                     pickle.dump(warehouse, warehouseFile)

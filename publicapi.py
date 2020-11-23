@@ -40,7 +40,7 @@ def handle_sex(message):
         else:
             price = '??'
         store[id] = price
-    store['last_update'] = datetime.datetime.utcnow()
+    store['last_update'] = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
 
     with open('stockprices.dict', 'wb') as fp:
         pickle.dump(store, fp)
@@ -70,7 +70,7 @@ def handle_au(message):
             store['history'][id].pop(1)
         price = round(sum(store['history'][id][1:]) / len(store['history'][id][1:]), 1)
         store[id] = price
-    store['last_update'] = datetime.datetime.utcnow()
+    store['last_update'] = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
 
     with open('auctionprices.dict', 'wb') as fp:
         pickle.dump(store, fp)

@@ -12,7 +12,7 @@ def misc(context):
     warehouse = load_saved(guild=context.user_data.get('guild', ''))
     hours = 5
     responses = []
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
     if (misc := warehouse.get('misc', {})) and (age := now - misc['timestamp']) < datetime.timedelta(hours=hours):
         try:
             with open('auctionprices.dict', 'rb') as ap, open('stockprices.dict', 'rb') as sp:
