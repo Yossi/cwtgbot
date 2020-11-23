@@ -1,14 +1,14 @@
 python-telegram-bot==13.0
-requests==2.24.0
+requests==2.25.0
 python-dateutil==2.8.1
 lunarcalendar==0.0.9
 pyluach==1.2.1
-pytz==2019.3
+pytz==2020.4
 PyYAML==5.3.1
 timezonefinder==4.5.0
 matplotlib==3.3.3
 filetype==1.0.7
-astral==1.10.1
+astral==1.10.1 # major breaking changes past this
 websocket-client==0.57.0
 rich==9.2.0
-kafka-python==2.0.1
+kafka-python==2.0.2
