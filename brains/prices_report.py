@@ -18,7 +18,7 @@ def special_sort(x):
 
 def prices_report(context):
     output = []
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
     with open('stockprices.dict', 'rb') as fp:
         prices = pickle.load(fp)
         price_age = prices['last_update']

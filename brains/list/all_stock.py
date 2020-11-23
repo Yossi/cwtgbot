@@ -20,7 +20,7 @@ def all_stock(context):
     warehouse = load_saved(guild=context.user_data.get('guild', ''))
     hours = 50
     responses = []
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
     if (res := warehouse.get('res', {})) and \
        (rec := warehouse.get('rec', {})) and \
        (alch := warehouse.get('alch', {})) and \

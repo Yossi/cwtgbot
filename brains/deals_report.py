@@ -6,7 +6,7 @@ from utils.wiki import name_lookup
 
 def deals_report(context):
     output = []
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
     with open('stockprices.dict', 'rb') as fp:
         prices = pickle.load(fp)
 
