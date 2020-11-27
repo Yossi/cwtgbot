@@ -175,7 +175,12 @@ def main(update, context, testing=False):
                     key = 'res'
                 else:
                     key = 'alch'
-            elif id_sample[0] in 'spfc':
+            elif id_sample[0] in 'fc':
+                if id_sample[-1] == 's': # stone shards
+                    key = 'parts'
+                else:
+                    key = 'misc'
+            elif id_sample[0] in 'sp':
                 key = 'misc'
             elif id_sample[0] == 'r':
                 key = 'rec'
