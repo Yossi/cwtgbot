@@ -20,7 +20,10 @@ def main(update, context, testing=False):
         ret.append(f'{percent_full}% full')
         items = text.split('\n')[1:]
         if items[0].startswith('Use /sg_{code} to trade some amount of resource for '):
-            items = (''.join(item.partition(' ')[::-1]) for item in items[2:])
+            items = [''.join(item.partition(' ')[::-1]) for item in items[2:]]
+        if '/gd_' in text:
+            items = [''.join(item.partition(' ')[2:]) for item in items]
+        print(items)
         generic(items)
 
     def more(items):
@@ -69,7 +72,7 @@ def main(update, context, testing=False):
                     count_keep = count_keep - max_weight
                 sales.append(f'/wts_{id}_{count_keep}_2500 {name}')
                 if count_deposit:
-                    deposits.append(f'/g_deposit_{id}{"_"+str(count_deposit) if count_deposit != 1 else ""} {name}')
+                    deposits.append(f'/gd_{id}{"_"+str(count_deposit) if count_deposit != 1 else ""} {name}')
             elif id in context.user_data.get('ignore', {}):
                 count_keep = context.user_data['ignore'][id]
                 if not count_keep:
@@ -77,9 +80,9 @@ def main(update, context, testing=False):
                 count_keep = min(int(count_keep), count_total)
                 count_deposit = count_total - count_keep
                 if count_deposit:
-                    deposits.append(f'/g_deposit_{id}{"_"+str(count_deposit) if count_deposit != 1 else ""} {name}')
+                    deposits.append(f'/gd_{id}{"_"+str(count_deposit) if count_deposit != 1 else ""} {name}')
             else:
-                deposits.append(f'/g_deposit_{id}{"_"+str(count_total) if count_total != 1 else ""} {name}')
+                deposits.append(f'/gd_{id}{"_"+str(count_total) if count_total != 1 else ""} {name}')
 
         if sales:
             if len(sales) == 1:
@@ -92,7 +95,7 @@ def main(update, context, testing=False):
                 fire_sale = ['Market is closed so you get deposit commands.\nForward this message back to the bot after battle to get the withdraw commands for a refund.\n']
                 for match in matches:
                     d = match.groupdict()
-                    fire_sale.append(f'/g_deposit_{d["id"]}{"_"+d["number"] if d["number"] != "1" else ""}{d["name"] if d["name"] else ""}')
+                    fire_sale.append(f'/gd_{d["id"]}{"_"+d["number"] if d["number"] != "1" else ""}{d["name"] if d["name"] else ""}')
                 sales = '\n'.join(sorted(fire_sale))
             ret.append(sales)
 
