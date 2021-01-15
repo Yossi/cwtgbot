@@ -172,6 +172,7 @@ def main(update, context, testing=False):
                 s = row.split()
                 data[s[0]] = int(s[-1])
 
+            key = None
             id_sample = list(data.keys())[0]
             if id_sample[0].isdigit():
                 if int(id_sample) <= 38:

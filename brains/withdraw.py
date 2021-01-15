@@ -14,7 +14,7 @@ def parts(matches, guild):
     matches = list(matches)
     for match in matches:
         if match.get('name'):
-            match['id'] = name_lookup[match['name'].strip().lower()]['id']
+            match['id'] = name_lookup[match['name'].strip().lower().replace('📃', '').replace('🧩', '')]['id']
 
         if match['id'][0].isdigit():
             if int(match['id']) <= 38:
