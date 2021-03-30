@@ -4,7 +4,7 @@ python-dateutil==2.8.1
 lunarcalendar==0.0.9
 pyluach==1.2.1
 pytz==2020.4
-PyYAML==5.3.1
+PyYAML==5.4
 timezonefinder==4.5.0
 matplotlib==3.3.3
 filetype==1.0.7
