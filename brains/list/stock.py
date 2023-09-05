@@ -39,7 +39,7 @@ def stock(context):
                 price = f' 💰{price}'
 
             craftable = ''
-            if id_lookup[id]['craftable']:
+            if id_lookup[id].get('craftable'):
                 recipe = id_lookup[id]['recipe']
                 fullsets = 1000000
                 for name, count in recipe.items():
@@ -50,7 +50,7 @@ def stock(context):
         if prices:
             output.append(f"\nPrices no fresher than {(now - prices['last_update']).seconds // 60} minutes.")
 
-        sort_by_weight = {id: res['data'][id] * id_lookup[id]['weight'] for id in res['data']}
+        sort_by_weight = {id: res['data'][id] * id_lookup[id]['weight'] for id in res['data'] if id_lookup[id].get('weight')}
         sort_by_weight = sorted(sort_by_weight, key=sort_by_weight.get, reverse=True)
         x = [
             [res['data'][id] for id in sort_by_weight],
