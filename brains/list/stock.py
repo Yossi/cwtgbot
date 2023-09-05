@@ -33,7 +33,7 @@ def stock(context):
             ordered_items = sorted(res['data'], key=res['data'].get, reverse=True)
 
         for id in ordered_items:
-            trade = '✅' if id_lookup[id]['exchange'] else '❌'
+            trade = '✅' if id_lookup[id].get('exchange') else '❌'
             price = prices.get(id, '')
             if price:
                 price = f' 💰{price}'
